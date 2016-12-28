@@ -11,7 +11,7 @@ LDFLAGS += -llapack
 
 OBJS = $(OBJDIR)/loadgms.o $(OBJDIR)/gevmcc.o $(OBJDIR)/gmomcc.o $(OBJDIR)/curvcheck.o $(OBJDIR)/sparsityplot.o $(OBJDIR)/convert.o
 
-all : $(BINDIR)/propcheck $(BINDIR)/convert $(BINDIR)/g2a
+all : $(BINDIR)/propcheck $(BINDIR)/convert
 
 depend : $(SRCDIR)/*.c $(SRCDIR)/*.h $(GAMSAPIDIR)/*.c $(GAMSAPIDIR)/*.h
 	$(CC) $(CFLAGS) -MM $^ | sed -e 's@^\([a-z]\)@$(OBJDIR)/\1@g' > $@
@@ -26,9 +26,6 @@ $(BINDIR)/propcheck : $(OBJS) $(OBJDIR)/propcheck.o | $(BINDIR)
 
 $(BINDIR)/convert : $(OBJS) $(OBJDIR)/convertmain.o | $(BINDIR)
 	$(CC) $^ $(LDFLAGS) -o $@
-
-$(BINDIR)/g2a : $(OBJDIR)/g2a.o | $(BINDIR)
-	$(CXX) $^ $(LDFLAGS) -o $@
 
 $(OBJDIR)/%.o : $(GAMSAPIDIR)/%.c | $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
