@@ -118,21 +118,7 @@ POINTPROPATTRS = {
 
 POINTFORMATS = (['gdx', 'sol'])
 
-SOURCELINKS = {
-    'Floudas e.a. handbook' : 'http://titan.princeton.edu/TestProblems/',
-    'MINOPT Model Library'  : 'http://titan.princeton.edu/MINOPT/',
-    'MacMINLP' : 'http://www-unix.mcs.anl.gov/~leyffer/MacMINLP/',
-    'minlp.org' : 'http://www.minlp.org/library/lib.php?lib=MINLP',
-    'Bonmin test library' : 'http://egon.cheme.cmu.edu/ibm/page.htm',
-    'ANTIGONE test library' : 'http://helios.princeton.edu/ANTIGONE/test_suite.html',
-    'GAMS Model Library' : 'http://www.gams.com/modlib/modlib.htm',
-    'POLIP' : 'http://polip.zib.de',
-    'VIELMA' : 'http://web.mit.edu/jvielma/www/data.html',
-    'BARON book' : 'http://web.ics.purdue.edu/~mtawarma/minlpbook/',
-    'Drexel' : 'http://www.pages.drexel.edu/~hvb22/minlpweb/',
-    'COPS' : 'http://www.mcs.anl.gov/~more/cops/',
-    'VANDERBEI' : 'http://www.princeton.edu/~rvdb/ampl/nlmodels/'
-    }
+SOURCELINKS = { }
 
 def readinfo() :
     '''Reads .info files about instances and points from meta directory'''
@@ -374,8 +360,8 @@ def removePoints(data, mininfeas) :
 
 def checkdata(data) :
     for m, mattribs in data.iteritems() :
-        if 'adddate' not in mattribs :
-            print >> sys.stderr, 'No addition date for instance', m;
+        #if 'adddate' not in mattribs :
+        #    print >> sys.stderr, 'No addition date for instance', m;
         if 'removedate' not in mattribs :
             if len(mattribs['formats']) == 0 :
                 print >> sys.stderr, 'No instance files found for instance', m;
@@ -586,37 +572,11 @@ def getprobtype(instanceattribs) :
 
 def getsourceids(instanceattribs) :
     sources = [];
-    if 'source' in instanceattribs :
-        s = instanceattribs['source'];
-        if s.find('FLOUDASBOOK') >= 0 :
-            sources.append('Floudas e.a. handbook');
-        if s.find('MINOPTLIB') >= 0 :
-            sources.append('MINOPT Model Library');
-        if s.find('MacMINLP') >= 0 :
-            sources.append('MacMINLP');
-        if s.find('VECCHIETTI') >= 0 : 
-            sources.append('Vecchietti library');
-        if s.find('BARONBOOK') >= 0 :
-            sources.append('BARON book');
-        if s.find('MINLPORG') >= 0 :
-            sources.append('minlp.org');
-        if s.find('CMUIBMMINLP') >= 0 :
-            sources.append('Bonmin test library');
-        if s.find('ANTIGONELIB') >= 0 :
-            sources.append('ANTIGONE test library');
-        if s.find('GAMSMODELLIB') >= 0 :
-            sources.append('GAMS Model Library');
-        if s.find('GAMSCLIENT') >= 0 :
-            sources.append('GAMS clients');
-        if s.find('POLIP') >= 0 :
-            sources.append('POLIP');
-        #if s.find('DREXEL') >= 0 :
-        #    sources.append('Drexel');
+    #if 'source' in instanceattribs :
+    #    s = instanceattribs['source'];
         
-    if 'references' in instanceattribs :
-        references = instanceattribs['references'];
-        if ('g00508' in references) or ('g00462' in references) :
-            sources.append('Westerlund');
+    #if 'references' in instanceattribs :
+    #    references = instanceattribs['references'];
 
     if len(sources) == 0 :
         sources = ['other'];
