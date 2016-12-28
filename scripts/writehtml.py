@@ -98,106 +98,14 @@ def _dualboundstohtml(dualbounds) :
 
 def _sourcetohtml(source):
     s = str(source);
-    s = s.replace('GAMSCLIENT', 'GAMS Client');
-    s = s.replace('VECCHIETTI', "Aldo Vecchietti's Model Collection");
-    s = s.replace('VIELMA', '<A href="' + metadata.SOURCELINKS['VIELMA'] + '">Juan Pablo Vielma Portfolio Optimization Instances Testset</A>');
-    s = s.replace('COPS', '<A href="' + metadata.SOURCELINKS['COPS'] + '">Constrained Optimization Problem Set (COPS)</A>');
-    s = s.replace('VANDERBEI', '<A href="' + metadata.SOURCELINKS['VANDERBEI'] + '">Nonlinear Optimization Models by Vanderbei</A>');
-    
-    modellib = s.find('GAMSMODELLIB');
-    if modellib >= 0 :
-        modellibend = modellib + len('GAMSMODELLIB'); 
-        modelname = instance;
-        if modellibend < len(s) and s[modellibend] == '(' :
-            parenthesisclose = s.index(')', modellibend);
-            modelname = s[modellibend+1 : parenthesisclose];
-            modellibend = parenthesisclose+1;
-        s = s.replace(s[modellib:modellibend], 'GAMS Model Library model <A href="http://www.gams.com/modlib/libhtml/' + modelname + '.htm">' + modelname + '</A>');
-
-    macminlp = s.find('MacMINLP(');
-    if macminlp >= 0 :
-        macminlpend = macminlp + len('MacMINLP(');
-        parenthesisclose = s.index(')', macminlpend);
-        files = s[macminlpend:parenthesisclose].split(',');
-        assert len(files) in [1,2];
-        newstr = 'MacMINLP model <A href="http://www-unix.mcs.anl.gov/~leyffer/MacMINLP/problems/' + files[0].strip() + '">' + files[0].strip() + '</A>';
-        if len(files) == 2 :
-            newstr += ' with <A href="http://www-unix.mcs.anl.gov/~leyffer/MacMINLP/problems/' + files[1].strip() + '">' + files[1].strip() + '</A>';
-        s = s.replace(s[macminlp:parenthesisclose+1], newstr);
-
-    minopt = s.find('MINOPTLIB(');
-    if minopt >= 0 :
-        minoptend = minopt + len('MINOPTLIB(');
-        parenthesisclose = s.index(')', minoptend);
-        file = s[minoptend:parenthesisclose].strip();
-        newstr = 'MINOPT Model Library model <A href="http://titan.princeton.edu/MINOPT/modlib/Tests/' + file + '">' + file + '</A>';
-        s = s.replace(s[minopt:parenthesisclose+1], newstr);
-
-    flbook = s.find('FLOUDASBOOK(');
-    if flbook >= 0 :
-        flbookend = flbook + len('FLOUDASBOOK(');
-        parenthesisclose = s.index(')', flbookend);
-        file = s[flbookend:parenthesisclose].strip();
-        chapter = file[2:].split('.')[0];
-        newstr = 'Test Problem <A href="http://titan.princeton.edu/TestProblems/chapter' + chapter + '/' + file + '.gms">' + file + '</A> of Chapter ' + chapter + ' of Floudas e.a. handbook';
-        s = s.replace(s[flbook:parenthesisclose+1], newstr);
-
-    glomiqo = s.find('ANTIGONELIB(');
-    if glomiqo >= 0 :
-        glomiqoend = glomiqo + len('ANTIGONELIB(');
-        parenthesisclose = s.index(')', glomiqoend);
-        file = s[glomiqoend:parenthesisclose].strip();
-        newstr = '<A href="http://helios.princeton.edu/ANTIGONE/test_suite.html">ANTIGONE test library</A> model ' + file;
-        s = s.replace(s[glomiqo:parenthesisclose+1], newstr);
-
-    start = s.find('CMUIBMMINLP(');
-    if start >= 0 :
-        pstart = start + len('CMUIBMMINLP(');
-        pclose = s.index(')', pstart);
-        file = s[pstart:pclose].strip();
-        newstr = file + ' from <A href="http://egon.cheme.cmu.edu/ibm/page.htm">CMU-IBM MINLP solver project page</A>';
-        s = s.replace(s[start:pclose+1], newstr);
-
-    start = s.find('MINLPORG(');
-    if start >= 0 :
-        pstart = start + len('MINLPORG(');
-        pclose = s.index(')', pstart);
-        [model, file] = s[pstart:pclose].split(',');
-        newstr = file + ' from <A href="http://www.minlp.org/library/problem/index.php?i=' + model + '">minlp.org model ' + model + '</A>';
-        s = s.replace(s[start:pclose+1], newstr);
-        
-    start = s.find('POLIP(');
-    if start >= 0 :
-        pstart = start + len('POLIP(');
-        pclose = s.index(')', pstart);
-        name = s[pstart:pclose].strip();
-        newstr = 'POLIP instance <A href="http://polip.zib.de/' + name + '.php">' + name + '</A>';
-        s = s.replace(s[start:pclose+1], newstr);
-
-    start = s.find('BARONBOOK(');
-    if start >= 0 :
-        pstart = start + len('BARONBOOK(');
-        pclose = s.index(')', pstart);
-        name = s[pstart:pclose].strip();
-        newstr = 'BARON book instance <A href="http://web.ics.purdue.edu/~mtawarma/minlpbook/' + name + '.gms">' + name + '</A>';
-        s = s.replace(s[start:pclose+1], newstr);
-
-    start = s.find('DREXEL(');
-    if start >= 0 :
-        pstart = start + len('DREXEL(');
-        pclose = s.index(')', pstart);
-        name = s[pstart:pclose].strip();
-        newstr = '<A href="http://www.pages.drexel.edu/~hvb22/minlpweb/' + name + '.mod">' + name + '</A>';
-        s = s.replace(s[start:pclose+1], newstr);
-
     return s;
 
 # (attribute keys, string to print for it, conversion function for value)
 # TODO get variable/equation names into table
 INSTANCEATTRS = [
     ('formats', 'Formats', _formatstohtml),
-    ('points', 'Primal Bounds', _pointstohtml),
-    ('dualbounds', ['Dual Bounds', 'Up to 3rd best bound is in bold. See also the FAQ!'], _dualboundstohtml),
+    #('points', 'Primal Bounds', _pointstohtml),
+    #('dualbounds', ['Dual Bounds', 'Up to 3rd best bound is in bold. See also the FAQ!'], _dualboundstohtml),
     ('references', 'References', _refstohtml),
     ('source', 'Source', _sourcetohtml),
     ('application', 'Application', str),
@@ -232,10 +140,10 @@ INSTANCEATTRS = [
     ('laghessianminblocksize', 'Minimal blocksize in Hessian of Lagrangian', str),
     ('laghessianmaxblocksize', 'Maximal blocksize in Hessian of Lagrangian', str),
     ('laghessianavgblocksize', 'Average blocksize in Hessian of Lagrangian', str),
-    ('nsemi', ['#Semicontinuities', 'semicontinuous and semiinteger variables'], str),
-    ('nnlsemi', ['#Nonlinear Semicontinuities', 'nonlinear semicontinuous and semiinteger variables'], str),
-    ('nsos1', '#SOS type 1', str),
-    ('nsos2', '#SOS type 2', str),
+    #('nsemi', ['#Semicontinuities', 'semicontinuous and semiinteger variables'], str),
+    #('nnlsemi', ['#Nonlinear Semicontinuities', 'nonlinear semicontinuous and semiinteger variables'], str),
+    #('nsos1', '#SOS type 1', str),
+    #('nsos2', '#SOS type 2', str),
     ('minobjcoef', ['Min. Objective Grad.', 'w.r.t. initial point'], '{0:.4e}'.format),
     #'minobjcoefvar' : str,
     ('maxobjcoef', ['Max. Objective Grad.', 'w.r.t. initial point'], '{0:.4e}'.format),
@@ -404,8 +312,8 @@ def _writepointpage(m, p, pattribs) :
 def _writeinstancepage(data) :
 
     instances = open(os.path.join(HTMLDIR, 'instances.html'), 'w');
-    print >> instances, '<HTML>', _htmlheader("MINLPLib 2 Instance Listing"), '<BODY>';
-    print >> instances, '<H3>MINLPLib Instance Listing</H3>'
+    print >> instances, '<HTML>', _htmlheader("QPLIB Instance Listing"), '<BODY>';
+    print >> instances, '<H3>QPLIB Instance Listing</H3>'
 
     print >> instances, '<link rel="stylesheet" type="text/css" href="../datatables/media/css/jquery.dataTables.css">'
     print >> instances, '<script type="text/javascript" language="javascript" src="../datatables/media/js/jquery.js"></script>'
@@ -425,7 +333,7 @@ def _writeinstancepage(data) :
     print >> instances, '$(document).ready(function() {'
     print >> instances, 'var table = $("#instancelisting").dataTable({"iDisplayLength": -1, "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],'
 
-    print >> instances, '"columnDefs":[ {"type": "numWithNull", "targets": [5,6,8,9]} ],'
+    print >> instances, '"columnDefs":[ {"type": "numWithNull", "targets": [5,6]} ],'
     
     print >> instances, '"aoColumns": ['
     print >> instances, '{"sType": "string" },'
@@ -436,21 +344,22 @@ def _writeinstancepage(data) :
     print >> instances, 'null,'
     print >> instances, 'null,'
     print >> instances, 'null,'
+    #print >> instances, 'null,'
+    #print >> instances, 'null,'
     print >> instances, 'null,'
-    print >> instances, 'null,'
-    print >> instances, 'null,'
-    print >> instances, 'null,'
-    print >> instances, 'null,'
-    print >> instances, '{"bSortable": false},'
-    print >> instances, '{"bSortable": false},'
-    print >> instances, '{"bSortable": false}]});'
+    #print >> instances, 'null,'
+    #print >> instances, 'null,'
+    #print >> instances, '{"bSortable": false},'
+    #print >> instances, '{"bSortable": false},'
+    #print >> instances, '{"bSortable": false}
+    print >> instances, ']});'
     print >> instances, 'new $.fn.dataTable.FixedHeader( table );'
     print >> instances, '} );'
     print >> instances, '</script>'
 
 
     
-    col_align = ['left', 'left', 'left'] + ['right'] * 6 + ['center'] + ['right'] * 2 + ['center'] + ['right'] * 2 + ['left'];
+    col_align = ['left', 'left', 'left'] + ['right'] * 6;
 
     t = HTML.Table([], col_align = col_align, border = 0, style = '', cellspacing = 0, cellpadding = 2, attribs = {'id' : 'instancelisting', 'class' : 'compact display'},
     header_row = [
@@ -462,14 +371,14 @@ def _writeinstancepage(data) :
         HTML.TableCell('#BinVars', attribs = {'title' : 'Number of Binary Variables', 'align': 'center'}, header = True),
         HTML.TableCell('#IntVars', attribs = {'title' : 'Number of Integer Variables', 'align': 'center'}, header = True),
         HTML.TableCell('#Cons', attribs = {'title' : 'Number of Constraints (equations)', 'align': 'center'}, header = True),
-        HTML.TableCell('#SOS', attribs = {'title' : 'Number of Special Ordered Set Constraints', 'align': 'center'}, header = True),
-        HTML.TableCell('#Semi', attribs = {'title' : 'Number of Semicontinuity/Semiintegrality Constraints', 'align': 'center'}, header = True),
+        #HTML.TableCell('#SOS', attribs = {'title' : 'Number of Special Ordered Set Constraints', 'align': 'center'}, header = True),
+        #HTML.TableCell('#Semi', attribs = {'title' : 'Number of Semicontinuity/Semiintegrality Constraints', 'align': 'center'}, header = True),
         HTML.TableCell('#NZ', attribs = {'title' : 'Number of Nonzeros in Jacobian and Objective', 'align': 'center'}, header = True),
-        HTML.TableCell('CoefRange', attribs = {'title' : 'Quotient maximal by minimal coefficient of objective gradient and Jacobian w.r.t. initial and solution points.', 'align': 'center'}, header = True),
-        HTML.TableCell('S', attribs = {'title' : 'Proven optimal value by at least 3 solvers?', 'align': 'center'}, header = True),
-        HTML.TableCell('Dual Bound', attribs = {'title' : 'Dual bound as reported by at least 3 solvers', 'align': 'right'}, header = True),
-        HTML.TableCell('Primal Bound', attribs = {'title' : 'Best known objective value', 'align': 'right'}, header = True),
-        HTML.TableCell('Points', attribs = {'title' : 'Available Solution Points', 'align': 'left'}, header = True)
+        #HTML.TableCell('CoefRange', attribs = {'title' : 'Quotient maximal by minimal coefficient of objective gradient and Jacobian w.r.t. initial and solution points.', 'align': 'center'}, header = True),
+        #HTML.TableCell('S', attribs = {'title' : 'Proven optimal value by at least 3 solvers?', 'align': 'center'}, header = True),
+        #HTML.TableCell('Dual Bound', attribs = {'title' : 'Dual bound as reported by at least 3 solvers', 'align': 'right'}, header = True),
+        #HTML.TableCell('Primal Bound', attribs = {'title' : 'Best known objective value', 'align': 'right'}, header = True),
+        #HTML.TableCell('Points', attribs = {'title' : 'Available Solution Points', 'align': 'left'}, header = True)
     ]);
     
     count = 0;
@@ -497,16 +406,16 @@ def _writeinstancepage(data) :
         row.append(HTML.TableCell(inttostr(mattribs['nbinvars']) if 'nbinvars' in mattribs else '?'));
         row.append(HTML.TableCell(inttostr(mattribs['nintvars']) if 'nintvars' in mattribs else '?'));
         row.append(HTML.TableCell(str(mattribs['ncons']) if 'ncons' in mattribs else '?'));
-        row.append(HTML.TableCell(inttostr(mattribs['nsos1'] + mattribs['nsos2']) if 'nsos1' in mattribs and 'nsos2' in mattribs else '?'));
-        row.append(HTML.TableCell(inttostr(mattribs['nsemi']) if 'nsemi' in mattribs else '?'));
+        #row.append(HTML.TableCell(inttostr(mattribs['nsos1'] + mattribs['nsos2']) if 'nsos1' in mattribs and 'nsos2' in mattribs else '?'));
+        #row.append(HTML.TableCell(inttostr(mattribs['nsemi']) if 'nsemi' in mattribs else '?'));
         row.append(HTML.TableCell(inttostr(mattribs['njacobiannz'] + mattribs['nobjnz']) if 'njacobiannz' in mattribs and 'nobjnz' in mattribs else '?'));
-        range = metadata.getcoefrange(mattribs);
-        row.append(HTML.TableCell('{0:.2e}'.format(range) if range is not None else '?'));
-        row.append(HTML.TableCell('*' if metadata.issolved(mattribs) else '&nbsp;'));
-        bestdual = metadata.gettrusteddual(mattribs);
-        bestprimal = metadata.getbestprimal(mattribs);
-        row.append(HTML.TableCell('{0:.4f}'.format(bestdual) if bestdual is not None else '')); # TODO treat unboundedness / infeasibility
-        row.append(HTML.TableCell('{0:.4f}'.format(bestprimal) if bestprimal is not None else '')); # TODO treat unboundedness / infeasibility
+        #range = metadata.getcoefrange(mattribs);
+        #row.append(HTML.TableCell('{0:.2e}'.format(range) if range is not None else '?'));
+        #row.append(HTML.TableCell('*' if metadata.issolved(mattribs) else '&nbsp;'));
+        #bestdual = metadata.gettrusteddual(mattribs);
+        #bestprimal = metadata.getbestprimal(mattribs);
+        #row.append(HTML.TableCell('{0:.4f}'.format(bestdual) if bestdual is not None else '')); # TODO treat unboundedness / infeasibility
+        #row.append(HTML.TableCell('{0:.4f}'.format(bestprimal) if bestprimal is not None else '')); # TODO treat unboundedness / infeasibility
 
         points = '';
         for p, pattribs in sorted(mattribs['points'].iteritems()) :
@@ -517,7 +426,7 @@ def _writeinstancepage(data) :
             else :
                 points += p
             points += '</A> ';
-        row.append(HTML.TableCell(points));
+        #row.append(HTML.TableCell(points));
         
         t.rows.append(HTML.TableRow(row, bgcolor = '#e0e0e0' if (count % 25) % 2 else "#fefefe"));
         count += 1;
@@ -531,9 +440,9 @@ def _writeinstancepage(data) :
     
     print >> instances, '<P>'
     print >> instances, '<B>Number of instances:', count, '</B><BR>';
-    print >> instances, 'Feasibility tolerance:', metadata.FEASTOL, '(points with absolute infeasibility of at least', metadata.FEASTOL, 'are not shown)', '<BR>';
-    print >> instances, 'Optimality tolerance:', metadata.OPTTOL, '(points with objective value difference below', metadata.OPTTOL, 'are considered equally good)', '<BR>';
-    print >> instances, 'Gap tolerance:', metadata.GAPTOL, '(dual bounds within', metadata.GAPTOL, 'of primal bound indicate instance as solved)';
+    #print >> instances, 'Feasibility tolerance:', metadata.FEASTOL, '(points with absolute infeasibility of at least', metadata.FEASTOL, 'are not shown)', '<BR>';
+    #print >> instances, 'Optimality tolerance:', metadata.OPTTOL, '(points with objective value difference below', metadata.OPTTOL, 'are considered equally good)', '<BR>';
+    #print >> instances, 'Gap tolerance:', metadata.GAPTOL, '(dual bounds within', metadata.GAPTOL, 'of primal bound indicate instance as solved)';
     print >> instances, '</P>';
     
 
@@ -552,8 +461,9 @@ def _writeinstancepage(data) :
         row.append(HTML.TableCell(mattribs['removereason'] if 'removereason' in mattribs else '?'));
         
         t.rows.append(HTML.TableRow(row));
-        
-    print >> instances, '<P>Removed Instances:<BR>', t, '</P>';
+    
+    if len(t.rows) > 1 :
+       print >> instances, '<P>Removed Instances:<BR>', t, '</P>';
     
     print >> instances, '</BODY></HTML>';
     instances.close();
@@ -803,32 +713,32 @@ def writehtml() :
             _writepointpage(m, p, pattribs);
         
     index = open(os.path.join(HTMLDIR, 'index.html'), 'w');
-    print >> index, '<HTML><HEAD>', _htmlheader("MINLPLib 2"), '</HEAD><BODY>';
-    print >> index, '<H2>MINLP Library 2</H2>'
+    print >> index, '<HTML><HEAD>', _htmlheader("QPLIB"), '</HEAD><BODY>';
+    print >> index, '<H2>QPLIB</H2>'
     
     print >> index, '<P><FONT SIZE=-1>'
-    p = subprocess.Popen(['svnversion', metadata.BASEDIR], stdout = subprocess.PIPE);
-    svnrev = p.communicate()[0];
-    if p.returncode != 0 :
-       print >> sys.stderr, 'Return code', p.returncode, 'from calling svnversion';
-    else :
-       print >> index, 'Current revision:', svnrev;
+    #p = subprocess.Popen(['svnversion', metadata.BASEDIR], stdout = subprocess.PIPE);
+    #svnrev = p.communicate()[0];
+    #if p.returncode != 0 :
+    #   print >> sys.stderr, 'Return code', p.returncode, 'from calling svnversion';
+    #else :
+    #   print >> index, 'Current revision:', svnrev;
     print >> index, 'Date:', datetime.datetime.today().strftime('%Y-%m-%d');
     print >> index, '</FONT></P>';
     
-    print >> index, '<P>Since 2001, the Mixed-Integer Nonlinear Programming Library (MINLPLib) and the Nonlinear Programming Library (GLOBALLib) have provided algorithm developers with a large and varied set of both theoretical and practical test models.';
-    print >> index, 'We have recently started with major updates to MINLPLib (now incorporating also NLPs), which includes the addition of many more instances.';
-    print >> index, 'We hope that the updated library can be a starting point to define a widely accepted test set to evaluate the performance of MINLP solving software.'
-    print >> index, '</P>';
-    print >> index, '<P>';
-    print >> index, 'Note, that the development of this update to the MINLPLib currently in <B>ALPHA</B> phase.';
-    print >> index, 'That is, while the library already provides more instances, more solution points, and more information on each instance than the first MINLPLib, it is still possible that instances are added, removed, or modified without notice.'
-    print >> index, '</P>'
+    #print >> index, '<P>Since 2001, the Mixed-Integer Nonlinear Programming Library (MINLPLib) and the Nonlinear Programming Library (GLOBALLib) have provided algorithm developers with a large and varied set of both theoretical and practical test models.';
+    #print >> index, 'We have recently started with major updates to MINLPLib (now incorporating also NLPs), which includes the addition of many more instances.';
+    #print >> index, 'We hope that the updated library can be a starting point to define a widely accepted test set to evaluate the performance of MINLP solving software.'
+    #print >> index, '</P>';
+    #print >> index, '<P>';
+    #print >> index, 'Note, that the development of this update to the MINLPLib currently in <B>ALPHA</B> phase.';
+    #print >> index, 'That is, while the library already provides more instances, more solution points, and more information on each instance than the first MINLPLib, it is still possible that instances are added, removed, or modified without notice.'
+    #print >> index, '</P>'
     print >> index, '<UL>';
 
     # write instance statistics page
     _writeinstancepage(data);
-    print >> index, '<LI>', '<A href=instances.html>Browse MINLPLib by instance name</A>',;
+    print >> index, '<LI>', '<A href=instances.html>Browse QPLIB by instance name</A>',;
     
     #rawdata = metadata.todataframe(data);
     #if rawdata is not None :
@@ -841,14 +751,14 @@ def writehtml() :
     print >> index, '<FONT SIZE=-1>(<A href="../instancedata.csv">raw data</A>)</FONT>', '</LI>';
     print >> index, '<BR>'
     
-    _writeauthorspage(data);
-    print >> index, '<LI>', '<A href=authors.html>Browse MINLPLib by author</A>', '</LI>';
+    #_writeauthorspage(data);
+    #print >> index, '<LI>', '<A href=authors.html>Browse MINLPLib by author</A>', '</LI>';
 
-    _writesourcepage(data);
-    print >> index, '<LI>', '<A href=sources.html>Browse MINLPLib by source</A>', '</LI>';
+    #_writesourcepage(data);
+    #print >> index, '<LI>', '<A href=sources.html>Browse MINLPLib by source</A>', '</LI>';
 
-    _writeapplicationspage(data);
-    print >> index, '<LI>', '<A href=applications.html>Browse MINLPLib by application</A>', '</LI>';
+    #_writeapplicationspage(data);
+    #print >> index, '<LI>', '<A href=applications.html>Browse MINLPLib by application</A>', '</LI>';
 
     #_writedatepage(data);
     #print >> index, '<LI>', '<A href=dates.html>Browse MINLPLib by date</A>', '</LI>';
@@ -856,29 +766,29 @@ def writehtml() :
     #statistics.writehtml(data);
     #print >> index, '<LI>', '<A href=statistics.html>MINLPLib Statistics</A>', '</LI>';
     
-    print >> index, '<BR>';
-    print >> index, '<LI>', '<A href=../minlplib2.zip>Download MINLPLib</A>', '(<!--#fsize virtual="../minlplib2.zip" -->)', '</LI>';
+    #print >> index, '<BR>';
+    print >> index, '<LI>', '<A href=../qplib.zip>Download QPLIB</A>', '(<!--#fsize virtual="../qplib.zip" -->)', '</LI>';
     
     print >> index, '</UL>'
     
-    print >> index, '<H3><A name="FAQ"/>Frequently Asked Questions</H3>'
-    print >> index, '<UL>'
-    print >> index, '<LI><I>What are the default bounds on variables in a GAMS model?</I>'
-    print >> index, '<P>See <A href="http://www.gams.com/help/topic/gams.doc/userguides/userguide/_u_g__variables.html?cp=0_2_0_1_4#UG_Variables_VariableTypes">the GAMS User\'s Guide</A>.'
-    print >> index, '<B>However</B>, MINLPLib 2 works around the default upper bound of 100 for integer variables by setting the option <tt>intvarup=0</tt> (see, e.g., model <a href="jit1.html">jit1</a>).'
-    print >> index, 'Therefore, for integer variables a default lower bound of 0 and a default upper bound of +infinity is assumed.</P></LI>'
+    #print >> index, '<H3><A name="FAQ"/>Frequently Asked Questions</H3>'
+    #print >> index, '<UL>'
+    #print >> index, '<LI><I>What are the default bounds on variables in a GAMS model?</I>'
+    #print >> index, '<P>See <A href="http://www.gams.com/help/topic/gams.doc/userguides/userguide/_u_g__variables.html?cp=0_2_0_1_4#UG_Variables_VariableTypes">the GAMS User\'s Guide</A>.'
+    #print >> index, '<B>However</B>, MINLPLib 2 works around the default upper bound of 100 for integer variables by setting the option <tt>intvarup=0</tt> (see, e.g., model <a href="jit1.html">jit1</a>).'
+    #print >> index, 'Therefore, for integer variables a default lower bound of 0 and a default upper bound of +infinity is assumed.</P></LI>'
     
-    print >> index, '<LI><I>Do the reported solution points and dual bounds allow to rank the performance of solvers?</I>'
-    print >> index, '<P><B>No.</B> New solutions are usually only added when improving the primal bound. If several solvers find the same solution, it is random which solver is attributed to that solution.'
-    print >> index, 'Further, the reported dual bounds are just the best value as computed in some run with some option settings on some machine at some time in the past.</P></LI>'
+    #print >> index, '<LI><I>Do the reported solution points and dual bounds allow to rank the performance of solvers?</I>'
+    #print >> index, '<P><B>No.</B> New solutions are usually only added when improving the primal bound. If several solvers find the same solution, it is random which solver is attributed to that solution.'
+    #print >> index, 'Further, the reported dual bounds are just the best value as computed in some run with some option settings on some machine at some time in the past.</P></LI>'
 
-    print >> index, '</UL>'
-    print >> index, '<H3>Call for Instances</H3>'
-    print >> index, '<P>We are looking for more interesting and challenging (MI)NLPs from all fields of Operations Research and Combinatorial Optimization, ideally those which have been built to model real life problems.<BR>';
-    print >> index, 'If you would like to contribute, please send your instances by <A href="mailto:stefan@gams.com">e-mail</A>.';
-    print >> index, 'We accept any well-known format that can be translated into GAMS. This includes AMPL (.mod and .nl), GAMS, ZIMPL, BARON, CPLEX LP, MPS, PIP, and OSiL.</P>'
-    print >> index, '<P>Further, if you have a MINLP model that you would like to discuss with other people, be reminded of the <A href="http://www.minlp.org">minlp.org initiative</A>.';
-    print >> index, 'We are monitoring minlp.org and add model instantiations from minlp.org to MINLPLib.</P>';
+    #print >> index, '</UL>'
+    #print >> index, '<H3>Call for Instances</H3>'
+    #print >> index, '<P>We are looking for more interesting and challenging (MI)NLPs from all fields of Operations Research and Combinatorial Optimization, ideally those which have been built to model real life problems.<BR>';
+    #print >> index, 'If you would like to contribute, please send your instances by <A href="mailto:stefan@gams.com">e-mail</A>.';
+    #print >> index, 'We accept any well-known format that can be translated into GAMS. This includes AMPL (.mod and .nl), GAMS, ZIMPL, BARON, CPLEX LP, MPS, PIP, and OSiL.</P>'
+    #print >> index, '<P>Further, if you have a MINLP model that you would like to discuss with other people, be reminded of the <A href="http://www.minlp.org">minlp.org initiative</A>.';
+    #print >> index, 'We are monitoring minlp.org and add model instantiations from minlp.org to MINLPLib.</P>';
     
     print >> index, '</BODY></HTML>';
     index.close();
