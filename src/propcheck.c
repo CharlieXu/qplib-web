@@ -10,9 +10,6 @@
 #include "loadgms.h"
 #include "curvcheck.h"
 #include "sparsityplot.h"
-#include "GamsNLinstr.h"
-
-typedef struct SCIP_ExprTree SCIP_EXPRTREE;
 
 static
 void assignComponent(
@@ -205,7 +202,6 @@ RETURN instanceCheck(
    int c;
    int e;
    int i;
-   int pos;
    
    double* objcoefs = NULL;
    int* objnlflags = NULL;
@@ -222,20 +218,10 @@ RETURN instanceCheck(
    int* qrow = NULL;
    double* qcoef = NULL;
 
-   int* opcodes = NULL;
-   int* fields = NULL;
-   int codelen;
-
-   RETURN ret;
-
    CURVATURE curv;
    CURVATURE curvconss;
    FUNCTYPE functype;
    int typecnt[FUNCTYPE_NONLINEAR+1];
-
-   int funccount[fndummy];
-   int nmul;
-   int ndiv;
 
    char sparsityfile[GMS_SSSIZE + 10];
 
@@ -336,20 +322,9 @@ RETURN instanceCheck(
       qcoef = (double*) malloc(maxqnz * sizeof(double));
    }
 
-   /* alloc some memory, if nonlinear */
-   if( gmoNLNZ(gmo) > 0 || gmoObjNLNZ(gmo) > 0 )
-   {
-      opcodes = (int*) malloc((gmoNLCodeSizeMaxRow(gmo)+1) * sizeof(int));
-      fields = (int*) malloc((gmoNLCodeSizeMaxRow(gmo)+1) * sizeof(int));
-   }
-
    for( e = FUNCTYPE_CONSTANT; e <= FUNCTYPE_NONLINEAR; ++e )
       typecnt[e] = 0;
    curvconss = CURVATURE_LINEAR;
-
-   memset(funccount, 0, fndummy * sizeof(int));
-   nmul = 0;
-   ndiv = 0;
 
    for( c = -1; c < gmoM(gmo); ++c )
    {
@@ -415,26 +390,12 @@ RETURN instanceCheck(
    printf("CONSCURVATURE     = %s\n", curvname[curvconss]);
    printf("NLINCONS          = %d\n", typecnt[FUNCTYPE_CONSTANT] + typecnt[FUNCTYPE_LINEAR]);
    printf("NQUADCONS         = %d\n", typecnt[FUNCTYPE_QUADRATIC]);
-   printf("NPOLYNOMCONS      = %d\n", typecnt[FUNCTYPE_POLYNOMIAL]);
-   printf("NSIGNOMCONS       = %d\n", typecnt[FUNCTYPE_SIGNOMIAL]);
-   printf("NGENNLCONS        = %d\n", typecnt[FUNCTYPE_NONLINEAR]);
-   printf("NLOPERANDS        =");
-   if( nmul )
-      printf(" mul");
-   if( ndiv )
-      printf(" div");
-   for( pos = 0; pos < fndummy; ++pos )
-      if( funccount[pos] )
-         printf(" %s", GamsFuncCodeName[pos]);
-   printf("\n");
 
    free(objcoefs);
    free(objnlflags);
    free(qcol);
    free(qrow);
    free(qcoef);
-   free(opcodes);
-   free(fields);
 
    /* disable Q for simpler Examiner interface */
    gmoUseQSet(gmo, 0);
