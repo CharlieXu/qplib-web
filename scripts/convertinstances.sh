@@ -3,23 +3,29 @@
 SCRIPTDIR=`dirname $0`
 SCRIPTDIR=`cd $SCRIPTDIR ; pwd`
 
+DOMOD=0
+DONL=0
+DOOSIL=0
+DOLP=1
+DOPYOMO=0
+
 DATADIR="$SCRIPTDIR/../data"
 BINDIR="$SCRIPTDIR/../bin"
 GMSDIR="$DATADIR/gms"
+METADIR="$DATADIR/meta"
 MODDIR="$DATADIR/mod"
 NLDIR="$DATADIR/nl"
 OSILDIR="$DATADIR/osil"
 LPDIR="$DATADIR/lp"
-METADIR="$DATADIR/meta"
 PYOMODIR="$DATADIR/pyomo"
 
 AMPL=$SCRIPTDIR/../ampl
 
-mkdir -p $MODDIR
-mkdir -p $NLDIR
-mkdir -p $OSILDIR
-mkdir -p $LPDIR
-#mkdir -p $PYOMODIR
+[ $DOMOD == 1 ] && mkdir -p $MODDIR
+[ $DONL == 1 ] && mkdir -p $NLDIR
+[ $DOOSIL == 1 ] && mkdir -p $OSILDIR
+[ $DOLP == 1 ] && mkdir -p $LPDIR
+[ $DOPYOMO == 1 ] && mkdir -p $PYOMODIR
 
 for i in $GMSDIR/*.gms ; do
 
@@ -27,7 +33,7 @@ iname=`basename $i .gms`
 
 modfile="${MODDIR}/${iname}.mod"
 
-if test ! -e $modfile ; then
+if [ $DOMOD == 1 -a ! -e $modfile ]; then
 
   echo "Converting $iname to AMPL .mod"
 
@@ -45,17 +51,17 @@ fi
 
 nlfile="${NLDIR}/${iname}.nl"
 
-# for instances with large expressions, AMPL needs a bigger stacksize
-ulimit -s 100000
-if [ -x $AMPL -a -e $modfile -a ! -e $nlfile ] ; then
+if [ $DONL == 1 -a -x $AMPL -a -e $modfile -a ! -e $nlfile ] ; then
   echo "Converting $iname to AMPL .nl"
  
+  # for instances with large expressions, AMPL needs a bigger stacksize
+  ulimit -s 100000
   echo "model $modfile; option auxfiles rowcol; write; quit;" | $AMPL -P -ob${nlfile/.nl/}
 fi
 
 osilfile="${OSILDIR}/${iname}.osil"
 
-if test ! -e $osilfile ; then
+if [ $DOOSIL == 1 -a ! -e $osilfile ]; then
 
   echo "Converting $iname to OSiL"
 
@@ -80,18 +86,18 @@ if test ! -e $osilfile ; then
   #fi
 fi
 
-#pyfile="${PYOMODIR}/${iname}.py"
-#
-#if test ! -e $pyfile ; then
-#  echo "Converting $iname to PYOMO .py"
-#
-#  echo "pyomo $pyfile" > convert.o42
-#  $SCRIPTDIR/../gams/gams $i optfile=42 output=convert.lst lo=2 logfile=convert.log pf4=0 limcol=0 limrow=0 pc=2 LP=CONVERT RMIP=CONVERT QCP=CONVERT RMIQCP=CONVERT NLP=CONVERT DNLP=CONVERT RMINLP=CONVERT CNS=CONVERT MIP=CONVERT MIQCP=CONVERT MINLP=CONVERT MCP=CONVERT MPEC=CONVERT RMPEC=CONVERT
-#fi
+pyfile="${PYOMODIR}/${iname}.py"
+
+if [ $DOPYOMO == 1 -a ! -e $pyfile ]; then
+  echo "Converting $iname to PYOMO .py"
+
+  echo "pyomo $pyfile" > convert.o42
+  $SCRIPTDIR/../gams/gams $i optfile=42 output=convert.lst lo=2 logfile=convert.log pf4=0 limcol=0 limrow=0 pc=2 LP=CONVERT RMIP=CONVERT QCP=CONVERT RMIQCP=CONVERT NLP=CONVERT DNLP=CONVERT RMINLP=CONVERT CNS=CONVERT MIP=CONVERT MIQCP=CONVERT MINLP=CONVERT MCP=CONVERT MPEC=CONVERT RMPEC=CONVERT
+fi
 
 lpfile="${LPDIR}/${iname}.lp"
 
-if test ! -e $lpfile ; then
+if [ $DOLP == 1 -a ! -e $lpfile ]; then
 
     echo "Converting $iname to .lp"
 
@@ -102,6 +108,3 @@ fi
 done
 
 rm -f convert.o42 convert.log convert.lst os.273 osil.log 
-
-# fct uses mod() with non-integer divisor, which isn't supported by AMPL
-rm -f ${MODDIR}/fct.mod
