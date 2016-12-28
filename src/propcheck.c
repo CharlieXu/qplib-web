@@ -8,7 +8,6 @@
 #include "gevmcc.h"
 
 #include "loadgms.h"
-#include "pointcheck.h"
 #include "curvcheck.h"
 #include "sparsityplot.h"
 #include "GamsNLinstr.h"

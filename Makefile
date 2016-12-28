@@ -9,11 +9,11 @@ CFLAGS = -g -O -Wall -I$(GAMSAPIDIR) "-DGAMSDIR=\"$(GAMSDIR)\"" -I$(SRCDIR)/xmnL
 LDFLAGS = -ldl -lpthread -lm -lpng
 LDFLAGS += -llapack
 
-OBJS = $(OBJDIR)/loadgms.o $(OBJDIR)/gevmcc.o $(OBJDIR)/gmomcc.o $(OBJDIR)/examiner.o $(OBJDIR)/utils.o $(OBJDIR)/curvcheck.o $(OBJDIR)/sparsityplot.o $(OBJDIR)/convert.o
+OBJS = $(OBJDIR)/loadgms.o $(OBJDIR)/gevmcc.o $(OBJDIR)/gmomcc.o $(OBJDIR)/curvcheck.o $(OBJDIR)/sparsityplot.o $(OBJDIR)/convert.o
 
 all : $(BINDIR)/propcheck $(BINDIR)/convert $(BINDIR)/g2a
 
-depend : $(SRCDIR)/*.c $(SRCDIR)/*.h $(SRCDIR)/xmnLib/*.c $(SRCDIR)/xmnLib/*.h $(GAMSAPIDIR)/*.c $(GAMSAPIDIR)/*.h
+depend : $(SRCDIR)/*.c $(SRCDIR)/*.h $(GAMSAPIDIR)/*.c $(GAMSAPIDIR)/*.h
 	$(CC) $(CFLAGS) -MM $^ | sed -e 's@^\([a-z]\)@$(OBJDIR)/\1@g' > $@
 
 -include depend
@@ -22,9 +22,6 @@ $(BINDIR) $(OBJDIR) :
 	mkdir -p $@
 
 $(BINDIR)/propcheck : $(OBJS) $(OBJDIR)/propcheck.o | $(BINDIR)
-	$(CC) $^ $(LDFLAGS) -o $@
-
-$(BINDIR)/pointpolish : $(OBJS) $(OBJDIR)/pointpolish.o | $(BINDIR)
 	$(CC) $^ $(LDFLAGS) -o $@
 
 $(BINDIR)/convert : $(OBJS) $(OBJDIR)/convertmain.o | $(BINDIR)
