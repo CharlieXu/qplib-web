@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 
 import os;
 import sys;
@@ -52,10 +52,11 @@ def gms2gms(infile, outfile, fix = "", gamsopts = "") :
         if ("abs" in line) or ("mod(" in line) or ("min(" in line) or ("max(" in line) or ("Gamma(" in line) :
             hasdiscont = True;
         if line.find("Solve m using") == 0 :
+            print >> gmsfile, 'm.tolproj = 0.0;';
             if 'CNS' in line :
                 modtype = "CNS"
             else :
-                modtype = "MINLP" if hasdiscrete else ("DNLP" if hasdiscont else "NLP");
+                modtype = "MIQCP" if hasdiscrete else ("DNLP" if hasdiscont else "QCP");
             print >> gmsfile, "$if not set " + modtype + " $set " + modtype + " " + modtype
             print >> gmsfile, "Solve m using %" + modtype + "%", ' '.join(line.split()[4:]);
         elif line.find('written by GAMS Convert') >= 0 :
