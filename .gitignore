@@ -1,2 +1,7 @@
 *.pyc
 *~
+obj/
+bin/
+html/
+gams
+depend
