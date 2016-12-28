@@ -598,21 +598,22 @@ def todataframe(data, includeremoved = False) :
         
         d['nlinfunc'] = mattribs['nlincons'] + (1 if mattribs['objtype'] == 'linear' else 0);
         d['nquadfunc'] = mattribs['nquadcons'] + (1 if mattribs['objtype'] == 'quadratic' else 0);
-        d['npolynomfunc'] = mattribs['npolynomcons'] + (1 if mattribs['objtype'] == 'polynomial' else 0);
-        d['nsignomfunc'] = mattribs['nsignomcons'] + (1 if mattribs['objtype'] == 'signomial' else 0);
-        d['ngennlfunc'] = mattribs['ngennlcons'] + (1 if mattribs['objtype'] == 'nonlinear' else 0);
-        d['nnlfunc'] = d['nquadfunc'] + d['npolynomfunc'] + d['nsignomfunc'] + d['ngennlfunc'];
+        #d['npolynomfunc'] = mattribs['npolynomcons'] + (1 if mattribs['objtype'] == 'polynomial' else 0);
+        #d['nsignomfunc'] = mattribs['nsignomcons'] + (1 if mattribs['objtype'] == 'signomial' else 0);
+        #d['ngennlfunc'] = mattribs['ngennlcons'] + (1 if mattribs['objtype'] == 'nonlinear' else 0);
+        d['nnlfunc'] = d['nquadfunc']; # + d['npolynomfunc'] + d['nsignomfunc'] + d['ngennlfunc'];
         d['nz'] = mattribs['nobjnz'] + mattribs['njacobiannz'];
         d['nlnz'] = mattribs['nobjnlnz'] + mattribs['njacobiannlnz'];
         d['ncontvars'] = mattribs['nvars'] - mattribs['nbinvars'] - mattribs['nintvars'] - mattribs['nsemi'] - mattribs['nsos1'] - mattribs['nsos2'];
-        d['coefrange'] = getcoefrange(mattribs);
-        d['gap'] = gettrustedgap(mattribs);
+        #d['coefrange'] = getcoefrange(mattribs);
+        #d['gap'] = gettrustedgap(mattribs);
         d['convex'] = True if isconvex(mattribs) else False if isnotconvex(mattribs) else None;
-        d['sourceids'] = getsourceids(mattribs);
-        d['primalbound'] = getbestprimal(mattribs);
-        d['dualbound'] = gettrusteddual(mattribs);
+        #d['sourceids'] = getsourceids(mattribs);
+        #d['primalbound'] = getbestprimal(mattribs);
+        #d['dualbound'] = gettrusteddual(mattribs);
 
         del d['points'];
+        del d['formats'];
         del d['dualbounds'];
 
         if 'nloperands' in mattribs :
