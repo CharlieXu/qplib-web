@@ -33,7 +33,6 @@ def writehtml(data) :
     print >> htmlout, '<HTML><HEAD>';
     print >> htmlout, '<TITLE>QPLIB Statistics</TITLE>';
     print >> htmlout, '</HEAD>'
-    print >> htmlout, '<!--#include virtual="/minlp/header.html" -->'
     print >> htmlout, '<BODY>';
     print >> htmlout, '<H3>QPLIB Statistics</H3>';
     

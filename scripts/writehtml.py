@@ -21,7 +21,6 @@ def _htmlheader(title) :
         </STYLE>
         <TITLE>''' + title + '''</TITLE>
         </HEAD>
-        <!--#include virtual="/minlp/header.html" -->
     ''';
 
 def _refstohtml(refs) :
