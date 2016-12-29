@@ -764,7 +764,7 @@ def writehtml() :
     #print >> index, '<LI>', '<A href=dates.html>Browse MINLPLib by date</A>', '</LI>';
     
     statistics.writehtml(data);
-    print >> index, '<LI>', '<A href=statistics.html>MINLPLib Statistics</A>', '</LI>';
+    print >> index, '<LI>', '<A href=statistics.html>QPLIB Statistics</A>', '</LI>';
     
     #print >> index, '<BR>';
     print >> index, '<LI>', '<A href=../qplib.zip>Download QPLIB</A>', '(<!--#fsize virtual="../qplib.zip" -->)', '</LI>';
