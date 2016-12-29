@@ -8,6 +8,10 @@
 
 #include "curvcheck.h"
 
+#ifdef HAVE_CHOLMOD
+#include "cholmod.h"
+#endif
+
 #if 0
 # define F77_FUNC(name,NAME) NAME
 # define F77_FUNC_(name,NAME) NAME
@@ -94,6 +98,155 @@ void curvAugment(
    *curvconss = curvadd[*curvconss][curv];
 }
 
+#ifdef HAVE_CHOLMOD
+static
+RETURN cholesky(
+   int qnz,
+   int* qcol,
+   int* qrow,
+   double* qcoef,
+   int dim,
+   CURVATURE* curv
+   )
+{
+   cholmod_triplet T;
+   cholmod_sparse* A;
+   cholmod_common c;
+   cholmod_factor* L;
+   int i;
+
+   *curv = CURVATURE_UNKNOWN;
+
+   cholmod_start(&c);
+   c.quick_return_if_not_posdef = 1;
+   c.final_ll = 1;  /* otherwise may not recognize non-positive semidefinite matrices */
+   c.final_monotonic = 0;  /* skip ordering columns, as we throw away result anyway */
+   c.final_pack = 0;  /* skip packing columns, as we throw away result anyway */
+   c.print = 0;  /* not even errors */
+
+   T.nrow = dim;
+   T.ncol = dim;
+   T.nzmax = qnz;
+   T.nnz = qnz;
+   T.i = qrow;
+   T.j = qcol;
+   T.x = qcoef;
+   T.z = NULL;
+      /* Describes what parts of the matrix are considered:
+      *
+      * 0:  matrix is "unsymmetric": use both upper and lower triangular parts
+      *     (the matrix may actually be symmetric in pattern and value, but
+      *     both parts are explicitly stored and used).  May be square or
+      *     rectangular.
+      * >0: matrix is square and symmetric.  Entries in the lower triangular
+      *     part are transposed and added to the upper triangular part when
+      *     the matrix is converted to cholmod_sparse form.
+      * <0: matrix is square and symmetric.  Entries in the upper triangular
+      *     part are transposed and added to the lower triangular part when
+      *     the matrix is converted to cholmod_sparse form.
+      */
+   /* we assume here that for the Hessian from GMO, only the lower-left triangle is given
+    * stype = 1 should be the corresponding setting
+    */
+   T.stype = 1;
+   T.itype = CHOLMOD_INT;  /* CHOLMOD_LONG: i and j are SuiteSparse_long.  Otherwise int */
+   T.xtype = CHOLMOD_REAL;  /* pattern, real, complex, or zomplex */
+   T.dtype = CHOLMOD_DOUBLE;  /* x and z are double or float */
+
+   for( i = 0; i < qnz; ++i )
+   {
+      assert(qcol[i] <= qrow[i]);
+      /* printf("T row %d col %d = %g\n", qrow[i], qcol[i], qcoef[i]); */
+   }
+
+   A = cholmod_triplet_to_sparse(&T, qnz, &c);
+   assert(A != NULL);
+   /* cholmod_print_sparse(A, "A", &c); */
+
+   L = cholmod_analyze(A, &c);
+   if( c.status == CHOLMOD_NOT_POSDEF )
+   {
+      *curv = CURVATURE_NONCONVEX;
+   }
+   else if( c.status != CHOLMOD_OK )
+   {
+      fprintf(stderr, "error %d from cholmod_analyze on A\n", c.status);
+      goto TERMINATE;
+   }
+   assert(L != NULL);
+
+   if( *curv == CURVATURE_UNKNOWN )
+   {
+      cholmod_factorize(A, L, &c);
+      if( c.status == CHOLMOD_NOT_POSDEF )
+      {
+         *curv = CURVATURE_NONCONVEX;
+      }
+      else if( c.status == CHOLMOD_OK )
+      {
+         *curv = CURVATURE_CONVEX;
+         goto TERMINATE;
+      }
+      else
+      {
+         fprintf(stderr, "error %d from cholmod_factorize on A\n", c.status);
+         goto TERMINATE;
+      }
+
+      /* cholmod_print_factor(L, "L", &c); */
+      /* printf("check factor: %d\n", cholmod_check_factor(L, &c)); */
+
+      assert(L->minor < L->n);  /* we should have found to be not positive semidefinite */
+   }
+
+   assert(*curv == CURVATURE_NONCONVEX);
+
+   /* now check whether concave, i.e., whether -A is positive semidefinite */
+   cholmod_free_factor(&L, &c);
+
+   /* negate matrix */
+   for( i = 0; i < A->nzmax; ++i )
+      ((double*)A->x)[i] = -((double*)A->x)[i];
+
+   L = cholmod_analyze(A, &c);
+   if( c.status == CHOLMOD_NOT_POSDEF )
+   {
+      *curv = CURVATURE_INDEFINITE;
+      goto TERMINATE;
+   }
+   else if( c.status != CHOLMOD_OK )
+   {
+      fprintf(stderr, "error %d from cholmod_analyze on -A\n", c.status);
+      goto TERMINATE;
+   }
+   assert(L != NULL);
+
+   cholmod_factorize(A, L, &c);
+   if( c.status == CHOLMOD_NOT_POSDEF )
+   {
+      *curv = CURVATURE_INDEFINITE;
+   }
+   else if( c.status == CHOLMOD_OK )
+   {
+      *curv = CURVATURE_CONCAVE;
+   }
+   else
+   {
+      fprintf(stderr, "error %d from cholmod_factorize on -A\n", c.status);
+   }
+
+   /* cholmod_print_factor(L, "L", &c); */
+   /* printf("check factor: %d\n", cholmod_check_factor(L, &c)); */
+
+TERMINATE:
+   cholmod_free_factor(&L, &c);
+   cholmod_free_sparse(&A, &c);
+   cholmod_finish(&c);
+
+   return RETURN_OK;
+}
+#endif
+
 RETURN curvQuad(
    gmoHandle_t gmo,
    int qnz,
@@ -145,6 +298,15 @@ RETURN curvQuad(
       }
    }
 
+#ifdef HAVE_CHOLMOD
+   if( dim > 10 )
+   {
+      cholesky(qnz, qcol, qrow, qcoef, dim, curv);
+      if( curvdecided[*curv] )
+         goto TERMINATE;
+      /* printf("falling back to lapack...\n"); */
+   }
+#endif
 
    a = (double*)malloc(dim * dim * sizeof(double));
    if( a == NULL ) /* out of memory */
