@@ -44,6 +44,8 @@ INSTANCEPROPATTRS = {
     'nnlbinvars' : int,
     'nnlintvars' : int,
     'nnlsemi' : int,
+    'nboundedvars' : int,
+    'nsingleboundedvars' : int,
     'nsos1' : int,
     'nsos2' : int,
     'objtype' : str,
@@ -62,6 +64,9 @@ INSTANCEPROPATTRS = {
     'objsense' : str,
     'objcurvature' : str,
     'conscurvature' : str,
+    'nconvexnlcons' : int,
+    'nconcavenlcons' : int,
+    'nindefinitenlcons' : int,
     'minobjcoef' : float,
     'minobjcoefvar' : str,
     'maxobjcoef' : float,
@@ -528,6 +533,8 @@ def getprobtype(instanceattribs) :
     nspecial = (instanceattribs['nsemi'] if 'nsemi' in instanceattribs else 0) \
         + (instanceattribs['nsos1'] if 'nsos1' in instanceattribs else 0) \
         + (instanceattribs['nsos2'] if 'nsos2' in instanceattribs else 0);
+    nboundedvars = (instanceattribs['nboundedvars'] if 'nboundedvars' in instanceattribs else 0) \
+        + (instanceattribs['nsingleboundedvars'] if 'nsingleboundedvars' in instanceattribs else 0);
 
     objtype = instanceattribs['objtype'] if 'objtype' in instanceattribs else 'linear';
     objcurv = instanceattribs['objcurvature'] if 'objcurvature' in instanceattribs else 'unknown';
@@ -571,7 +578,10 @@ def getprobtype(instanceattribs) :
 
     # constraints: N (none), B (box), L (linear), D (diagonal convex quadratic), C (convex quadratic), Q (nonconvex quadratic)
     if ncons == 0 :
-       s += 'B';   # TODO could be N
+       if nboundedvars == 0 :
+          s += 'N';
+       else :
+          s += 'B';
     elif nlincons == ncons :
        s += 'L';
     elif conscurv == 'convex' :
