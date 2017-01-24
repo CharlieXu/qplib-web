@@ -49,7 +49,7 @@ def writehtml(data) :
     print >> htmlout, "<P>";
     plt.clf();
     ptypecounts = df['probtype'].value_counts();
-    cont = pd.Series(ptypecounts.index.map(lambda x : x[0] == 'Q'), index = ptypecounts.index).sort_values();
+    cont = pd.Series(ptypecounts.index.map(lambda x : x[1] == 'C'), index = ptypecounts.index).sort_values();
     ptypecounts = ptypecounts.reindex_like(cont);
     #print ptypecounts.to_string();
     plt.pie(ptypecounts, labels = ptypecounts.index, colors = ['b' if x else 'r' for x in cont]);
