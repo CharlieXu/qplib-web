@@ -538,18 +538,23 @@ def getprobtype(instanceattribs) :
     nquadcons = instanceattribs['nquadcons'] if 'nquadcons' in instanceattribs else 0;
     conscurv = instanceattribs['conscurvature'] if 'conscurvature' in instanceattribs else 'unknown';
 
+    nlaghessiannz = instanceattribs['nlaghessiannz'] if 'nlaghessiannz' in instanceattribs else 0;
+    nlaghessiandiagnz = instanceattribs['nlaghessiandiagnz'] if 'nlaghessiandiagnz' in instanceattribs else 0;
+
     s = '';
 
     # objective: L (linear), D (diagonal convex quadratic), C (convex), or Q (indefinite)
     if objtype == 'linear' :
        s += 'L';
-    elif objcurv == 'convex' and objsense == 'min' :
-       s += 'C';
-    elif objcurv == 'concave' and objsense == 'max' :
-       s += 'C';
+    elif (objcurv == 'convex' and objsense == 'min') or (objcurv == 'concave' and objsense == 'max') :
+       # if Hessian of Lagrangian has only diagonal entries, then quadratic matrix of objective is diagonal
+       # TODO if some constraints are quadratic non-diagonal, then objective could still be diagonal
+       if nlaghessiannz == nlaghessiandiagnz :
+          s += 'D';
+       else :
+          s += 'C';
     else :
        s += 'Q';
-    # TODO D
 
     # variables: C (continuous only), B (binary only), M (mixed binary and continuous), I (integer only), G (others)
     assert nspecial == 0;  # no SOS, semi in QPLIB
@@ -570,10 +575,14 @@ def getprobtype(instanceattribs) :
     elif nlincons == ncons :
        s += 'L';
     elif conscurv == 'convex' :
-       s += 'C';
+       # if Hessian of Lagrangian has only diagonal entries, then all quadratic matrices are diagonal
+       # TODO if objective is quadratic non-diagonal, then constraints could still be diagonal
+       if nlaghessiannz == nlaghessiandiagnz :
+          s += 'D';
+       else :
+          s += 'C';
     else :
        s += 'Q';
-    # TODO D ?
 
     return s;
 
