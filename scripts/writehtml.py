@@ -1,4 +1,5 @@
 #!/usr/bin/python2
+# -*- coding: utf-8 -*-
 
 import os;
 import subprocess;
@@ -16,12 +17,46 @@ PNGDIR = os.path.join(metadata.DATADIR, 'png');
 
 def _htmlheader(title) :
     return '''<HEAD>
+        <META http-equiv="content-type" content="text/html;charset=UTF-8" />
+        <META name="author" content="Stefan Vigerske, Ambros Gleixner" />
+        <META name="description" content="QPLIB: A Library of Quadratic Programming Instances" />
+        <META name="keywords" content="QPLIB" />
+        <META name="robots" content="index|follow" />
         <STYLE>
         table.dataframe { text-align: right; font-size: 12px; border: 1px; border-collapse: collapse}
         </STYLE>
+        <link rel="stylesheet" media="all" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Sans" />
+        <link rel="stylesheet" media="all" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800" />
+        <link rel="stylesheet" type="text/css" href="qplib.css" />
         <TITLE>''' + title + '''</TITLE>
         </HEAD>
     ''';
+
+def _htmlstartbody() :
+    return '''<BODY>
+    <div id="content">
+      <h1>QPLIB</h1>
+      <h2>A Library of Quadratic Programming Instances</h2>
+
+      <a href="index.html">Home</a> //
+      <a href="instances.html">browse instances</a> //
+      <a href="statistics.html">view statistics</a> //
+      <a href="../qplib.zip">download QPLIB archive</a>
+
+      <hr />
+    ''';
+
+def _htmlendbody() :
+    return '''<br /><br /><br /><hr />
+      <p>
+        Website &copy; 2017 by <a href="http://www.zib.de">Zuse Institute Berlin</a>. All rights reserved.
+      <a href="http://www.zib.de/en/imprint.html">Imprint</a>.<br /><br />
+      <!-- <a href="http://validator.w3.org/check/referer"><img class="logo" src="../valid-xhtml11.png" alt="Valid XHTML 1.1!" /></a>&nbsp; -->
+      <a href="http://jigsaw.w3.org/css-validator/check/referer"><img class="logo" src="../valid-css.png" alt="Valid CSS!" /></a>
+      </p>
+    </div>
+
+    </BODY>''';
 
 def _refstohtml(refs) :
     s = '';
@@ -165,9 +200,9 @@ def _writemodelpage(m, mattribs, bib) :
     
     page = open(os.path.join(HTMLDIR, m + '.html'), 'w');
     
-    print >> page, '<HTML>', _htmlheader(m), '<BODY>';
+    print >> page, '<HTML>', _htmlheader(m), _htmlstartbody();
     
-    print >> page, '<H2>', m, '</H2>';
+    print >> page, '<H3>', m, '</H3>';
         
     #if 'references' in mattribs and len(mattribs['references']) > 0 :
     #    refs = mattribs['references'];
@@ -189,15 +224,16 @@ def _writemodelpage(m, mattribs, bib) :
     global objsense;
     objsense = 1.0 if 'objsense' not in mattribs or mattribs['objsense'] == "min" else -1.0;
 
-    t = HTML.Table();
-    
+    t = HTML.Table(style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-collapse: collapse;", width="100%", border="0");
+    rowstyle = "border-top: 1px solid #BBBBBB; border-bottom: 1px solid #BBBBBB; border-collapse: collapse;"
+
     for a in INSTANCEATTRS :
         if a[0] in mattribs :
             if isinstance(a[1], list) :
                 title = '<B title="' + a[1][1] + '">' + a[1][0] + ':</B>'; 
             else :
                 title = '<B>' + str(a[1]) + ':</B>';
-            t.rows.append([title, a[2](mattribs[a[0]])]);
+            t.rows.append(HTML.TableRow([title, a[2](mattribs[a[0]])], attribs={"style":rowstyle}));
             
     if os.path.exists(os.path.join(PNGDIR, m + '.jac.png')) :
         s = '<img src=' + os.path.join('..', 'data', 'png', m + '.jac.png');
@@ -205,14 +241,14 @@ def _writemodelpage(m, mattribs, bib) :
             s += ' width=600';
         s += ' title="black = linear, red = nonlinear"';
         s += '>';
-        t.rows.append(['<B title="black = linear, red = nonlinear">Sparsity Jacobian:</B>', s]);
+        t.rows.append(HTML.TableRow(['<B title="black = linear, red = nonlinear">Sparsity Jacobian:</B>', s], attribs={"style":rowstyle}));
 
     if os.path.exists(os.path.join(PNGDIR, m + '.hess.png')) :
         s = '<img src=' + os.path.join('..', 'data', 'png', m + '.hess.png');
         if mattribs['nvars'] > 600 :
             s += ' width=600';
         s += '>';
-        t.rows.append(['<B>Sparsity Lag. Hessian:</B>', s]);
+        t.rows.append(HTML.TableRow(['<B>Sparsity Lag. Hessian:</B>', s], attribs={"style":rowstyle}));
             
     print >> page, t;
     
@@ -229,14 +265,14 @@ def _writemodelpage(m, mattribs, bib) :
     #    print >> page, '</P>';
     
     if 'gms' in mattribs['formats'] :
-        print >> page, '<HR><PRE>'
+        print >> page, '<PRE>'
         #with open(os.path.join(HTMLDIR, '..', 'data', 'gms', m + '.gms')) as f:
         #    print >> page, f.read();
         print >> page, '<!--#include virtual="../data/gms/' + m + '.gms" -->';
         print >> page, '</PRE>';
 
     
-    print >> page, '</BODY></HTML>';
+    print >> page, _htmlendbody(), '</HTML>';
     page.close();
 
 def _pointformatstohtml(formats) :
@@ -311,8 +347,7 @@ def _writepointpage(m, p, pattribs) :
 def _writeinstancepage(data) :
 
     instances = open(os.path.join(HTMLDIR, 'instances.html'), 'w');
-    print >> instances, '<HTML>', _htmlheader("QPLIB Instance Listing"), '<BODY>';
-    print >> instances, '<H3>QPLIB Instance Listing</H3>'
+    print >> instances, '<HTML>', _htmlheader("QPLIB Instance Listing"), _htmlstartbody();
 
     print >> instances, '<link rel="stylesheet" type="text/css" href="../datatables/media/css/jquery.dataTables.css">'
     print >> instances, '<script type="text/javascript" language="javascript" src="../datatables/media/js/jquery.js"></script>'
@@ -464,7 +499,7 @@ def _writeinstancepage(data) :
     if len(t.rows) > 1 :
        print >> instances, '<P>Removed Instances:<BR>', t, '</P>';
     
-    print >> instances, '</BODY></HTML>';
+    print >> instances, _htmlendbody(), '</HTML>';
     instances.close();
     
 def _writeauthorspage(data) :
@@ -712,86 +747,106 @@ def writehtml() :
             _writepointpage(m, p, pattribs);
         
     index = open(os.path.join(HTMLDIR, 'index.html'), 'w');
-    print >> index, '<HTML><HEAD>', _htmlheader("QPLIB"), '</HEAD><BODY>';
-    print >> index, '<H2>QPLIB</H2>'
+    print >> index, '<HTML>', _htmlheader("QPLIB: A Library of Quadratic Programming Instances"), _htmlstartbody();
     
-    print >> index, '<P><FONT SIZE=-1>'
-    #p = subprocess.Popen(['svnversion', metadata.BASEDIR], stdout = subprocess.PIPE);
-    #svnrev = p.communicate()[0];
-    #if p.returncode != 0 :
-    #   print >> sys.stderr, 'Return code', p.returncode, 'from calling svnversion';
-    #else :
-    #   print >> index, 'Current revision:', svnrev;
-    print >> index, 'Date:', datetime.datetime.today().strftime('%Y-%m-%d');
-    print >> index, '</FONT></P>';
-    
-    #print >> index, '<P>Since 2001, the Mixed-Integer Nonlinear Programming Library (MINLPLib) and the Nonlinear Programming Library (GLOBALLib) have provided algorithm developers with a large and varied set of both theoretical and practical test models.';
-    #print >> index, 'We have recently started with major updates to MINLPLib (now incorporating also NLPs), which includes the addition of many more instances.';
-    #print >> index, 'We hope that the updated library can be a starting point to define a widely accepted test set to evaluate the performance of MINLP solving software.'
-    #print >> index, '</P>';
-    #print >> index, '<P>';
-    #print >> index, 'Note, that the development of this update to the MINLPLib currently in <B>ALPHA</B> phase.';
-    #print >> index, 'That is, while the library already provides more instances, more solution points, and more information on each instance than the first MINLPLib, it is still possible that instances are added, removed, or modified without notice.'
-    #print >> index, '</P>'
-    print >> index, '<UL>';
+    print >> index, '''      <p>
+        This website hosts a collection of problem instances from the diverse class of <i>quadratic programming
+        problems</i>.  Starting from 8,164&nbsp;submitted instances, the final version of QPLIB contains
+        251&nbsp;discrete and 116&nbsp;continuous instances of different characteristics.  During this process, we
+        developed a taxonomy based on a three-fields code of the form <b>OVC</b>, where <b>O</b> indicates the objective
+        function, <b>V</b> the variables, and <b>C</b> the constraints of the problem. The fields can be given the
+        following values:
+      </p>
+      <ol>
+        <li>objective function: (L)inear, (D)iagonal convex quadratic, (C)onvex quadratic, nonconvex (Q)uadratic;
+        </li>
+        <li>variables: (C)ontinuous only, (B)inary only, (M)ixed binary and continuous, (I)nteger only, (G)eneral (all three types);
+        </li>
+        <li>constraints: (N)one, (B)ox, (L)inear, (D)iagonal convex quadratic, (C)onvex quadratic, nonconvex (Q)uadratic.
+        </li>
+      </ol>
+      <p>
+        For more details, see the preprint
+      </p>
+      <ul>
+        <li> Fabio Furini, Emiliano Traversi, Pietro Belotti, Antonio Frangioni, Ambros Gleixner, Nick Gould, Leo
+          Liberti, Andrea Lodi, Ruth Misener, Hans Mittelmann, Nick Sahinidis, Stefan Vigerske, and Angelika
+          Wiegele. <a href="">QPLIB: A Library of Quadratic Programming Instances</a>, submitted to Mathematical
+          Programming Computation, 2017.
+        </li>
+      </ul>''';
+      
 
-    # write instance statistics page
-    _writeinstancepage(data);
-    print >> index, '<LI>', '<A href=instances.html>Browse QPLIB by instance name</A>',;
-    
-    #rawdata = metadata.todataframe(data);
-    #if rawdata is not None :
-    #    alldata = open(os.path.join(HTMLDIR, 'allinstancedata.csv'), 'w');
-    #    print >> alldata, "<HTML><HEAD>", _htmlheader("MINLPLib 2 Instance Data"), "</HEAD><BODY>";
-    #    print >> alldata, rawdata.to_csv(sep = ';');
-    #    print >> alldata, "</BODY></HTML>";
-    #    alldata.close();
-    #    print >> index, '<FONT SIZE=-2>(<A href=allinstancedata.html>raw data</A>)</FONT>', '</LI>';
-    print >> index, '<FONT SIZE=-1>(<A href="../instancedata.csv">raw data</A>)</FONT>', '</LI>';
-    print >> index, '<BR>'
-    
-    #_writeauthorspage(data);
-    #print >> index, '<LI>', '<A href=authors.html>Browse MINLPLib by author</A>', '</LI>';
+    print >> index, '''      <h3>History and updates</h3>
+      <ul>
+        <li>July 19, 2015: A first beta version containing 410&nbsp;discrete instances and 138&nbsp;continuous instances is online (<a href="http://www.lamsade.dauphine.fr/QPlib2014/doku.php?id=beta">here</a>).
+        </li>
+        <li>July 17, 2015: Emiliano Traversi presents on the collection and initial filtering of QPLIB instances at ISMP
+        2015 in Pittsburgh (<a href="../ismp2015.pdf">slides</a>).
+        </li>
+      </ul>''';
 
-    #_writesourcepage(data);
-    #print >> index, '<LI>', '<A href=sources.html>Browse MINLPLib by source</A>', '</LI>';
 
-    #_writeapplicationspage(data);
-    #print >> index, '<LI>', '<A href=applications.html>Browse MINLPLib by application</A>', '</LI>';
+    print >> index, '''      <h3>Committee</h3>
+      <p>
+        The following researchers have been involved in the creation of QPLIB:
+      </p>
+      <ul>
+        <li> <a href="http://www.ieor.berkeley.edu/~atamturk/" title="http://www.ieor.berkeley.edu/~atamturk/">Alper Atamt&uuml;rk</a>,
+        </li>
+        <li> <a href="https://plus.google.com/+PietroBelotti" title="https://plus.google.com/+PietroBelotti">Pietro Belotti</a>, Xpress-Optimizer team, FICO
+        </li>
+        <li> <a href="http://pageperso.lif.univ-mrs.fr/~pierre.bonami/" title="http://pageperso.lif.univ-mrs.fr/~pierre.bonami/">Pierre Bonami</a>
+        </li>
+        <li> <a href="http://tippie.uiowa.edu/sburer" title="http://tippie.uiowa.edu/sburer">Samuel Burer</a>
+        </li>
+        <li> <a href="http://cedric.cnam.fr/~elloumi" title="http://cedric.cnam.fr/~elloumi">Sourour Elloumi</a>
+        </li>
+        <li> <a href="http://www.di.unipi.it/~frangio/" title="http://www.di.unipi.it/~frangio/">Antonio Frangioni</a>, Dipartimento di Informatica, Università di Pisa
+        </li>
+        <li> <a href="http://www.lamsade.dauphine.fr/~furini" title="http://www.lamsade.dauphine.fr/~furini">Fabio Furini</a>, LAMSADE, Université Paris Dauphine
+        </li>
+        <li> <a href="http://www.zib.de/gleixner/" title="http://www.zib.de/gleixner/">Ambros Gleixner</a>, Department Optimization, Zuse Institute Berlin
+        </li>
+        <li> <a href="http://www.numerical.rl.ac.uk/people/nimg/nimg.html" title="http://www.numerical.rl.ac.uk/people/nimg/nimg.html">Nick Gould</a>, STFC-Rutherford Appleton Laboratory
+        </li>
+        <li> <a href="http://www.lix.polytechnique.fr/~liberti/" title="http://www.lix.polytechnique.fr/~liberti/">Leo Liberti</a>, CNRS LIX, Ecole Polytechnique
+        </li>
+        <li> <a href="https://www.gerad.ca/en/people/andrea-lodi" title="https://www.gerad.ca/en/people/andrea-lodi">Andrea Lodi</a>, Ecole Polytechnique de Montréal
+        </li>
+        <li> <a href="https://wp.doc.ic.ac.uk/rmisener/" title="https://wp.doc.ic.ac.uk/rmisener/">Ruth Misener</a>, Department of Computing, Imperial College London
+        </li>
+        <li> <a href="http://plato.la.asu.edu/" title="http://plato.la.asu.edu/">Hans Mittelmann</a>, School of Mathematical and Statistical Sciences, Arizona State University
+        </li>
+        <li> <a href="http://www.cheme.cmu.edu/people/faculty/ns1b.htm" title="http://www.cheme.cmu.edu/people/faculty/ns1b.htm">Nick Sahinidis</a>, Chemical Engineering, Carnegie Mellon University
+        </li>
+        <li> <a href="http://lipn.univ-paris13.fr/~roupin/index.php#contact" title="http://lipn.univ-paris13.fr/~roupin/index.php#contact">Frederic Roupin</a>
+        </li>
+        <li> <a href="http://lipn.univ-paris13.fr/~traversi/" title="http://lipn.univ-paris13.fr/~traversi/">Emiliano Traversi</a>, LIPN, Université de Paris 13
+        </li>
+        <li> <a href="http://www.uni-klu.ac.at/~anwiegel/" title="http://www.uni-klu.ac.at/~anwiegel/">Angelika Wiegele</a>, Institut f&uuml;r Mathematik, Alpen-Adria-Universit&auml;t Klagenfurt
+        </li>
+      </ul>
 
-    #_writedatepage(data);
-    #print >> index, '<LI>', '<A href=dates.html>Browse MINLPLib by date</A>', '</LI>';
-    
-    statistics.writehtml(data);
-    print >> index, '<LI>', '<A href=statistics.html>QPLIB Statistics</A>', '</LI>';
-    
-    #print >> index, '<BR>';
-    print >> index, '<LI>', '<A href=../qplib.zip>Download QPLIB</A>', '(<!--#fsize virtual="../qplib.zip" -->)', '</LI>';
-    
-    print >> index, '</UL>'
-    
-    #print >> index, '<H3><A name="FAQ"/>Frequently Asked Questions</H3>'
-    #print >> index, '<UL>'
-    #print >> index, '<LI><I>What are the default bounds on variables in a GAMS model?</I>'
-    #print >> index, '<P>See <A href="http://www.gams.com/help/topic/gams.doc/userguides/userguide/_u_g__variables.html?cp=0_2_0_1_4#UG_Variables_VariableTypes">the GAMS User\'s Guide</A>.'
-    #print >> index, '<B>However</B>, MINLPLib 2 works around the default upper bound of 100 for integer variables by setting the option <tt>intvarup=0</tt> (see, e.g., model <a href="jit1.html">jit1</a>).'
-    #print >> index, 'Therefore, for integer variables a default lower bound of 0 and a default upper bound of +infinity is assumed.</P></LI>'
-    
-    #print >> index, '<LI><I>Do the reported solution points and dual bounds allow to rank the performance of solvers?</I>'
-    #print >> index, '<P><B>No.</B> New solutions are usually only added when improving the primal bound. If several solvers find the same solution, it is random which solver is attributed to that solution.'
-    #print >> index, 'Further, the reported dual bounds are just the best value as computed in some run with some option settings on some machine at some time in the past.</P></LI>'
+      <p>
+        We want to thank the <a href="https://www.fondation-hadamard.fr/fr/pgmo">Gaspard Monge Program for Optimization and Operations Research (PGMO)</a> and <a href="http://www.gams.com">GAMS</a> for their support of the QPLIB project.
+      </p>''';
 
-    #print >> index, '</UL>'
-    #print >> index, '<H3>Call for Instances</H3>'
-    #print >> index, '<P>We are looking for more interesting and challenging (MI)NLPs from all fields of Operations Research and Combinatorial Optimization, ideally those which have been built to model real life problems.<BR>';
-    #print >> index, 'If you would like to contribute, please send your instances by <A href="mailto:stefan@gams.com">e-mail</A>.';
-    #print >> index, 'We accept any well-known format that can be translated into GAMS. This includes AMPL (.mod and .nl), GAMS, ZIMPL, BARON, CPLEX LP, MPS, PIP, and OSiL.</P>'
-    #print >> index, '<P>Further, if you have a MINLP model that you would like to discuss with other people, be reminded of the <A href="http://www.minlp.org">minlp.org initiative</A>.';
-    #print >> index, 'We are monitoring minlp.org and add model instantiations from minlp.org to MINLPLib.</P>';
-    
-    print >> index, '</BODY></HTML>';
+
+    print >> index, '''      <h3>Contact</h3>
+
+      <p>
+        For questions and comments please contact the main coordinators <a href="http://www.lamsade.dauphine.fr/~furini/">Fabio Furini</a> and <a href="http://lipn.univ-paris13.fr/~traversi/">Emiliano Traversi</a> at <a href="mailto:qplib2014@gmail.com">qplib2014@gmail.com</a>.
+      </p>''';
+
+
+    print >> index, _htmlendbody();
     index.close();
     
-    
+    # write instance and statistics page
+    _writeinstancepage(data);
+    statistics.writehtml(data);
+
+
 if __name__ == '__main__' :
     writehtml();
