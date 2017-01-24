@@ -797,6 +797,12 @@ def writehtml() :
     print >> index, '</BODY></HTML>';
     index.close();
     
+    # write .htaccess file to activate SSI for HTML files
+    htaccess = open(os.path.join(HTMLDIR, '.htaccess'), 'w');
+    print >> htaccess, 'Options +Includes';
+    print >> htaccess, 'AddType text/html .html';
+    print >> htaccess, 'AddHandler server-parsed .html';
+    htaccess.close();
     
 if __name__ == '__main__' :
     writehtml();
