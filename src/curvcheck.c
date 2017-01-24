@@ -117,6 +117,18 @@ RETURN cholesky(
 
    *curv = CURVATURE_UNKNOWN;
 
+   /* ensure that matrix from GMO is of lower-left form */
+   for( i = 0; i < qnz; ++i )
+   {
+      if( qcol[i] > qrow[i] )
+      {
+         int tmp = qcol[i];
+         qcol[i] = qrow[i];
+         qrow[i] = tmp;
+      }
+      /* printf("T row %d col %d = %g\n", qrow[i], qcol[i], qcoef[i]); */
+   }
+
    cholmod_start(&c);
    c.quick_return_if_not_posdef = 1;
    c.final_ll = 1;  /* otherwise may not recognize non-positive semidefinite matrices */
@@ -145,19 +157,13 @@ RETURN cholesky(
       *     part are transposed and added to the lower triangular part when
       *     the matrix is converted to cholmod_sparse form.
       */
-   /* we assume here that for the Hessian from GMO, only the lower-left triangle is given
+   /* we ensured above that for the Hessian from GMO, only the lower-left triangle is given
     * stype = 1 should be the corresponding setting
     */
    T.stype = 1;
    T.itype = CHOLMOD_INT;  /* CHOLMOD_LONG: i and j are SuiteSparse_long.  Otherwise int */
    T.xtype = CHOLMOD_REAL;  /* pattern, real, complex, or zomplex */
    T.dtype = CHOLMOD_DOUBLE;  /* x and z are double or float */
-
-   for( i = 0; i < qnz; ++i )
-   {
-      assert(qcol[i] <= qrow[i]);
-      /* printf("T row %d col %d = %g\n", qrow[i], qcol[i], qcoef[i]); */
-   }
 
    A = cholmod_triplet_to_sparse(&T, qnz, &c);
    assert(A != NULL);
@@ -302,7 +308,12 @@ RETURN curvQuad(
    if( dim > 10 )
    {
       cholesky(qnz, qcol, qrow, qcoef, dim, curv);
-      if( curvdecided[*curv] )
+      /* it seems that CHOLMOD sometimes concludes a matrix as not positive-semidefinite,
+       * though Lapack below might actually conclude that all eigenvalues are >= 0 (-1e-9)
+       * thus, retry with Lapack if CHOLMOD concludes indefinite
+       * TODO if we know its likely to be indefinte, then we should just eval x*Q*x for some random x
+       */
+      if( curvdecided[*curv] && *curv != CURVATURE_INDEFINITE )
          goto TERMINATE;
       /* printf("falling back to lapack...\n"); */
    }
