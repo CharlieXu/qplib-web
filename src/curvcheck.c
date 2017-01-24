@@ -267,17 +267,18 @@ RETURN curvSample(
    int iter;
    unsigned int seed = 42;
    double prod;
+   double* x;
 
    assert(qcol != NULL);
    assert(qrow != NULL);
    assert(qcoef != NULL);
    assert(curv != NULL);
 
-   double* x = (double*) malloc(n * sizeof(double));
+   x = (double*) malloc(n * sizeof(double));
 
    for( iter = 0; iter < n/10 && !curvdecided[*curv]; ++iter )
    {
-      /* generate random trial point (values in [-1.0,1.0] */
+      /* generate random trial point (values in [-1.0,1.0]) */
       for( i = 0; i < n; ++i )
          x[i] = 2.0 * (double)rand_r(&seed) / (double)RAND_MAX - 1.0;
 
