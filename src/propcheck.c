@@ -224,6 +224,9 @@ RETURN instanceCheck(
    CURVATURE curvconss;
    FUNCTYPE functype;
    int typecnt[FUNCTYPE_NONLINEAR+1];
+   int nconvexcons;
+   int nconcavecons;
+   int nindefinitecons;
 
    char sparsityfile[GMS_SSSIZE + 10];
 
@@ -342,6 +345,9 @@ RETURN instanceCheck(
       typecnt[e] = 0;
    curvconss = CURVATURE_LINEAR;
 
+   nconvexcons = 0;
+   nconcavecons = 0;
+   nindefinitecons = 0;
    for( c = -1; c < gmoM(gmo); ++c )
    {
       switch( c == -1 ? gmoGetObjOrder(gmo) : gmoGetEquOrderOne(gmo, c) )
@@ -398,12 +404,29 @@ RETURN instanceCheck(
                break;
          }
 
+         switch( curv )
+         {
+            case CURVATURE_CONVEX :
+               ++nconvexcons;
+               break;
+            case CURVATURE_CONCAVE :
+               ++nconcavecons;
+               break;
+            case CURVATURE_INDEFINITE:
+               ++nindefinitecons;
+               break;
+            default: ;
+         }
+
          curvAugment(&curvconss, curv);
 
          ++typecnt[functype];
       }
    }
    printf("CONSCURVATURE     = %s\n", curvname[curvconss]);
+   printf("NCONVEXNLCONS     = %d\n", nconvexcons);
+   printf("NCONCAVENLCONS    = %d\n", nconcavecons);
+   printf("NINDEFINITENLCONS = %d\n", nindefinitecons);
    printf("NLINCONS          = %d\n", typecnt[FUNCTYPE_CONSTANT] + typecnt[FUNCTYPE_LINEAR]);
    printf("NQUADCONS         = %d\n", typecnt[FUNCTYPE_QUADRATIC]);
 
