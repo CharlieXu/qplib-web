@@ -115,7 +115,20 @@ RETURN cholesky(
    cholmod_factor* L;
    int i;
 
+   /* TODO augment incoming curv, don't just reset */
    *curv = CURVATURE_UNKNOWN;
+
+   /* ensure that matrix from GMO is of lower-left form */
+   for( i = 0; i < qnz; ++i )
+   {
+      if( qcol[i] > qrow[i] )
+      {
+         int tmp = qcol[i];
+         qcol[i] = qrow[i];
+         qrow[i] = tmp;
+      }
+      /* printf("T row %d col %d = %g\n", qrow[i], qcol[i], qcoef[i]); */
+   }
 
    cholmod_start(&c);
    c.quick_return_if_not_posdef = 1;
@@ -145,19 +158,13 @@ RETURN cholesky(
       *     part are transposed and added to the lower triangular part when
       *     the matrix is converted to cholmod_sparse form.
       */
-   /* we assume here that for the Hessian from GMO, only the lower-left triangle is given
+   /* we ensured above that for the Hessian from GMO, only the lower-left triangle is given
     * stype = 1 should be the corresponding setting
     */
    T.stype = 1;
    T.itype = CHOLMOD_INT;  /* CHOLMOD_LONG: i and j are SuiteSparse_long.  Otherwise int */
    T.xtype = CHOLMOD_REAL;  /* pattern, real, complex, or zomplex */
    T.dtype = CHOLMOD_DOUBLE;  /* x and z are double or float */
-
-   for( i = 0; i < qnz; ++i )
-   {
-      assert(qcol[i] <= qrow[i]);
-      /* printf("T row %d col %d = %g\n", qrow[i], qcol[i], qcoef[i]); */
-   }
 
    A = cholmod_triplet_to_sparse(&T, qnz, &c);
    assert(A != NULL);
@@ -247,6 +254,52 @@ TERMINATE:
 }
 #endif
 
+RETURN curvSample(
+   int n,
+   int qnz,
+   int* qcol,
+   int* qrow,
+   double* qcoef,
+   CURVATURE* curv
+   )
+{
+   int i;
+   int iter;
+   unsigned int seed = 42;
+   double prod;
+   double* x;
+
+   assert(qcol != NULL);
+   assert(qrow != NULL);
+   assert(qcoef != NULL);
+   assert(curv != NULL);
+
+   x = (double*) malloc(n * sizeof(double));
+
+   for( iter = 0; iter < n/10 && !curvdecided[*curv]; ++iter )
+   {
+      /* generate random trial point (values in [-1.0,1.0]) */
+      for( i = 0; i < n; ++i )
+         x[i] = 2.0 * (double)rand_r(&seed) / (double)RAND_MAX - 1.0;
+
+      /* compute x'*Q*x */
+      prod = 0.0;
+      for( i = 0; i < qnz; ++i )
+         prod += qcoef[i] * x[qcol[i]] * x[qrow[i]];
+
+      /* conclude on curvature of Q */
+      if( prod > 1e-9 )
+         curvAugment(curv, CURVATURE_NONCONCAVE);
+      else if( prod < -1e-9)
+         curvAugment(curv, CURVATURE_NONCONVEX);
+      /* printf("prod = %g -> curv = %s\n", prod, curvname[*curv]); */
+   }
+
+   free(x);
+
+   return RETURN_OK;
+}
+
 RETURN curvQuad(
    gmoHandle_t gmo,
    int qnz,
@@ -298,11 +351,19 @@ RETURN curvQuad(
       }
    }
 
+   curvSample(dim, qnz, qcol, qrow, qcoef, curv);
+   if( curvdecided[*curv] )
+      goto TERMINATE;
+
 #ifdef HAVE_CHOLMOD
    if( dim > 10 )
    {
       cholesky(qnz, qcol, qrow, qcoef, dim, curv);
-      if( curvdecided[*curv] )
+      /* it seems that CHOLMOD sometimes concludes a matrix as not positive-semidefinite,
+       * though Lapack below might actually conclude that all eigenvalues are >= 0 (-1e-9)
+       * thus, retry with Lapack if CHOLMOD concludes indefinite
+       */
+      if( curvdecided[*curv] && *curv != CURVATURE_INDEFINITE )
          goto TERMINATE;
       /* printf("falling back to lapack...\n"); */
    }

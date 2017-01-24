@@ -208,6 +208,8 @@ RETURN instanceCheck(
    int nnlbin;
    int nnlint;
    int nnlsemi;
+   int nbounded;
+   int nhalfbounded;
 
    int do2dir;
    int dohess;
@@ -222,6 +224,9 @@ RETURN instanceCheck(
    CURVATURE curvconss;
    FUNCTYPE functype;
    int typecnt[FUNCTYPE_NONLINEAR+1];
+   int nconvexcons;
+   int nconcavecons;
+   int nindefinitecons;
 
    char sparsityfile[GMS_SSSIZE + 10];
 
@@ -243,13 +248,18 @@ RETURN instanceCheck(
 
    gmoUseQSet(gmo, 1);
    
-   /* check how many discrete variables are nonlinear */
+   /* check how many discrete variables are nonlinear
+    * count variable bounds
+    */
    nnlbin = 0;
    nnlint = 0;
    nnlsemi = 0;
+   nbounded = 0;
+   nhalfbounded = 0;
    for( i = 0; i < gmoN(gmo); ++i )
    {
       int nz, nlnz, objnz;
+      int haslb, hasub;
       gmoGetColStat(gmo, i, &nz, &qnz, &nlnz, &objnz); /* check whether nonlinear in constraints */
       if( qnz == 0 && nlnz == 0 && (objnlflags == NULL || objnlflags[i] == 0) )
          continue;
@@ -270,6 +280,13 @@ RETURN instanceCheck(
             ++nnlint;
             break;
       }
+
+      haslb = (gmoGetVarLowerOne(gmo, i) != gmoMinf(gmo));
+      hasub = (gmoGetVarUpperOne(gmo, i) != gmoPinf(gmo));
+      if( haslb && hasub )
+         ++nbounded;
+      else if( haslb || hasub )
+         ++nhalfbounded;
    }
 
    printf("NVARS             = %d\n", gmoN(gmo));
@@ -281,6 +298,8 @@ RETURN instanceCheck(
    printf("NNLBINVARS        = %d\n", nnlbin);
    printf("NNLINTVARS        = %d\n", nnlint);
    printf("NNLSEMI           = %d\n", nnlsemi);
+   printf("NBOUNDEDVARS      = %d\n", nbounded);
+   printf("NSINGLEBOUNDEDVARS = %d\n", nhalfbounded);
 
    gmoGetSosCounts(gmo, &numsos1, &numsos2, &nzsos);
    printf("NSOS1             = %d\n", numsos1);
@@ -326,6 +345,9 @@ RETURN instanceCheck(
       typecnt[e] = 0;
    curvconss = CURVATURE_LINEAR;
 
+   nconvexcons = 0;
+   nconcavecons = 0;
+   nindefinitecons = 0;
    for( c = -1; c < gmoM(gmo); ++c )
    {
       switch( c == -1 ? gmoGetObjOrder(gmo) : gmoGetEquOrderOne(gmo, c) )
@@ -382,12 +404,29 @@ RETURN instanceCheck(
                break;
          }
 
+         switch( curv )
+         {
+            case CURVATURE_CONVEX :
+               ++nconvexcons;
+               break;
+            case CURVATURE_CONCAVE :
+               ++nconcavecons;
+               break;
+            case CURVATURE_INDEFINITE:
+               ++nindefinitecons;
+               break;
+            default: ;
+         }
+
          curvAugment(&curvconss, curv);
 
          ++typecnt[functype];
       }
    }
    printf("CONSCURVATURE     = %s\n", curvname[curvconss]);
+   printf("NCONVEXNLCONS     = %d\n", nconvexcons);
+   printf("NCONCAVENLCONS    = %d\n", nconcavecons);
+   printf("NINDEFINITENLCONS = %d\n", nindefinitecons);
    printf("NLINCONS          = %d\n", typecnt[FUNCTYPE_CONSTANT] + typecnt[FUNCTYPE_LINEAR]);
    printf("NQUADCONS         = %d\n", typecnt[FUNCTYPE_QUADRATIC]);
 

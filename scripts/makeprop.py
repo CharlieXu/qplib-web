@@ -2,6 +2,7 @@
 
 import os;
 import subprocess;
+from datetime import datetime;
 
 DATADIR = os.path.join(os.path.dirname(__file__), '..', 'data');
 BINDIR = os.path.join(os.path.dirname(__file__), '..', 'bin');
@@ -38,7 +39,7 @@ for f in sorted(instances) :
     if not missingprop :
         continue;
 
-    print f, (len(points[f]) if f in points else 0), 'points';
+    print datetime.now().strftime('%H:%M:%S'), f, (len(points[f]) if f in points else 0), 'points';
         
     p = subprocess.Popen([os.path.join(BINDIR, 'propcheck'), os.path.join(DATADIR, 'gms', f)] + (points[f] if f in points else []),
                          stdout = subprocess.PIPE);

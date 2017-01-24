@@ -150,6 +150,8 @@ INSTANCEATTRS = [
     ('nvars', '#Variables', str),
     ('nbinvars', '#Binary Variables', str),
     ('nintvars', '#Integer Variables', str),
+    ('nboundedvars', '#Bounded Variables', str),
+    ('nsingleboundedvars', '#Variables with one bound', str),
     ('nnlvars', '#Nonlinear Variables', str),
     ('nnlbinvars', '#Nonlinear Binary Variables', str),
     ('nnlintvars', '#Nonlinear Integer Variables', str),
@@ -166,6 +168,9 @@ INSTANCEATTRS = [
     ('ngennlcons', '#General Nonlinear Constraints', str),
     ('nloperands', 'Operands in Gen. Nonlin. Functions', ' '.join),
     ('conscurvature', 'Constraints curvature', str),
+    ('nconvexnlcons', '#Convex Nonlinear Constraints', str),
+    ('nconcavenlcons', '#Concave Nonlinear Constraints', str),
+    ('nindefinitenlcons', '#Indefinite Nonlinear Constraints', str),
     ('njacobiannz', '#Nonzeros in Jacobian', str),
     ('njacobiannlnz', '#Nonlinear Nonzeros in Jacobian', str),
     ('nlaghessiannz', '#Nonzeros in (Upper-Left) Hessian of Lagrangian', str),
@@ -980,7 +985,13 @@ def writehtml() :
     # write instance and statistics page
     _writeinstancepage(data);
     statistics.writehtml(data);
-
-
+    
+    # write .htaccess file to activate SSI for HTML files
+    htaccess = open(os.path.join(HTMLDIR, '.htaccess'), 'w');
+    print >> htaccess, 'Options +Includes';
+    print >> htaccess, 'AddType text/html .html';
+    print >> htaccess, 'AddHandler server-parsed .html';
+    htaccess.close();
+    
 if __name__ == '__main__' :
     writehtml();

@@ -49,7 +49,7 @@ def writehtml(data) :
     print >> htmlout, "<P>";
     plt.clf();
     ptypecounts = df['probtype'].value_counts();
-    cont = pd.Series(ptypecounts.index.map(lambda x : x[0] == 'Q'), index = ptypecounts.index).sort_values();
+    cont = pd.Series(ptypecounts.index.map(lambda x : x[1] == 'C'), index = ptypecounts.index).sort_values();
     ptypecounts = ptypecounts.reindex_like(cont);
     #print ptypecounts.to_string();
     plt.pie(ptypecounts, labels = ptypecounts.index, colors = ['b' if x else 'r' for x in cont]);
@@ -61,7 +61,6 @@ def writehtml(data) :
     plt.clf();
     plt.hist(df['nvars'].values, bins = np.logspace(0, np.log10(df['nvars'].max()), 15));
     plt.gca().set_xscale("log");
-    plt.legend();
     plt.xlabel('Number of variables');
     plt.ylabel('Number of instances');
     plt.title('histogram w.r.t. #variables');
@@ -70,7 +69,6 @@ def writehtml(data) :
     plt.clf();
     plt.hist(df['ncons'].values, bins = np.logspace(0, np.log10(df['ncons'].max()), 15));
     plt.gca().set_xscale("log");
-    plt.legend();
     plt.xlabel('Number of constraints');
     plt.ylabel('Number of instances');
     plt.title('histogram w.r.t. #constraints');
@@ -88,7 +86,6 @@ def writehtml(data) :
     plt.scatter(df['nvars'], df['ncons']+1, s = 200 * df['density'].clip_lower(0.05), alpha = 0.5, label = None);
     plt.gca().set_yscale("log");
     plt.gca().set_xscale("log");
-    plt.legend(loc = 'upper left');
     plt.xlabel('Number of variables');
     plt.ylabel('Number of constraints');
     plt.title('instances scatter plot');
@@ -98,7 +95,6 @@ def writehtml(data) :
     plt.scatter(df['nnlvars'], df['nnlfunc'], s = 200 * df['nldensity'].clip_lower(0.05), alpha = 0.5, label = None);
     plt.gca().set_yscale("log");
     plt.gca().set_xscale("log");
-    plt.legend(loc = 'upper left');
     plt.xlabel('Number of nonlinear variables');
     plt.ylabel('Number of nonlinear constraints');
     plt.title('instances scatter plot (nonlinear parts only)');

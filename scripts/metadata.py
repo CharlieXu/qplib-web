@@ -44,6 +44,8 @@ INSTANCEPROPATTRS = {
     'nnlbinvars' : int,
     'nnlintvars' : int,
     'nnlsemi' : int,
+    'nboundedvars' : int,
+    'nsingleboundedvars' : int,
     'nsos1' : int,
     'nsos2' : int,
     'objtype' : str,
@@ -62,6 +64,9 @@ INSTANCEPROPATTRS = {
     'objsense' : str,
     'objcurvature' : str,
     'conscurvature' : str,
+    'nconvexnlcons' : int,
+    'nconcavenlcons' : int,
+    'nindefinitenlcons' : int,
     'minobjcoef' : float,
     'minobjcoefvar' : str,
     'maxobjcoef' : float,
@@ -528,46 +533,67 @@ def getprobtype(instanceattribs) :
     nspecial = (instanceattribs['nsemi'] if 'nsemi' in instanceattribs else 0) \
         + (instanceattribs['nsos1'] if 'nsos1' in instanceattribs else 0) \
         + (instanceattribs['nsos2'] if 'nsos2' in instanceattribs else 0);
-        
+    nboundedvars = (instanceattribs['nboundedvars'] if 'nboundedvars' in instanceattribs else 0) \
+        + (instanceattribs['nsingleboundedvars'] if 'nsingleboundedvars' in instanceattribs else 0);
+
     objtype = instanceattribs['objtype'] if 'objtype' in instanceattribs else 'linear';
-    #ncons = instanceattribs['ncons'] if 'ncons' in instanceattrs else 0;
+    objcurv = instanceattribs['objcurvature'] if 'objcurvature' in instanceattribs else 'unknown';
+    objsense = instanceattribs['objsense'] if 'objsense' in instanceattribs else 'min';
+
+    ncons = instanceattribs['ncons'] if 'ncons' in instanceattribs else 0;
     nlincons = instanceattribs['nlincons'] if 'nlincons' in instanceattribs else 0;
     nquadcons = instanceattribs['nquadcons'] if 'nquadcons' in instanceattribs else 0;
-    nnonquadcons = instanceattribs['npolynomcons'] if 'npolynomcons' in instanceattribs else 0;
-    nnonquadcons += instanceattribs['nsignomcons'] if 'nsignomcons' in instanceattribs else 0;
-    nnonquadcons += instanceattribs['ngennlcons'] if 'ngennlcons' in instanceattribs else 0;
+    conscurv = instanceattribs['conscurvature'] if 'conscurvature' in instanceattribs else 'unknown';
+
+    nlaghessiannz = instanceattribs['nlaghessiannz'] if 'nlaghessiannz' in instanceattribs else 0;
+    nlaghessiandiagnz = instanceattribs['nlaghessiandiagnz'] if 'nlaghessiandiagnz' in instanceattribs else 0;
 
     s = '';
-    if nvars == 0 :
-        return 'P';
-    
-    if nbinvars == nvars :
-        s += 'B'
-    elif nintvars == nvars :
-        s += 'I';
-    elif nintvars > 0 :
-        s += 'MI';
-    elif nbinvars > 0 :
-        s += 'MB'
-    elif nspecial > 0 :
-        s += 'S'
-        
-    if nnonquadcons > 0 or objtype in ['signomial', 'polynomial', 'nonlinear'] :
-        # something more than quadratic -> *NLP 
-        s += 'NLP';
-    elif objtype == 'quadratic' and nquadcons > 0 :
-        # quadratic obj, quad cons
-        s += 'QCQP';
-    elif objtype == 'quadratic' and nquadcons == 0 :
-        # quadratic obj, linear cons
-        s += 'QP'
-    elif nquadcons > 0 :
-        # linear obj, quad cons
-        s += 'QCP'
+
+    # objective: L (linear), D (diagonal convex quadratic), C (convex), or Q (indefinite)
+    if objtype == 'linear' :
+       s += 'L';
+    elif (objcurv == 'convex' and objsense == 'min') or (objcurv == 'concave' and objsense == 'max') :
+       # if Hessian of Lagrangian has only diagonal entries, then quadratic matrix of objective is diagonal
+       # TODO if some constraints are quadratic non-diagonal, then objective could still be diagonal
+       if nlaghessiannz == nlaghessiandiagnz :
+          s += 'D';
+       else :
+          s += 'C';
     else :
-        # linear obj, linear cons
-        s += 'P';
-    
+       s += 'Q';
+
+    # variables: C (continuous only), B (binary only), M (mixed binary and continuous), I (integer only), G (others)
+    assert nspecial == 0;  # no SOS, semi in QPLIB
+    if nbinvars == 0 and nintvars == 0:
+       s += 'C';
+    elif nbinvars == nvars :
+       s += 'B';
+    elif nintvars == 0 :
+       s += 'M';
+    elif nintvars == nvars :
+       s += 'I';
+    else :
+       s += 'G';
+
+    # constraints: N (none), B (box), L (linear), D (diagonal convex quadratic), C (convex quadratic), Q (nonconvex quadratic)
+    if ncons == 0 :
+       if nboundedvars == 0 :
+          s += 'N';
+       else :
+          s += 'B';
+    elif nlincons == ncons :
+       s += 'L';
+    elif conscurv == 'convex' :
+       # if Hessian of Lagrangian has only diagonal entries, then all quadratic matrices are diagonal
+       # TODO if objective is quadratic non-diagonal, then constraints could still be diagonal
+       if nlaghessiannz == nlaghessiandiagnz :
+          s += 'D';
+       else :
+          s += 'C';
+    else :
+       s += 'Q';
+
     return s;
 
 def getsourceids(instanceattribs) :
