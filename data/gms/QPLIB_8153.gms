@@ -829,18 +829,18 @@ e96..    1.013535003*x2 + 1.039557271*x3 + 1.038082541*x4 + 1.0439477*x5
        + 1.024738044*x26 + 1.036349603*x27 + 1.112290578*x28 + 1.026572705*x29
        + 1.022348246*x30 + 1.028235364*x31 + x32 - x125 =E= 0.7;
 
-e97.. sqr(x64) + sqr(x65) + sqr(x66) + sqr(x67) + sqr(x68) + sqr(x69) + sqr(x70) + x71
-      *x71 + sqr(x72) + sqr(x73) + sqr(x74) + sqr(x75) + sqr(x76) + sqr(x77) + x78*
-      x78 + sqr(x79) + sqr(x80) + sqr(x81) + sqr(x82) + sqr(x83) + sqr(x84) + sqr(x85)
-       + sqr(x86) + sqr(x87) + sqr(x88) + sqr(x89) + sqr(x90) + sqr(x91) + sqr(x92) + 
-      sqr(x93) - sqr(x94) =L= 0;
+e97.. sqr(x64) + sqr(x65) + sqr(x66) + sqr(x67) + sqr(x68) + sqr(x69) + sqr(x70
+      ) + x71*x71 + sqr(x72) + sqr(x73) + sqr(x74) + sqr(x75) + sqr(x76) + sqr(
+      x77) + x78*x78 + sqr(x79) + sqr(x80) + sqr(x81) + sqr(x82) + sqr(x83) + 
+      sqr(x84) + sqr(x85) + sqr(x86) + sqr(x87) + sqr(x88) + sqr(x89) + sqr(x90
+      ) + sqr(x91) + sqr(x92) + sqr(x93) - sqr(x94) =L= 0;
 
-e98.. sqr(x95) + sqr(x96) + sqr(x97) + sqr(x98) + sqr(x99) + sqr(x100) + sqr(x101)
-       + sqr(x102) + sqr(x103) + sqr(x104) + sqr(x105) + sqr(x106) + sqr(x107)
-       + sqr(x108) + sqr(x109) + sqr(x110) + sqr(x111) + sqr(x112) + sqr(x113)
-       + sqr(x114) + sqr(x115) + sqr(x116) + sqr(x117) + sqr(x118) + sqr(x119)
-       + sqr(x120) + sqr(x121) + sqr(x122) + sqr(x123) + sqr(x124) - sqr(x125)
-       =L= 0;
+e98.. sqr(x95) + sqr(x96) + sqr(x97) + sqr(x98) + sqr(x99) + sqr(x100) + sqr(
+      x101) + sqr(x102) + sqr(x103) + sqr(x104) + sqr(x105) + sqr(x106) + sqr(
+      x107) + sqr(x108) + sqr(x109) + sqr(x110) + sqr(x111) + sqr(x112) + sqr(
+      x113) + sqr(x114) + sqr(x115) + sqr(x116) + sqr(x117) + sqr(x118) + sqr(
+      x119) + sqr(x120) + sqr(x121) + sqr(x122) + sqr(x123) + sqr(x124) - sqr(
+      x125) =L= 0;
 
 * set non-default bounds
 x2.up = 1;
