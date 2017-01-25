@@ -215,137 +215,6 @@ INSTANCEATTRS = [
     #'maxscaleequ' : str
     ]
 
-def _writecssfile() :
-
-    page = open(os.path.join(HTMLDIR, 'qplib.css'), 'w');
-
-    print >> page, '''/* css by miss monorom monorom.com for www.intensivstation.ch */
-/* css released under Creative Commons License -  http://creativecommons.org/licenses/by/2.0/deed.en  */
-
-body
-{
-	 background-color:#fafafa;
-	 color:#000000;
-	 font-family:'Open Sans',Arial,Helvetica,sans-serif,Arial,sans-serif;
-	 font-size:11pt;
-	 margin:0;
-	 padding:0;
-}
-
-a
-{
-	 color:#0080DD;
-	 text-decoration:none;
-}
-
-a:visited
-{
-	 color:#0080DD;
-}
-
-a:hover
-{
-	 color:#ffa500;
-}
-
-a:active
-{
-	 color:#0080DD;
-	 text-decoration:underline;
-}
-
-h1
-{
-	 font-family:'Droid Sans','Liberation Sans',Arial,Helvetica,sans-serif;
-	 font-size:48px;
-	 font-weight:bold;
-	 padding-bottom:0;
-	 margin-bottom:0;
-}
-
-h2
-{
-	 font-family:'Droid Sans','Liberation Sans',Arial,Helvetica,sans-serif;
-	 font-size:38px;
-	 font-weight:bold;
-	 padding-top:0;
-	 margin-top:10px;
-}
-
-h3
-{
-	 font-family:'Droid Sans','Liberation Sans',Georgia,Times,serif;
-	 font-size:28px;
-	 font-weight:normal;
-	 padding:0.75em 0 0 0;
-	 margin-bottom:10px;
-}
-
-hr
-{
-	 background:#333333;
-	 background-image:-webkit-linear-gradient(left, #cccccc, #333333, #cccccc);
-	 background-image:-moz-linear-gradient(left, #cccccc, #333333, #cccccc);
-	 background-image:-ms-linear-gradient(left, #cccccc, #333333, #cccccc);
-	 background-image:-o-linear-gradient(left, #cccccc, #333333, #cccccc);
-	 border:0;
-	 height:2px;
-	 margin:1.5em 0 1.5em 0;
-}
-
-pre, code
-{
-	 font-size:1.3em;
-}
-
-#content
-{
-    margin-left: auto;
-    margin-right: auto;
-	 margin-bottom:200px;
-    margin-top:50px;
-	 width:1000px;
-	 line-height:1.3;
-}
-
-#content p
-{
-	 margin:0 0 15px;
-	 padding:0;
-	 text-align:justify;
-}
-
-#footer
-{
-	background-color:#cccccc;
-	bottom:0;
-   color:#0080DD;
-	font-size:11px;
-	left:0px;
-	margin:0px auto 0px auto;
-	padding:0px 0 0px 0;
-	position:fixed;
-	width:1020px;
-}
-
-#footertext
-{
-	 margin:0px auto 0px auto;
-	 width:1000px;
-}
-
-p.le
-{
-	 float:left;
-}
-
-p.ri
-{
-	 float:right;
-}''';
-
-    page.close();
-
 def _writemodelpage(m, mattribs, bib) :
     
     page = open(os.path.join(HTMLDIR, m + '.html'), 'w');
@@ -1031,9 +900,7 @@ def writehtml() :
         for p, pattribs in mattribs['points'].iteritems() :
             _writepointpage(m, p, pattribs);
 
-    # write landing page and css file
-    _writecssfile();
-
+    # write landing page
     index = open(os.path.join(HTMLDIR, 'index.html'), 'w');
     print >> index, '<HTML>', _htmlheader("QPLIB: A Library of Quadratic Programming Instances"), _htmlstartbody();
     
