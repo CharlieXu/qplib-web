@@ -244,14 +244,14 @@ def _writemodelpage(m, mattribs, bib) :
     objsense = 1.0 if 'objsense' not in mattribs or mattribs['objsense'] == "min" else -1.0;
 
     t = HTML.Table(style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-collapse: collapse;", width="100%", border="0", cellpadding=5);
-    rowstyle = "border-top: 1px solid #BBBBBB; border-bottom: 1px solid #BBBBBB; border-collapse: collapse;"
+    rowstyle = "border-top: 1px solid #CCCCCC; border-bottom: 1px solid #CCCCCC; border-collapse: collapse;"
 
     for a in INSTANCEATTRS :
         if a[0] in mattribs :
             if isinstance(a[1], list) :
-                title = '<B title="' + a[1][1] + '">' + a[1][0] + ':</B>'; 
+                title = '<span title="' + a[1][1] + '">' + a[1][0] + '</span>';
             else :
-                title = '<B>' + str(a[1]) + ':</B>';
+                title = '<span>' + str(a[1]) + '</span>';
             t.rows.append(HTML.TableRow([title, a[2](mattribs[a[0]])], attribs={"style":rowstyle}));
             
     if os.path.exists(os.path.join(PNGDIR, m + '.jac.png')) :
@@ -260,14 +260,14 @@ def _writemodelpage(m, mattribs, bib) :
             s += ' width=600';
         s += ' title="black = linear, red = nonlinear"';
         s += '>';
-        t.rows.append(HTML.TableRow(['<B title="black = linear, red = nonlinear">Sparsity Jacobian:</B>', s], attribs={"style":rowstyle}));
+        t.rows.append(HTML.TableRow(['<span title="black = linear, red = nonlinear">Sparsity Jacobian</span>', s], attribs={"style":rowstyle}));
 
     if os.path.exists(os.path.join(PNGDIR, m + '.hess.png')) :
         s = '<img src=' + os.path.join('..', 'data', 'png', m + '.hess.png');
         if mattribs['nvars'] > 600 :
             s += ' width=600';
         s += '>';
-        t.rows.append(HTML.TableRow(['<B>Sparsity Lag. Hessian:</B>', s], attribs={"style":rowstyle}));
+        t.rows.append(HTML.TableRow(['<span>Sparsity Lag. Hessian</span>', s], attribs={"style":rowstyle}));
             
     print >> page, t;
     
