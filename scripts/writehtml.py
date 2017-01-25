@@ -5,6 +5,7 @@ import os;
 import subprocess;
 import datetime;
 import sys;
+import shutil;
 try :
     import matplotlib;
 
@@ -64,8 +65,8 @@ def _htmlendbody() :
       <p>
         Website &copy; 2017 by <a href="http://www.zib.de">Zuse Institute Berlin</a>. All rights reserved.
       <a href="http://www.zib.de/en/imprint.html">Imprint</a>.<br /><br />
-      <!-- <a href="http://validator.w3.org/check/referer"><img class="logo" src="../valid-xhtml11.png" alt="Valid XHTML 1.1!" /></a>&nbsp; -->
-      <a href="http://jigsaw.w3.org/css-validator/check/referer"><img class="logo" src="../valid-css.png" alt="Valid CSS!" /></a>
+      <!-- <a href="http://validator.w3.org/check/referer"><img class="logo" src="valid-xhtml11.png" alt="Valid XHTML 1.1!" /></a>&nbsp; -->
+      <a href="http://jigsaw.w3.org/css-validator/check/referer"><img class="logo" src="valid-css.png" alt="Valid CSS!" /></a>
       </p>
     </div>
 
@@ -889,9 +890,9 @@ def _writestatistics(data) :
       <ul>
         <li> in <a href="../instancedata.csv">csv format</a>,
         </li>
-        <li> as <a href="../instancedata.xlsx">xlsx spreadsheet</a>, and
+        <li> as <a href="instancedata.xlsx">xlsx spreadsheet</a>, and
         </li>
-        <li> as <a href="../instancedata.ods">ods spreadsheet</a>.
+        <li> as <a href="instancedata.ods">ods spreadsheet</a>.
         </li>
       </ul>'''
 
@@ -1014,6 +1015,11 @@ def writehtml() :
     if not os.access(HTMLDIR, os.X_OK | os.W_OK) :
         raise BaseException('Cannot write into directory ' + HTMLDIR);
 
+    # copy all files static/
+    STATICDIR = os.path.join(metadata.BASEDIR, 'static');
+    for f in os.listdir(STATICDIR) :
+       shutil.copy(os.path.join(STATICDIR, f), HTMLDIR);
+
     # write pages for each model and point
     for m, mattribs in data.iteritems() :
         _writemodelpage(m, mattribs, bib);
@@ -1064,7 +1070,7 @@ def writehtml() :
         <li>July 19, 2015: A first beta version containing 410&nbsp;discrete instances and 138&nbsp;continuous instances is online (<a href="http://www.lamsade.dauphine.fr/QPlib2014/doku.php?id=beta">here</a>).
         </li>
         <li>July 17, 2015: Emiliano Traversi presents on the collection and initial filtering of QPLIB instances at ISMP
-        2015 in Pittsburgh (<a href="../ismp2015.pdf">slides</a>).
+        2015 in Pittsburgh (<a href="ismp2015.pdf">slides</a>).
         </li>
       </ul>''';
 
