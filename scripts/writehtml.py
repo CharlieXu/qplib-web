@@ -368,10 +368,10 @@ def _writeinstancepage(data) :
     instances = open(os.path.join(HTMLDIR, 'instances.html'), 'w');
     print >> instances, '<HTML>', _htmlheader("QPLIB Instance Listing"), _htmlstartbody();
 
-    print >> instances, '<link rel="stylesheet" type="text/css" href="../datatables/media/css/jquery.dataTables.css">'
-    print >> instances, '<script type="text/javascript" language="javascript" src="../datatables/media/js/jquery.js"></script>'
-    print >> instances, '<script type="text/javascript" language="javascript" src="../datatables/media/js/jquery.dataTables.js"></script>'
-    print >> instances, '<script type="text/javascript" language="javascript" src="../datatables/extensions/FixedHeader/js/dataTables.fixedHeader.js"></script>'
+    print >> instances, '<link rel="stylesheet" type="text/css" href="datatables/media/css/jquery.dataTables.css">'
+    print >> instances, '<script type="text/javascript" language="javascript" src="datatables/media/js/jquery.js"></script>'
+    print >> instances, '<script type="text/javascript" language="javascript" src="datatables/media/js/jquery.dataTables.js"></script>'
+    print >> instances, '<script type="text/javascript" language="javascript" src="datatables/extensions/FixedHeader/js/dataTables.fixedHeader.js"></script>'
     print >> instances, '<script type="text/javascript" language="javascript" class="init">'
     print >> instances, 'jQuery.fn.dataTableExt.oSort["numWithNull-asc"] = function(a,b) {'
     print >> instances, 'var x = parseInt(a);'
@@ -884,10 +884,15 @@ def writehtml() :
     if not os.access(HTMLDIR, os.X_OK | os.W_OK) :
         raise BaseException('Cannot write into directory ' + HTMLDIR);
 
-    # copy all files from static/
+    # copy all files and directories from static/
     STATICDIR = os.path.join(metadata.BASEDIR, 'static');
     for f in os.listdir(STATICDIR) :
-       shutil.copy(os.path.join(STATICDIR, f), HTMLDIR);
+       if os.path.isfile(os.path.join(STATICDIR, f)) :
+          shutil.copy(os.path.join(STATICDIR, f), HTMLDIR);
+       else :
+          if os.path.exists(os.path.join(HTMLDIR, f)) :
+             shutil.rmtree(os.path.join(HTMLDIR, f));
+          shutil.copytree(os.path.join(STATICDIR, f), os.path.join(HTMLDIR, f));
 
     # copy all files from data/{gms,lp,png}
     for d in ['gms', 'lp', 'png'] :
