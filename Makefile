@@ -9,8 +9,12 @@ CFLAGS = -g -O -Wall -I$(GAMSAPIDIR) "-DGAMSDIR=\"$(GAMSDIR)\"" -I$(SRCDIR)/xmnL
 LDFLAGS = -ldl -lpthread -lm -lpng
 LDFLAGS += -llapack
 
-CFLAGS += -DHAVE_CHOLMOD
-LDFLAGS += -lcholmod
+-include make.local
+
+ifeq ($(CHOLMOD),true)
+   CFLAGS += -DHAVE_CHOLMOD
+   LDFLAGS += -lcholmod
+endif
 
 OBJS = $(OBJDIR)/loadgms.o $(OBJDIR)/gevmcc.o $(OBJDIR)/gmomcc.o $(OBJDIR)/curvcheck.o $(OBJDIR)/sparsityplot.o $(OBJDIR)/convert.o
 

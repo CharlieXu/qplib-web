@@ -9,3 +9,7 @@ To build the QPLib instance listing:
 3. Run ```./scripts/convertinstances.sh``` to create .lp files.
 5. Run ```./scripts/writehtml.py``` to create HTML pages
 6. Run ```./scripts/makedist.sh``` to create a qplib.zip file.
+
+The code that checks instances for convexity can make use of CHOLMOD.
+If you have CHOLMOD available on your system, create a file make.local
+in the base directory with the line ```CHOLMOD = true```.
