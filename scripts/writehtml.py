@@ -757,7 +757,7 @@ def _writestatistics(data) :
         You can access the raw data:
       </p>
       <ul>
-        <li> in <a href="../instancedata.csv">csv format</a>,
+        <li> in <a href="instancedata.csv">csv format</a>,
         </li>
         <li> as <a href="instancedata.xlsx">xlsx spreadsheet</a>, and
         </li>
@@ -772,6 +772,9 @@ def _writestatistics(data) :
         return
 
     df = metadata.todataframe(data);
+
+    # create instancedata.csv
+    df.to_csv(os.path.join(HTMLDIR, 'instancedata.csv'));
 
     ninstances = len(df.index);
 
