@@ -880,10 +880,7 @@ def _saveplot(htmlout, name) :
 
 def _writestatistics(data) :
     htmlout = open(os.path.join(HTMLDIR, "statistics.html"), 'w');
-    print >> htmlout, '<HTML><HEAD>';
-    print >> htmlout, '<TITLE>QPLIB Statistics</TITLE>';
-    print >> htmlout, '</HEAD>'
-    print >> htmlout, '<BODY>';
+    print >> htmlout, '<HTML>', _htmlheader("QPLIB Statistics"), _htmlstartbody();
     print >> htmlout, '<H3>QPLIB Statistics</H3>';
 
     if not _havepandas :
@@ -984,7 +981,7 @@ def _writestatistics(data) :
 
     print >> htmlout, "</P>";
 
-    print >> htmlout, "</BODY></HTML>";
+    print >> htmlout, _htmlendbody(), "</HTML>";
     htmlout.close();
 
 def writehtml() :
