@@ -243,7 +243,7 @@ def _writemodelpage(m, mattribs, bib) :
     global objsense;
     objsense = 1.0 if 'objsense' not in mattribs or mattribs['objsense'] == "min" else -1.0;
 
-    t = HTML.Table(style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-collapse: collapse;", width="100%", border="0");
+    t = HTML.Table(style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-collapse: collapse;", width="100%", border="0", cellpadding=5);
     rowstyle = "border-top: 1px solid #BBBBBB; border-bottom: 1px solid #BBBBBB; border-collapse: collapse;"
 
     for a in INSTANCEATTRS :
