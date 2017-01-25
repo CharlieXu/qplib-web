@@ -85,7 +85,7 @@ def _refstohtml(refs) :
 def _formatstohtml(formats) :
     s = '';
     for f in sorted(formats) :
-        s += '<A href="../data/' + f + '/' + instance + '.' + f + '">' + f + "</A> ";
+        s += '<A href="' + f + '/' + instance + '.' + f + '">' + f + "</A> ";
     return s;
 
 def _pointstohtml(points) :
@@ -109,7 +109,7 @@ def _pointstohtml(points) :
             s += '</B>';
         s += ' <A href=' + instance + '.' + p + '.html>' + p + '</A> ( ';
         for f in sorted(pattribs['formats']) :
-            s += '<A href="../data/' + f + '/' + instance + '.' + p + '.' + f + '">' + f + "</A> ";
+            s += '<A href="' + f + '/' + instance + '.' + p + '.' + f + '">' + f + "</A> ";
         s += ') ';
         if 'infeasibility' in pattribs :
             s += ' <FONT SIZE=-1>(infeas: {0:.1g})'.format(pattribs['infeasibility']) + '</FONT>';
@@ -287,7 +287,7 @@ def _writemodelpage(m, mattribs, bib) :
         print >> page, '<PRE>'
         #with open(os.path.join(HTMLDIR, '..', 'data', 'gms', m + '.gms')) as f:
         #    print >> page, f.read();
-        print >> page, '<!--#include virtual="../data/gms/' + m + '.gms" -->';
+        print >> page, '<!--#include virtual="gms/' + m + '.gms" -->';
         print >> page, '</PRE>';
 
     
@@ -297,7 +297,7 @@ def _writemodelpage(m, mattribs, bib) :
 def _pointformatstohtml(formats) :
     s = '';
     for f in sorted(formats) :
-        s += '<A href="../data/' + f + '/' + instance + '.' + point + '.' + f + '">' + f + "</A> ";
+        s += '<A href="' + f + '/' + instance + '.' + point + '.' + f + '">' + f + "</A> ";
     return s;
 
 # (attribute keys, string to print for it, conversion function for value)
@@ -357,7 +357,7 @@ def _writepointpage(m, p, pattribs) :
         print >> page, '<HR><PRE>'
         #with open(os.path.join(HTMLDIR, '..', 'data', 'sol', m + '.' + p + '.sol')) as f:
         #    print >> page, f.read();
-        print >> page, '<!--#include virtual="../data/sol/' + m + '.' + p + '.sol" -->';
+        print >> page, '<!--#include virtual="sol/' + m + '.' + p + '.sol" -->';
         print >> page, '</PRE>';
 
     print >> page, '</BODY></HTML>';
@@ -445,7 +445,7 @@ def _writeinstancepage(data) :
         
         formats = '';
         for f in sorted(mattribs['formats']) :
-            formats += '<A href="../data/' + f + '/' + m + '.' + f + '">' + f + "</A> ";
+            formats += '<A href="' + f + '/' + m + '.' + f + '">' + f + "</A> ";
         row.append(HTML.TableCell(formats));
 
         def inttostr(x) :
@@ -884,10 +884,16 @@ def writehtml() :
     if not os.access(HTMLDIR, os.X_OK | os.W_OK) :
         raise BaseException('Cannot write into directory ' + HTMLDIR);
 
-    # copy all files static/
+    # copy all files from static/
     STATICDIR = os.path.join(metadata.BASEDIR, 'static');
     for f in os.listdir(STATICDIR) :
        shutil.copy(os.path.join(STATICDIR, f), HTMLDIR);
+
+    # copy all files from data/{gms,lp,png}
+    for d in ['gms', 'lp', 'png'] :
+       if os.path.exists(os.path.join(HTMLDIR, d)) :
+          shutil.rmtree(os.path.join(HTMLDIR, d));
+       shutil.copytree(os.path.join(metadata.DATADIR, d), os.path.join(HTMLDIR, d));
 
     # write pages for each model and point
     for m, mattribs in data.iteritems() :
