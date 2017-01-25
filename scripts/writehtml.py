@@ -757,24 +757,27 @@ def _writestatistics(data) :
         The following diagrams provide aggregated statistics on sources and characteristics of the instances in QPLIB.
         You can access the raw data:
       </p>
-      <ul>
+      <ul>''';
+    if _havepandas :
+        print >> htmlout, '''
         <li> in <a href="instancedata.csv">csv format</a>,
-        </li>
+        </li>''';
+    print >> htmlout, '''
         <li> as <a href="instancedata.xlsx">xlsx spreadsheet</a>, and
         </li>
         <li> as <a href="instancedata.ods">ods spreadsheet</a>.
         </li>
-      </ul>'''
-
-    # create instancedata.csv
-    df = metadata.todataframe(data);
-    df.to_csv(os.path.join(HTMLDIR, 'instancedata.csv'));
+      </ul>''';
 
     if not _havepandas :
         print >> htmlout, 'Python PANDAS not available, cannot generate statistics.';
         print >> htmlout, "</BODY></HTML>";
         htmlout.close();
         return
+
+    # create instancedata.csv
+    df = metadata.todataframe(data);
+    df.to_csv(os.path.join(HTMLDIR, 'instancedata.csv'));
 
     ninstances = len(df.index);
 
