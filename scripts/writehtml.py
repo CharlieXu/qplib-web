@@ -881,7 +881,19 @@ def _saveplot(htmlout, name) :
 def _writestatistics(data) :
     htmlout = open(os.path.join(HTMLDIR, "statistics.html"), 'w');
     print >> htmlout, '<HTML>', _htmlheader("QPLIB Statistics"), _htmlstartbody();
-    print >> htmlout, '<H3>QPLIB Statistics</H3>';
+
+    print >> htmlout, '''<p>
+        The following diagrams provide aggregated statistics on sources and characteristics of the instances in QPLIB.
+        You can access the raw data:
+      </p>
+      <ul>
+        <li> in <a href="../instancedata.csv">csv format</a>,
+        </li>
+        <li> as <a href="../instancedata.xlsx">xlsx spreadsheet</a>, and
+        </li>
+        <li> as <a href="../instancedata.ods">ods spreadsheet</a>.
+        </li>
+      </ul>'''
 
     if not _havepandas :
         print >> htmlout, 'Python PANDAS not available, cannot generate statistics.';
@@ -893,6 +905,7 @@ def _writestatistics(data) :
 
     ninstances = len(df.index);
 
+    print >> htmlout, "<h3>Problem types</h3>";
     print >> htmlout, "<P>";
     plt.clf();
     ptypecounts = df['probtype'].value_counts();
@@ -904,6 +917,40 @@ def _writestatistics(data) :
     _saveplot(htmlout, 'probtype');
     print >> htmlout, "</P>";
 
+    print >> htmlout, "<h3>Variable types</h3>";
+    print >> htmlout, "<P>";
+    discrtypes = ['contvars', 'binvars', 'intvars'];
+    label = ['Continuous', 'Binary', 'Integer'];
+    plt.clf();
+    width = 0.8;
+    ind = np.arange(len(discrtypes)) + 0.5;
+    p1 = plt.bar(ind, [(df['n' + x] > 0).sum() for x in discrtypes], width);
+    plt.ylabel('Number of instances')
+    plt.title('Variable Types');
+    plt.xticks(ind+width/2., label);
+    #plt.legend( (p1[0], p2[0]), ('GLOBALLib + MINLPLib 1', 'new in MINLPLib 2') )
+    plt.xlim(0.1, ind[-1] + 1.0);
+    plt.ylim(0, len(df.index));
+    _saveplot(htmlout, "vartypes");
+    print >> htmlout, "</P>";
+
+    print >> htmlout, "<h3>Convexity</h3>";
+    print >> htmlout, "<P>";
+    plt.clf();
+    convex = df['convex'].sum();
+    nonconvex = (df['convex'] == False).sum();
+    all = len(df.index) + 0.0;
+    unknown = all - df['convex'].count();
+    plt.pie([convex if not np.isnan(convex) else 0, nonconvex, unknown],
+            colors = ['b', 'r', 'c'],
+            labels = ['convex\n{0:.0f}%'.format(100.0 * convex / all), 'nonconvex\n{0:.0f}%'.format(100.0 * nonconvex / all), 'undecided\n{0:.0f}%'.format(100.0 * unknown / all)]
+            );
+    plt.gca().set_aspect(1);
+    plt.title('instances convexity');
+    _saveplot(htmlout, 'convexity');
+    print >> htmlout, "</P>";
+
+    print >> htmlout, "<h3>Dimensions</h3>";
     print >> htmlout, "<P>";
     plt.clf();
     plt.hist(df['nvars'].values, bins = np.logspace(0, np.log10(df['nvars'].max()), 15));
@@ -922,12 +969,10 @@ def _writestatistics(data) :
     _saveplot(htmlout, 'ncons');
     print >> htmlout, "</P>";
 
+    print >> htmlout, "<h3>Density</h3>";
     print >> htmlout, "<P>";
-    print >> htmlout, "Scatter plots: Area of bubble corresponds to instance (nonlinear) density. ", "<BR>";
-    print >> htmlout, "<FONT SIZE=-2>Density in left scatter plot is (#nonzeros in objective and jacobian) / (#vars * (#cons + 1)).", "<BR>";
-    print >> htmlout, "Density in right scatter plot is (#nonlinear nonzeros in objective and jacobian) / (#nonlinear vars * (#nonlinear cons + 1 if objective is nonlinear)).", "<BR>";
-    print >> htmlout, "Densities below 0.05 are shown as 0.05.";
-    print >> htmlout, "</FONT><BR>"
+    print >> htmlout, "In these scatter plots, each bubble represents an instance and the area of the bubble corresponds to (nonlinear) density of the instance:", "<BR>";
+
     plt.clf();
     #print df[['nvars', 'ncons', 'nz', 'density']].sort('density').to_string();
     plt.scatter(df['nvars'], df['ncons']+1, s = 200 * df['density'].clip_lower(0.05), alpha = 0.5, label = None);
@@ -946,39 +991,12 @@ def _writestatistics(data) :
     plt.ylabel('Number of nonlinear constraints');
     plt.title('instances scatter plot (nonlinear parts only)');
     _saveplot(htmlout, 'sizenlscatter');
-    print >> htmlout, "</P>";
 
-    print >> htmlout, "<P>";
-    plt.clf();
-    convex = df['convex'].sum();
-    nonconvex = (df['convex'] == False).sum();
-    all = len(df.index) + 0.0;
-    unknown = all - df['convex'].count();
-    plt.pie([convex if not np.isnan(convex) else 0, nonconvex, unknown],
-            colors = ['b', 'r', 'c'],
-            labels = ['convex\n{0:.0f}%'.format(100.0 * convex / all), 'nonconvex\n{0:.0f}%'.format(100.0 * nonconvex / all), 'undecided\n{0:.0f}%'.format(100.0 * unknown / all)]
-            );
-    plt.gca().set_aspect(1);
-    plt.title('instances convexity');
-    _saveplot(htmlout, 'convexity');
-    print >> htmlout, "</P>";
-
-    print >> htmlout, "<P>";
-
-    discrtypes = ['contvars', 'binvars', 'intvars'];
-    label = ['Continuous', 'Binary', 'Integer'];
-    plt.clf();
-    width = 0.8;
-    ind = np.arange(len(discrtypes)) + 0.5;
-    p1 = plt.bar(ind, [(df['n' + x] > 0).sum() for x in discrtypes], width);
-    plt.ylabel('Number of instances')
-    plt.title('Variable Types');
-    plt.xticks(ind+width/2., label);
-    #plt.legend( (p1[0], p2[0]), ('GLOBALLib + MINLPLib 1', 'new in MINLPLib 2') )
-    plt.xlim(0.1, ind[-1] + 1.0);
-    plt.ylim(0, len(df.index));
-    _saveplot(htmlout, "vartypes");
-
+    print >> htmlout, "<UL>";
+    print >> htmlout, "<LI>The density in left scatter plot is defined as (#nonzeros in objective and jacobian) / (#vars * (#cons + 1)).", "</LI>";
+    print >> htmlout, "<LI> The density in right scatter plot is defined as (#nonlinear nonzeros in objective and jacobian) / (#nonlinear vars * (#nonlinear cons + 1 if objective is nonlinear)).", "</LI>";
+    print >> htmlout, "<LI> Densities below 0.05 are shown as 0.05.", "</LI>";
+    print >> htmlout, "</UL>"
     print >> htmlout, "</P>";
 
     print >> htmlout, _htmlendbody(), "</HTML>";
