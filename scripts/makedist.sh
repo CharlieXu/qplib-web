@@ -5,11 +5,9 @@ SCRIPTDIR=`cd $SCRIPTDIR ; pwd`
 
 cd $SCRIPTDIR/..
 
-rm -f qplib.zip
+rm -f html/qplib.zip
 ln -s . qplib
 
-zip -r qplib.zip qplib/data/{meta,gms,lp} \
-   qplib/html \
-   qplib/scripts/{query.py,metadata.py}
+zip -r html/qplib.zip qplib/html
     
 rm qplib

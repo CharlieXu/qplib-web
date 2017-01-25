@@ -55,7 +55,7 @@ def _htmlstartbody() :
       <a href="index.html">Home</a> //
       <a href="instances.html">browse instances</a> //
       <a href="statistics.html">view statistics</a> //
-      <a href="../qplib.zip">download QPLIB archive (<!--#fsize virtual="../qplib.zip" -->)</a>
+      <a href="qplib.zip">download QPLIB archive (<!--#fsize virtual="qplib.zip" -->)</a>
 
       <hr />
     ''';
