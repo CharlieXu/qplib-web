@@ -765,16 +765,15 @@ def _writestatistics(data) :
         </li>
       </ul>'''
 
+    # create instancedata.csv
+    df = metadata.todataframe(data);
+    df.to_csv(os.path.join(HTMLDIR, 'instancedata.csv'));
+
     if not _havepandas :
         print >> htmlout, 'Python PANDAS not available, cannot generate statistics.';
         print >> htmlout, "</BODY></HTML>";
         htmlout.close();
         return
-
-    df = metadata.todataframe(data);
-
-    # create instancedata.csv
-    df.to_csv(os.path.join(HTMLDIR, 'instancedata.csv'));
 
     ninstances = len(df.index);
 
