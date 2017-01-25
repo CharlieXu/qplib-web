@@ -284,6 +284,7 @@ def _writemodelpage(m, mattribs, bib) :
     #    print >> page, '</P>';
     
     if 'gms' in mattribs['formats'] :
+        print >> page, '<H3>' + m + '.gms</H3>';
         print >> page, '<PRE>'
         #with open(os.path.join(HTMLDIR, '..', 'data', 'gms', m + '.gms')) as f:
         #    print >> page, f.read();
