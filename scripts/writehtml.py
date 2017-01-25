@@ -255,7 +255,7 @@ def _writemodelpage(m, mattribs, bib) :
             t.rows.append(HTML.TableRow([title, a[2](mattribs[a[0]])], attribs={"style":rowstyle}));
             
     if os.path.exists(os.path.join(PNGDIR, m + '.jac.png')) :
-        s = '<img src=' + os.path.join('..', 'data', 'png', m + '.jac.png');
+        s = '<img src=' + os.path.join('png', m + '.jac.png');
         if mattribs['nvars'] > 600 :
             s += ' width=600';
         s += ' title="black = linear, red = nonlinear"';
@@ -263,7 +263,7 @@ def _writemodelpage(m, mattribs, bib) :
         t.rows.append(HTML.TableRow(['<span title="black = linear, red = nonlinear">Sparsity Jacobian</span>', s], attribs={"style":rowstyle}));
 
     if os.path.exists(os.path.join(PNGDIR, m + '.hess.png')) :
-        s = '<img src=' + os.path.join('..', 'data', 'png', m + '.hess.png');
+        s = '<img src=' + os.path.join('png', m + '.hess.png');
         if mattribs['nvars'] > 600 :
             s += ' width=600';
         s += '>';
@@ -961,15 +961,15 @@ def writehtml() :
         The following researchers have been involved in the creation of QPLIB:
       </p>
       <ul>
-        <li> <a href="http://www.ieor.berkeley.edu/~atamturk/" title="http://www.ieor.berkeley.edu/~atamturk/">Alper Atamt&uuml;rk</a>,
+        <li> <a href="http://www.ieor.berkeley.edu/~atamturk/" title="http://www.ieor.berkeley.edu/~atamturk/">Alper Atamt&uuml;rk</a>, University of California, Berkeley
         </li>
         <li> <a href="https://plus.google.com/+PietroBelotti" title="https://plus.google.com/+PietroBelotti">Pietro Belotti</a>, Xpress-Optimizer team, FICO
         </li>
-        <li> <a href="http://pageperso.lif.univ-mrs.fr/~pierre.bonami/" title="http://pageperso.lif.univ-mrs.fr/~pierre.bonami/">Pierre Bonami</a>
+        <li> <a href="http://pageperso.lif.univ-mrs.fr/~pierre.bonami/" title="http://pageperso.lif.univ-mrs.fr/~pierre.bonami/">Pierre Bonami</a>, IBM CPLEX
         </li>
-        <li> <a href="http://tippie.uiowa.edu/sburer" title="http://tippie.uiowa.edu/sburer">Samuel Burer</a>
+        <li> <a href="http://tippie.uiowa.edu/sburer" title="http://tippie.uiowa.edu/sburer">Samuel Burer</a>, University of Iowa
         </li>
-        <li> <a href="http://cedric.cnam.fr/~elloumi" title="http://cedric.cnam.fr/~elloumi">Sourour Elloumi</a>
+        <li> <a href="http://cedric.cnam.fr/~elloumi" title="http://cedric.cnam.fr/~elloumi">Sourour Elloumi</a>, Ecole Nationale Supérieure d'Informatique pour l'Industrie et l'Entreprise
         </li>
         <li> <a href="http://www.di.unipi.it/~frangio/" title="http://www.di.unipi.it/~frangio/">Antonio Frangioni</a>, Dipartimento di Informatica, Università di Pisa
         </li>
@@ -989,7 +989,7 @@ def writehtml() :
         </li>
         <li> <a href="http://www.cheme.cmu.edu/people/faculty/ns1b.htm" title="http://www.cheme.cmu.edu/people/faculty/ns1b.htm">Nick Sahinidis</a>, Chemical Engineering, Carnegie Mellon University
         </li>
-        <li> <a href="http://lipn.univ-paris13.fr/~roupin/index.php#contact" title="http://lipn.univ-paris13.fr/~roupin/index.php#contact">Frederic Roupin</a>
+        <li> <a href="http://lipn.univ-paris13.fr/~roupin/index.php#contact" title="http://lipn.univ-paris13.fr/~roupin/index.php#contact">Frederic Roupin</a>, Institut Galilée
         </li>
         <li> <a href="http://lipn.univ-paris13.fr/~traversi/" title="http://lipn.univ-paris13.fr/~traversi/">Emiliano Traversi</a>, LIPN, Université de Paris 13
         </li>

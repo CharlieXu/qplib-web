@@ -14,6 +14,4 @@ The code that checks instances for convexity can make use of CHOLMOD.
 If you have CHOLMOD available on your system, create a file make.local
 in the base directory with the line ```CHOLMOD = true```.
 
-To publish the website, copy the following directories to your server:
-- html/
-- data/png/
+To publish the website, simply copy the html/ directory to your server.
