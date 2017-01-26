@@ -361,8 +361,8 @@ RETURN instanceCheck(
 
             if( c == -1 )
             {
-                printf("NOBJQUADNZ        = 0");
-                printf("NOBJQUADDIAGNZ    = 0");
+                printf("NOBJQUADNZ        = 0\n");
+                printf("NOBJQUADDIAGNZ    = 0\n");
             }
             break;
 
