@@ -3,6 +3,13 @@
 
 #include "def.h"
 
+typedef struct
+{
+   int nnegeigvals;
+   int nposeigvals;
+   int nzeroeigvals;
+} eigvalcount;
+
 extern
 CURVATURE curvNegate(
    CURVATURE curv
@@ -16,12 +23,13 @@ void curvAugment(
 
 extern
 RETURN curvQuad(
-   struct gmoRec* gmo,
+   int qdim,
    int qnz,
    int* qcol,
    int* qrow,
    double* qcoef,
-   CURVATURE* curv
+   CURVATURE* curv,
+   eigvalcount* evcount
 );
 
 extern

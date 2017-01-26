@@ -172,6 +172,8 @@ INSTANCEATTRS = [
     ('objsense', 'Objective Sense', str),
     ('objtype', 'Objective type', str),
     ('objcurvature', 'Objective curvature', str),
+    ('nobjquadnegev', ['#Negative eigenvalues in objective matrix', 'eigenvalues below -1e-9 in coefficient matrix of quadratic part of objective'], int),
+    ('nobjquadposev', ['#Positive eigenvalues in objective matrix', 'eigenvalues above  1e-9 in coefficient matrix of quadratic part of objective'], int),
     ('nobjnz', '#Nonzeros in Objective', str),
     ('nobjnlnz', '#Nonlinear Nonzeros in Objective', str),
     ('nobjquadnz', ['#Quadratic Terms in Objective', 'number of square and bilinear terms'], str),

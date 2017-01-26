@@ -66,6 +66,8 @@ INSTANCEPROPATTRS = {
     'nlaghessiandiagnz' : int,
     'objsense' : str,
     'objcurvature' : str,
+    'nobjquadnegev', int,
+    'nobjquadposev', int,
     'conscurvature' : str,
     'nconvexnlcons' : int,
     'nconcavenlcons' : int,

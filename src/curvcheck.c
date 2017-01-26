@@ -301,12 +301,13 @@ RETURN curvSample(
 }
 
 RETURN curvQuad(
-   gmoHandle_t gmo,
+   int qdim,
    int qnz,
    int* qcol,
    int* qrow,
    double* qcoef,
-   CURVATURE* curv
+   CURVATURE* curv,
+   eigvalcount* evcount
    )
 {
    int* varmap = NULL;
@@ -322,8 +323,8 @@ RETURN curvQuad(
    assert(qcoef != NULL);
    assert(curv != NULL);
 
-   varmap = (int*)malloc(gmoN(gmo) * sizeof(int));
-   for( i = 0; i < gmoN(gmo); ++i )
+   varmap = (int*)malloc(qdim * sizeof(int));
+   for( i = 0; i < qdim; ++i )
       varmap[i] = -1;
 
    *curv = CURVATURE_UNKNOWN;
@@ -346,17 +347,22 @@ RETURN curvQuad(
          else if( qcoef[i] < -1e-9 )
             curvAugment(curv, CURVATURE_NONCONVEX);
 
-         if( curvdecided[*curv] )
+         /* if curvature was all we needed, then can stop here */
+         if( curvdecided[*curv] && evcount == NULL )
             goto TERMINATE;
       }
    }
 
-   curvSample(dim, qnz, qcol, qrow, qcoef, curv);
-   if( curvdecided[*curv] )
-      goto TERMINATE;
+   if( evcount == NULL )
+   {
+      /* try with some sampling, if we don't have to compute eigenvalues */
+      curvSample(dim, qnz, qcol, qrow, qcoef, curv);
+      if( curvdecided[*curv] )
+         goto TERMINATE;
+   }
 
 #ifdef HAVE_CHOLMOD
-   if( dim > 10 )
+   if( dim > 10 && evcount == NULL )
    {
       cholesky(qnz, qcol, qrow, qcoef, dim, curv);
       /* it seems that CHOLMOD sometimes concludes a matrix as not positive-semidefinite,
@@ -415,6 +421,13 @@ RETURN curvQuad(
       *curv = CURVATURE_LINEAR;
    else
       *curv = CURVATURE_INDEFINITE;
+
+   if( evcount != NULL )
+   {
+      evcount->nposeigvals = npos;
+      evcount->nnegeigvals = nneg;
+      evcount->nzeroeigvals = qdim - npos - nneg;
+   }
 
 TERMINATE:
    free(varmap);
@@ -490,7 +503,7 @@ RETURN curvHessian(
 
    if( numerr == 0 )
    {
-      curvQuad(gmo, nz, colidx, rowidx, val, curv);
+      curvQuad(gmoN(gmo), nz, colidx, rowidx, val, curv, NULL);
 
       switch( *curv )
       {

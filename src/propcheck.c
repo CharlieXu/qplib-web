@@ -370,6 +370,8 @@ RETURN instanceCheck(
          {
             if( c == -1 )
             {
+               eigvalcount evcount;
+
                qnz = gmoObjQNZ(gmo);
                assert(qnz <= maxqnz);
                (void) gmoGetObjQ(gmo, qcol, qrow, qcoef);
@@ -378,8 +380,13 @@ RETURN instanceCheck(
                for( i = 0; i < qnz; ++i )
                   if( qcol[i] == qrow[i] )
                      ++diagnz;
-               printf("NOBJQUADNZ        = %d", qnz);
-               printf("NOBJQUADDIAGNZ    = %d", diagnz);
+               printf("NOBJQUADNZ        = %d\n", qnz);
+               printf("NOBJQUADDIAGNZ    = %d\n", diagnz);
+
+               CHECK( curvQuad(gmoN(gmo), qnz, qcol, qrow, qcoef, &curv, &evcount) );
+
+               printf("NOBJQUADNEGEV     = %d\n", evcount.nnegeigvals);
+               printf("NOBJQUADPOSEV     = %d\n", evcount.nposeigvals);
             }
             else
             {
@@ -391,9 +398,9 @@ RETURN instanceCheck(
                for( i = 0; i < qnz && qcol[i] != qrow[i]; ++i );
                if( i == qnz )
                   ++ndiagquadcons;
-            }
 
-            CHECK( curvQuad(gmo, qnz, qcol, qrow, qcoef, &curv) );
+               CHECK( curvQuad(gmoN(gmo), qnz, qcol, qrow, qcoef, &curv, NULL) );
+            }
 
             functype = FUNCTYPE_QUADRATIC;
 
