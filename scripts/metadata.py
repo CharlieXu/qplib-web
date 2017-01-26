@@ -66,8 +66,8 @@ INSTANCEPROPATTRS = {
     'nlaghessiandiagnz' : int,
     'objsense' : str,
     'objcurvature' : str,
-    'nobjquadnegev', int,
-    'nobjquadposev', int,
+    'nobjquadnegev' : int,
+    'nobjquadposev' : int,
     'conscurvature' : str,
     'nconvexnlcons' : int,
     'nconcavenlcons' : int,
@@ -544,10 +544,13 @@ def getprobtype(instanceattribs) :
     objtype = instanceattribs['objtype'] if 'objtype' in instanceattribs else 'linear';
     objcurv = instanceattribs['objcurvature'] if 'objcurvature' in instanceattribs else 'unknown';
     objsense = instanceattribs['objsense'] if 'objsense' in instanceattribs else 'min';
+    nobjquadnz = instanceattribs['nobjquadnz'] if 'nobjquadnz' in instanceattribs else 0;
+    nobjquaddiagnz = instanceattribs['nobjquaddiagnz'] if 'nobjquaddiagnz' in instanceattribs else 0;
 
     ncons = instanceattribs['ncons'] if 'ncons' in instanceattribs else 0;
     nlincons = instanceattribs['nlincons'] if 'nlincons' in instanceattribs else 0;
     nquadcons = instanceattribs['nquadcons'] if 'nquadcons' in instanceattribs else 0;
+    ndiagquadcons = instanceattribs['ndiagquadcons'] if 'ndiagquadcons' in instanceattribs else 0;
     conscurv = instanceattribs['conscurvature'] if 'conscurvature' in instanceattribs else 'unknown';
 
     nlaghessiannz = instanceattribs['nlaghessiannz'] if 'nlaghessiannz' in instanceattribs else 0;
@@ -559,9 +562,7 @@ def getprobtype(instanceattribs) :
     if objtype == 'linear' :
        s += 'L';
     elif (objcurv == 'convex' and objsense == 'min') or (objcurv == 'concave' and objsense == 'max') :
-       # if Hessian of Lagrangian has only diagonal entries, then quadratic matrix of objective is diagonal
-       # TODO if some constraints are quadratic non-diagonal, then objective could still be diagonal
-       if nlaghessiannz == nlaghessiandiagnz :
+       if nobjquadnz == nobjquaddiagnz :
           s += 'D';
        else :
           s += 'C';
@@ -590,9 +591,7 @@ def getprobtype(instanceattribs) :
     elif nlincons == ncons :
        s += 'L';
     elif conscurv == 'convex' :
-       # if Hessian of Lagrangian has only diagonal entries, then all quadratic matrices are diagonal
-       # TODO if objective is quadratic non-diagonal, then constraints could still be diagonal
-       if nlaghessiannz == nlaghessiandiagnz :
+       if nquadcons == ndiagquadcons :
           s += 'D';
        else :
           s += 'C';
