@@ -956,10 +956,14 @@ def writehtml() :
 
     print >> index, '''      <h3>History and updates</h3>
       <ul>
+        <li>February 3, 2017: The finalized instance selection for QPLIB&nbsp;2014 goes online.
+        </li>
         <li>July 19, 2015: A first beta version containing 410&nbsp;discrete instances and 138&nbsp;continuous instances is online (<a href="http://www.lamsade.dauphine.fr/QPlib2014/doku.php?id=beta">here</a>).
         </li>
         <li>July 17, 2015: Emiliano Traversi presents on the collection and initial filtering of QPLIB instances at ISMP
         2015 in Pittsburgh (<a href="ismp2015.pdf">slides</a>).
+        </li>
+        <li>January 21, 2014: First call for instances is out on dmanet.  Until 2015, 8,164&nbsp;instances are submitted.
         </li>
       </ul>''';
 
@@ -969,15 +973,7 @@ def writehtml() :
         The following researchers have been involved in the creation of QPLIB:
       </p>
       <ul>
-        <li> <a href="http://www.ieor.berkeley.edu/~atamturk/" title="http://www.ieor.berkeley.edu/~atamturk/">Alper Atamt&uuml;rk</a>, University of California, Berkeley
-        </li>
         <li> <a href="https://plus.google.com/+PietroBelotti" title="https://plus.google.com/+PietroBelotti">Pietro Belotti</a>, Xpress-Optimizer team, FICO
-        </li>
-        <li> <a href="http://pageperso.lif.univ-mrs.fr/~pierre.bonami/" title="http://pageperso.lif.univ-mrs.fr/~pierre.bonami/">Pierre Bonami</a>, IBM CPLEX
-        </li>
-        <li> <a href="http://tippie.uiowa.edu/sburer" title="http://tippie.uiowa.edu/sburer">Samuel Burer</a>, University of Iowa
-        </li>
-        <li> <a href="http://cedric.cnam.fr/~elloumi" title="http://cedric.cnam.fr/~elloumi">Sourour Elloumi</a>, Ecole Nationale Supérieure d'Informatique pour l'Industrie et l'Entreprise
         </li>
         <li> <a href="http://www.di.unipi.it/~frangio/" title="http://www.di.unipi.it/~frangio/">Antonio Frangioni</a>, Dipartimento di Informatica, Università di Pisa
         </li>
@@ -997,9 +993,9 @@ def writehtml() :
         </li>
         <li> <a href="http://www.cheme.cmu.edu/people/faculty/ns1b.htm" title="http://www.cheme.cmu.edu/people/faculty/ns1b.htm">Nick Sahinidis</a>, Chemical Engineering, Carnegie Mellon University
         </li>
-        <li> <a href="http://lipn.univ-paris13.fr/~roupin/index.php#contact" title="http://lipn.univ-paris13.fr/~roupin/index.php#contact">Frederic Roupin</a>, Institut Galilée
-        </li>
         <li> <a href="http://lipn.univ-paris13.fr/~traversi/" title="http://lipn.univ-paris13.fr/~traversi/">Emiliano Traversi</a>, LIPN, Université de Paris 13
+        </li>
+        <li> <a href="http://www.gams.com/~stefan/" title="http://www.gams.com/~stefan/">Stefan Vigerske</a>, GAMS Software GmbH
         </li>
         <li> <a href="http://www.uni-klu.ac.at/~anwiegel/" title="http://www.uni-klu.ac.at/~anwiegel/">Angelika Wiegele</a>, Institut f&uuml;r Mathematik, Alpen-Adria-Universit&auml;t Klagenfurt
         </li>
