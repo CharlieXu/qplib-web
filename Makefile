@@ -7,7 +7,9 @@ GAMSAPIDIR=$(GAMSDIR)/apifiles/C/api
 
 CFLAGS = -g -O -Wall -I$(GAMSAPIDIR) "-DGAMSDIR=\"$(GAMSDIR)\"" -I$(SRCDIR)/xmnLib
 LDFLAGS = -ldl -lpthread -lm -lpng
-LDFLAGS += -llapack
+# use MKL from GAMS for eigenvalues
+LDFLAGS += -L$(GAMSDIR) -lmkl_core -lmkl_intel_lp64 -lmkl_gnu_thread -Wl,-rpath,$(GAMSDIR)
+#LDFLAGS += -llapack
 
 -include make.local
 
