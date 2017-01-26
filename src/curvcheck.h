@@ -7,7 +7,6 @@ typedef struct
 {
    int nnegeigvals;
    int nposeigvals;
-   int nzeroeigvals;
 } eigvalcount;
 
 extern

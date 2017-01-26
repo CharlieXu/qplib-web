@@ -330,6 +330,8 @@ RETURN curvQuad(
    *curv = CURVATURE_UNKNOWN;
 
    dim = 0;
+   npos = 0;
+   nneg = 0;
    for( i = 0; i < qnz; ++i )
    {
       if( varmap[qcol[i]] == -1 )
@@ -343,14 +345,36 @@ RETURN curvQuad(
       {
          /* quick check: positive (negative) elements on diagonal prohibit concavity (convexity, resp) */
          if( qcoef[i] > 1e-9 )
+         {
             curvAugment(curv, CURVATURE_NONCONCAVE);
+            ++npos;
+         }
          else if( qcoef[i] < -1e-9 )
+         {
             curvAugment(curv, CURVATURE_NONCONVEX);
+            ++nneg;
+         }
 
          /* if curvature was all we needed, then can stop here */
          if( curvdecided[*curv] && evcount == NULL )
             goto TERMINATE;
       }
+   }
+
+   if( qnz == npos + nneg && evcount != NULL )
+   {
+      /* if matrix is diagonal, then we can decide on curvature and count on eigenvalues */
+      if( *curv == CURVATURE_NONCONCAVE )
+         *curv = CURVATURE_CONVEX;
+      else if( *curv == CURVATURE_NONCONVEX )
+         *curv = CURVATURE_CONCAVE;
+      assert(curvdecided[*curv]);  /* otherwise dim=0... */
+
+      evcount->nposeigvals = npos;
+      evcount->nnegeigvals = nneg;
+
+      goto TERMINATE;
+
    }
 
    if( evcount == NULL )
@@ -426,7 +450,6 @@ RETURN curvQuad(
    {
       evcount->nposeigvals = npos;
       evcount->nnegeigvals = nneg;
-      evcount->nzeroeigvals = qdim - npos - nneg;
    }
 
 TERMINATE:
