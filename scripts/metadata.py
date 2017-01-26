@@ -57,6 +57,8 @@ INSTANCEPROPATTRS = {
     'nloperands' : lambda x: set(x.split()),
     'nobjnz' : int,
     'nobjnlnz' : int,
+    'nobjquadnz' : int,
+    'nobjquaddiagnz' : int,
     'njacobiannz' : int,
     'njacobiannlnz' : int,
     'nlaghessiannz' : int,

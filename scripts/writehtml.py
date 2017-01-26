@@ -174,6 +174,8 @@ INSTANCEATTRS = [
     ('objcurvature', 'Objective curvature', str),
     ('nobjnz', '#Nonzeros in Objective', str),
     ('nobjnlnz', '#Nonlinear Nonzeros in Objective', str),
+    ('nobjquadnz', ['#Quadratic Terms in Objective', 'number of square and bilinear terms'], str),
+    ('nobjquaddiagnz', '#Square Terms in Objective', str),
     ('ncons', '#Constraints', str),
     ('nlincons', '#Linear Constraints', str),
     ('nquadcons', '#Quadratic Constraints', str),

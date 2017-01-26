@@ -356,6 +356,12 @@ RETURN instanceCheck(
             curv = CURVATURE_LINEAR;
             /* cannot easily check for #nonzeros in a single row, but constant equations are usually filtered out by GAMS anyway */
             functype = (c >= 0 || gmoObjNZ(gmo) > 0) ? FUNCTYPE_LINEAR : FUNCTYPE_CONSTANT;
+
+            if( c == -1 )
+            {
+                printf("NOBJQUADNZ        = 0");
+                printf("NOBJQUADDIAGNZ    = 0");
+            }
             break;
 
          case gmoorder_Q :
@@ -365,6 +371,13 @@ RETURN instanceCheck(
                qnz = gmoObjQNZ(gmo);
                assert(qnz <= maxqnz);
                (void) gmoGetObjQ(gmo, qcol, qrow, qcoef);
+
+               int diagnz = 0;
+               for( i = 0; i < qnz; ++i )
+                  if( qcol[i] == qrow[i] )
+                     ++diagnz;
+               printf("NOBJQUADNZ        = %d", qnz);
+               printf("NOBJQUADDIAGNZ    = %d", diagnz);
             }
             else
             {
