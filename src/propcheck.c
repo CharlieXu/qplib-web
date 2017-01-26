@@ -227,6 +227,7 @@ RETURN instanceCheck(
    int nconvexcons;
    int nconcavecons;
    int nindefinitecons;
+   int ndiagquadcons;
 
    char sparsityfile[GMS_SSSIZE + 10];
 
@@ -348,6 +349,7 @@ RETURN instanceCheck(
    nconvexcons = 0;
    nconcavecons = 0;
    nindefinitecons = 0;
+   ndiagquadcons = 0;
    for( c = -1; c < gmoM(gmo); ++c )
    {
       switch( c == -1 ? gmoGetObjOrder(gmo) : gmoGetEquOrderOne(gmo, c) )
@@ -384,6 +386,11 @@ RETURN instanceCheck(
                qnz = gmoGetRowQNZOne(gmo, c);
                assert(qnz <= maxqnz);
                (void) gmoGetRowQ(gmo, c, qcol, qrow, qcoef);
+
+               /* check if diagonal */
+               for( i = 0; i < qnz && qcol[i] != qrow[i]; ++i );
+               if( i == qnz )
+                  ++ndiagquadcons;
             }
 
             CHECK( curvQuad(gmo, qnz, qcol, qrow, qcoef, &curv) );
@@ -442,6 +449,7 @@ RETURN instanceCheck(
    printf("NINDEFINITENLCONS = %d\n", nindefinitecons);
    printf("NLINCONS          = %d\n", typecnt[FUNCTYPE_CONSTANT] + typecnt[FUNCTYPE_LINEAR]);
    printf("NQUADCONS         = %d\n", typecnt[FUNCTYPE_QUADRATIC]);
+   printf("NDIAGQUADCONS     = %d\n", ndiagquadcons);
 
    free(objcoefs);
    free(objnlflags);

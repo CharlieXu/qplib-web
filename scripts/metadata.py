@@ -51,6 +51,7 @@ INSTANCEPROPATTRS = {
     'objtype' : str,
     'nlincons' : int,
     'nquadcons' : int,
+    'ndiagquadcons' : int,
     'npolynomcons' : int,
     'nsignomcons' : int,
     'ngennlcons' : int,

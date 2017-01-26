@@ -179,6 +179,7 @@ INSTANCEATTRS = [
     ('ncons', '#Constraints', str),
     ('nlincons', '#Linear Constraints', str),
     ('nquadcons', '#Quadratic Constraints', str),
+    ('ndiagquadcons', ['#Diagonal Quadratic Constraints', 'only square and linear terms'], str),
     ('npolynomcons', '#Polynomial Constraints', str),
     ('nsignomcons', '#Signomial Constraints', str),
     ('ngennlcons', '#General Nonlinear Constraints', str),
