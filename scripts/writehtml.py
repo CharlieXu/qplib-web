@@ -751,9 +751,7 @@ def _writestatistics(data) :
 
     print >> htmlout, '''<p>
         The following diagrams provide aggregated statistics on sources and characteristics of the instances in QPLIB.
-        You can access the raw data:
-      </p>
-      <ul><li> in <a href="instancedata.csv">csv format</a></li></ul>''';
+        You can download the raw data in <a href="instancedata.csv">csv format</a>.''';
 
     # create instancedata.csv
     df = metadata.todataframe(data);
@@ -809,6 +807,10 @@ def _writestatistics(data) :
 
     print >> htmlout, "<h3>Convexity</h3>";
     print >> htmlout, "<P>";
+    print >> htmlout, 'The picture on the right shows the fraction of negative (positive) eigenvalues in the coefficient matrix of the objective function for a minimisation (maximisation) instance w.r.t. the total number of variables.';
+    print >> htmlout, "</P>";
+
+    print >> htmlout, "<P>";
     plt.clf();
     convex = df['convex'].sum();
     nonconvex = (df['convex'] == False).sum();
@@ -828,7 +830,6 @@ def _writestatistics(data) :
     plt.xlabel('Instances with quadratic objective function');
     plt.ylabel('% hard eigenvalues in objective');
     _saveplot(htmlout, 'hardev');
-    print >> htmlout, '<br/>The picture on the right shows the fraction of negative (positive) eigenvalues in the coefficient matrix of the objective function for a minimisation (maximisation) instance w.r.t. the total number of variables.';
     print >> htmlout, "</P>";
 
     print >> htmlout, "<h3>Dimensions</h3>";
@@ -842,16 +843,6 @@ def _writestatistics(data) :
     _saveplot(htmlout, 'nvars_hist');
 
     plt.clf();
-    plt.hist(df['ncons'].values, bins = np.logspace(0, np.log10(df['ncons'].max()), 15));
-    plt.gca().set_xscale("log");
-    plt.xlabel('Number of constraints');
-    plt.ylabel('Number of instances');
-    #plt.title('histogram w.r.t. #constraints');
-    _saveplot(htmlout, 'ncons_hist');
-    print >> htmlout, "</P>";
-
-    print >> htmlout, "<P>";
-    plt.clf();
     varsize = df[['nvars']].copy();
     varsize['ndiscrvars' ] = (df['nbinvars'] + df['nintvars']).clip_lower(1e-1);
     varsize.sort_values('nvars', inplace = True);
@@ -862,6 +853,16 @@ def _writestatistics(data) :
     plt.xlabel('Instances');
     #plt.title('Number of variables');
     _saveplot(htmlout, 'nvars');
+    print >> htmlout, "</P>";
+
+    print >> htmlout, "<P>";
+    plt.clf();
+    plt.hist(df['ncons'].values, bins = np.logspace(0, np.log10(df['ncons'].max()), 15));
+    plt.gca().set_xscale("log");
+    plt.xlabel('Number of constraints');
+    plt.ylabel('Number of instances');
+    #plt.title('histogram w.r.t. #constraints');
+    _saveplot(htmlout, 'ncons_hist');
 
     plt.clf();
     conssize = df[['ncons']].copy();
@@ -874,18 +875,6 @@ def _writestatistics(data) :
     plt.xlabel('Instances');
     #plt.title('Number of constraints');
     _saveplot(htmlout, 'ncons');
-
-    plt.clf();
-    conssize = df[df['nquadcons']>0][['nquadcons','nconvexnlcons']].copy();
-    conssize['nnonconvexquadcons' ] = (conssize['nquadcons'] - conssize['nconvexnlcons']).clip_lower(1e-1);
-    conssize.sort_values('nquadcons', inplace = True);
-    p1 = plt.plot(conssize['nquadcons'].values, color = 'r', marker = '+', linestyle = 'None');
-    p2 = plt.plot(conssize['nnonconvexquadcons'].values, color = 'blue', marker = 'x', linestyle = 'None');
-    plt.gca().set_yscale("log");
-    plt.legend( (p1[0], p2[0]), ('# quadratic constraints', '# nonconvex quadratic constraints'), loc = 'upper left' );
-    plt.xlabel('Instances with at least one quadratic constraint');
-    #plt.title('Number of quadratic constraints');
-    _saveplot(htmlout, 'nquadcons');
     print >> htmlout, "</P>";
 
     print >> htmlout, "<P>";
@@ -901,6 +890,18 @@ def _writestatistics(data) :
     plt.ylabel('Number of constraints (+1)');
     #plt.title('Distribution of number of variables and constraints');
     _saveplot(htmlout, 'nvarsncons');
+
+    plt.clf();
+    conssize = df[df['nquadcons']>0][['nquadcons','nconvexnlcons']].copy();
+    conssize['nnonconvexquadcons' ] = (conssize['nquadcons'] - conssize['nconvexnlcons']).clip_lower(1e-1);
+    conssize.sort_values('nquadcons', inplace = True);
+    p1 = plt.plot(conssize['nquadcons'].values, color = 'r', marker = '+', linestyle = 'None');
+    p2 = plt.plot(conssize['nnonconvexquadcons'].values, color = 'blue', marker = 'x', linestyle = 'None');
+    plt.gca().set_yscale("log");
+    plt.legend( (p1[0], p2[0]), ('# quadratic constraints', '# nonconvex quadratic constraints'), loc = 'upper left' );
+    plt.xlabel('Instances with at least one quadratic constraint');
+    #plt.title('Number of quadratic constraints');
+    _saveplot(htmlout, 'nquadcons');
     print >> htmlout, "</P>";
 
     print >> htmlout, "<h3>Density</h3>";
@@ -931,6 +932,10 @@ def _writestatistics(data) :
     print >> htmlout, "<LI> The density in right scatter plot is defined as (#nonlinear nonzeros in objective and jacobian) / (#nonlinear vars * (#nonlinear cons + 1 if objective is nonlinear)).", "</LI>";
     print >> htmlout, "<LI> Densities below 0.05 are shown as 0.05.", "</LI>";
     print >> htmlout, "</UL>"
+    print >> htmlout, "</P>";
+
+    print >> htmlout, "<P>";
+    print >> htmlout, "The diagram below shows the instances with a quadratic objective function sorted according to the density of the quadratic objective function coefficient matrix.";
     print >> htmlout, "</P>";
 
     print >> htmlout, "<P>";
