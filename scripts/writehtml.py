@@ -855,10 +855,8 @@ def _writestatistics(data) :
     _saveplot(htmlout, 'convexity');
 
     plt.clf();
-    negeigs = df[df['nobjquadnz']>0][['nobjquadnegev','nvars']];
-    negeigs['negevpercent'] = negeigs['nobjquadnegev'].div(negeigs['nvars']) * 100.0;
-    negeigs.sort_values('negevpercent', inplace = True);
-    plt.plot(negeigs['negevpercent'].values, color = 'r', marker = '+', linestyle = 'None');
+    negeigs = df[df['nobjquadnz']>0]['objquadnegevfrac'].sort_values() * 100.0;
+    plt.plot(negeigs.values, color = 'r', marker = '+', linestyle = 'None');
     plt.xlabel('Instances with quadratic objective function');
     plt.ylabel('% negative eigenvalues in objective');
     _saveplot(htmlout, 'negev');
@@ -968,10 +966,8 @@ def _writestatistics(data) :
 
     print >> htmlout, "<P>";
     plt.clf();
-    density = df[df['nobjquadnz']>0][['nobjquadnz','nobjquaddiagnz','nobjnlnz']];
-    density['density'] = (2*density['nobjquadnz']-density['nobjquaddiagnz']).div(density['nobjnlnz'].apply(lambda x : x**2)) * 100.0;
-    density.sort_values('density', inplace = True);
-    plt.plot(density['density'].values, color = 'r', marker = '+', linestyle = 'None');
+    density = df[df['nobjquadnz']>0]['objquaddensity'].sort_values() * 100;
+    plt.plot(density.values, color = 'r', marker = '+', linestyle = 'None');
     plt.xlabel('Instances with quadratic objective function');
     plt.ylabel('% density of objective coef. matrix');
     _saveplot(htmlout, 'objquaddensity');
