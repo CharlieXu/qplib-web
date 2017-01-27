@@ -390,7 +390,7 @@ def _writeinstancepage(data) :
     print >> instances, 'return ((isNaN(x) || x < y) ? 1 : ((isNaN(y) || x > y) ? -1 : 0));'
     print >> instances, '};'
     print >> instances, '$(document).ready(function() {'
-    print >> instances, 'var table = $("#instancelisting").dataTable({"iDisplayLength": -1, "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],'
+    print >> instances, 'var table = $("#instancelisting").dataTable({"iDisplayLength": -1, "bLengthChange": false,  "bPaginate": false,'
 
     print >> instances, '"columnDefs":[ {"type": "numWithNull", "targets": [5,6,8,9]} ],'
     
@@ -434,7 +434,7 @@ def _writeinstancepage(data) :
         HTML.TableCell('#NZ', attribs = {'title' : 'Number of Nonzeros in Jacobian and Objective'}, header = True),
     ]);
     
-    count = 0;
+    bgcolor = '#e0e0e0';
     for m, mattribs in sorted(data.iteritems()) :
         
         # skip removed instances here
@@ -479,8 +479,8 @@ def _writeinstancepage(data) :
             points += '</A> ';
         #row.append(HTML.TableCell(points));
         
-        t.rows.append(HTML.TableRow(row, bgcolor = '#e0e0e0' if (count % 25) % 2 else "#fefefe"));
-        count += 1;
+        t.rows.append(HTML.TableRow(row, bgcolor = bgcolor));
+        bgcolor = "#fefefe" if bgcolor == '#e0e0e0' else '#fefefe';  # swap bgcolor
 
     # fix <thead>
     tStr = str(t)
@@ -488,14 +488,7 @@ def _writeinstancepage(data) :
     tStr = tStr.replace('</TR>', '</TR></THEAD><TBODY>', 1)
     tStr = tStr.replace('</TABLE>', '</TBODY></TABLE>', 1)
     print >> instances, '<P>', tStr, '</P>';
-    
-    print >> instances, '<P>'
-    print >> instances, '<B>Number of instances:', count, '</B><BR>';
-    #print >> instances, 'Feasibility tolerance:', metadata.FEASTOL, '(points with absolute infeasibility of at least', metadata.FEASTOL, 'are not shown)', '<BR>';
-    #print >> instances, 'Optimality tolerance:', metadata.OPTTOL, '(points with objective value difference below', metadata.OPTTOL, 'are considered equally good)', '<BR>';
-    #print >> instances, 'Gap tolerance:', metadata.GAPTOL, '(dual bounds within', metadata.GAPTOL, 'of primal bound indicate instance as solved)';
-    print >> instances, '</P>';
-    
+
 
     # print removed instances    
     count = 0;
