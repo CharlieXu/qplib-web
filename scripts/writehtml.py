@@ -392,11 +392,13 @@ def _writeinstancepage(data) :
     print >> instances, '$(document).ready(function() {'
     print >> instances, 'var table = $("#instancelisting").dataTable({"iDisplayLength": -1, "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],'
 
-    print >> instances, '"columnDefs":[ {"type": "numWithNull", "targets": [5,6]} ],'
+    print >> instances, '"columnDefs":[ {"type": "numWithNull", "targets": [7,8]} ],'
     
     print >> instances, '"aoColumns": ['
     print >> instances, '{"sType": "string" },'
     print >> instances, '{"bSortable": false},'
+    print >> instances, '{"sType": "string" },'
+    print >> instances, '{"sType": "string" },'
     print >> instances, '{"sType": "string" },'
     print >> instances, '{"sType": "string" },'
     print >> instances, 'null,'
@@ -418,14 +420,16 @@ def _writeinstancepage(data) :
 
 
     
-    col_align = ['left', 'left', 'left'] + ['right'] * 6;
+    col_align = ['left', 'left', 'left', 'left', 'left'] + ['right'] * 6;
 
     t = HTML.Table([], col_align = col_align, border = 0, style = '', cellspacing = 0, cellpadding = 2, attribs = {'id' : 'instancelisting', 'class' : 'compact display'},
     header_row = [
         HTML.TableCell('Name', attribs = {'title' : 'Instance Name', 'align': 'left'}, header = True),
         HTML.TableCell('Formats', attribs = {'title' : 'Available Fileformats', 'align': 'left'}, header = True),
-        HTML.TableCell('Type', attribs = {'title' : 'Problem type', 'align': 'left'}, header = True),
-        HTML.TableCell('C', attribs = {'title' : 'Continuous Relaxation proven to be convex?', 'align': 'center'}, header = True),
+        HTML.TableCell('O', attribs = {'title' : 'Objective type', 'align': 'left'}, header = True),
+        HTML.TableCell('V', attribs = {'title' : 'Variables type', 'align': 'left'}, header = True),
+        HTML.TableCell('C', attribs = {'title' : 'Constraints type', 'align': 'left'}, header = True),
+        HTML.TableCell('Cvx', attribs = {'title' : 'Continuous Relaxation proven to be convex?', 'align': 'center'}, header = True),
         HTML.TableCell('#Vars', attribs = {'title' : 'Number of Variables', 'align': 'center'}, header = True),
         HTML.TableCell('#BinVars', attribs = {'title' : 'Number of Binary Variables', 'align': 'center'}, header = True),
         HTML.TableCell('#IntVars', attribs = {'title' : 'Number of Integer Variables', 'align': 'center'}, header = True),
@@ -459,7 +463,10 @@ def _writeinstancepage(data) :
                 return '';
             return str(x);
 
-        row.append(HTML.TableCell(mattribs['probtype']));
+        probtype = mattribs['probtype'];
+        row.append(HTML.TableCell(probtype[0]));
+        row.append(HTML.TableCell(probtype[1]));
+        row.append(HTML.TableCell(probtype[2]));
         row.append(HTML.TableCell('*' if metadata.isconvex(mattribs) else '-' if metadata.isnotconvex(mattribs) else ''));
         row.append(HTML.TableCell(inttostr(mattribs['nvars']) if 'nvars' in mattribs else '?'));
         row.append(HTML.TableCell(inttostr(mattribs['nbinvars']) if 'nbinvars' in mattribs else '?'));
