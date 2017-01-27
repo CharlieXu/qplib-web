@@ -805,6 +805,23 @@ def _writestatistics(data) :
     _saveplot(htmlout, 'probtype');
     print >> htmlout, "</P>";
 
+    def simplifyprobtype(t) :
+       r = '';
+       r += 'C' if t[0] == 'D' else t[0];  # map objective D to C
+       r += t[1];
+       r += 'C' if t[2] == 'D' else t[2];  # map constraints D to C
+       return r;
+    discrtypecounts = df[df['nbinvars']+df['nintvars']>0]['probtype'].map(simplifyprobtype).value_counts().sort_index();  # non-continuous only
+    discrtypecounts['total'] = discrtypecounts.sum();
+    conttypecounts = df[df['nbinvars']+df['nintvars']==0]['probtype'].map(simplifyprobtype).value_counts().sort_index();  # continuous only
+    conttypecounts['total'] = conttypecounts.sum();
+    print >> htmlout, '<table><tr><th valign="top">Continuous Instances</th><th>&nbsp;&nbsp;&nbsp;</th><th valign="top">Discrete Instances</th></tr>'
+    print >> htmlout, '<tr><td valign="top">';
+    pd.DataFrame(conttypecounts).to_html(htmlout, header = False);
+    print >> htmlout, '</td><td/><td valign="top">';
+    pd.DataFrame(discrtypecounts).to_html(htmlout, header = False);
+    print >> htmlout, '</td></tr></table>';
+
     print >> htmlout, "<h3>Variable types</h3>";
     print >> htmlout, "<P>";
     discrtypes = ['contvars', 'binvars', 'intvars'];
