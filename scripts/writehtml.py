@@ -801,7 +801,7 @@ def _writestatistics(data) :
     ptypecounts = ptypecounts.reindex_like(cont);
     #print ptypecounts.to_string();
     plt.pie(ptypecounts, labels = ptypecounts.index, colors = ['b' if x else 'r' for x in cont]);
-    plt.title('problem type');
+    #plt.title('problem type');
     _saveplot(htmlout, 'probtype');
     print >> htmlout, "</P>";
 
@@ -814,7 +814,7 @@ def _writestatistics(data) :
     ind = np.arange(len(discrtypes)) + 0.5;
     p1 = plt.bar(ind, [(df['n' + x] > 0).sum() for x in discrtypes], width);
     plt.ylabel('Number of instances')
-    plt.title('Variable Types');
+    #plt.title('Variable Types');
     plt.xticks(ind+width/2., label);
     #plt.legend( (p1[0], p2[0]), ('GLOBALLib + MINLPLib 1', 'new in MINLPLib 2') )
     plt.xlim(0.1, ind[-1] + 1.0);
@@ -834,7 +834,7 @@ def _writestatistics(data) :
             labels = ['convex\n{0:.0f}%'.format(100.0 * convex / all), 'nonconvex\n{0:.0f}%'.format(100.0 * nonconvex / all), 'undecided\n{0:.0f}%'.format(100.0 * unknown / all)]
             );
     plt.gca().set_aspect(1);
-    plt.title('instances convexity');
+    #plt.title('instances convexity');
     _saveplot(htmlout, 'convexity');
 
     plt.clf();
@@ -854,7 +854,7 @@ def _writestatistics(data) :
     plt.gca().set_xscale("log");
     plt.xlabel('Number of variables');
     plt.ylabel('Number of instances');
-    plt.title('histogram w.r.t. #variables');
+    #plt.title('histogram w.r.t. #variables');
     _saveplot(htmlout, 'nvars_hist');
 
     plt.clf();
@@ -862,7 +862,7 @@ def _writestatistics(data) :
     plt.gca().set_xscale("log");
     plt.xlabel('Number of constraints');
     plt.ylabel('Number of instances');
-    plt.title('histogram w.r.t. #constraints');
+    #plt.title('histogram w.r.t. #constraints');
     _saveplot(htmlout, 'ncons_hist');
     print >> htmlout, "</P>";
 
@@ -876,7 +876,7 @@ def _writestatistics(data) :
     plt.gca().set_yscale("log");
     plt.legend( (p1[0], p2[0]), ('# variables', '# discrete variables'), loc = 'upper left' );
     plt.xlabel('Instances');
-    plt.title('Number of variables');
+    #plt.title('Number of variables');
     _saveplot(htmlout, 'nvars');
 
     plt.clf();
@@ -888,7 +888,7 @@ def _writestatistics(data) :
     plt.gca().set_yscale("log");
     plt.legend( (p1[0], p2[0]), ('# constraints', '# quadratic constraints'), loc = 'upper left' );
     plt.xlabel('Instances');
-    plt.title('Number of constraints');
+    #plt.title('Number of constraints');
     _saveplot(htmlout, 'ncons');
 
     plt.clf();
@@ -900,7 +900,7 @@ def _writestatistics(data) :
     plt.gca().set_yscale("log");
     plt.legend( (p1[0], p2[0]), ('# quadratic constraints', '# nonconvex quadratic constraints'), loc = 'upper left' );
     plt.xlabel('Instances with at least one quadratic constraint');
-    plt.title('Number of quadratic constraints');
+    #plt.title('Number of quadratic constraints');
     _saveplot(htmlout, 'nquadcons');
     print >> htmlout, "</P>";
 
@@ -915,7 +915,7 @@ def _writestatistics(data) :
     plt.legend( (p1, p2), ('Continuous instances', 'Discrete instances'), loc = 'upper left' );
     plt.xlabel('Number of variables');
     plt.ylabel('Number of constraints (+1)');
-    plt.title('Distribution of number of variables and constraints');
+    #plt.title('Distribution of number of variables and constraints');
     _saveplot(htmlout, 'nvarsncons');
     print >> htmlout, "</P>";
 
@@ -930,7 +930,7 @@ def _writestatistics(data) :
     plt.gca().set_xscale("log");
     plt.xlabel('Number of variables');
     plt.ylabel('Number of constraints');
-    plt.title('instances scatter plot');
+    #plt.title('instances scatter plot');
     _saveplot(htmlout, 'sizescatter');
 
     plt.clf();
@@ -939,7 +939,7 @@ def _writestatistics(data) :
     plt.gca().set_xscale("log");
     plt.xlabel('Number of nonlinear variables');
     plt.ylabel('Number of nonlinear constraints');
-    plt.title('instances scatter plot (nonlinear parts only)');
+    #plt.title('instances scatter plot (nonlinear parts only)');
     _saveplot(htmlout, 'sizenlscatter');
 
     print >> htmlout, "<UL>";
