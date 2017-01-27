@@ -846,7 +846,7 @@ def _writestatistics(data) :
     plt.xlabel('Number of variables');
     plt.ylabel('Number of instances');
     plt.title('histogram w.r.t. #variables');
-    _saveplot(htmlout, 'nvars');
+    _saveplot(htmlout, 'nvars_hist');
 
     plt.clf();
     plt.hist(df['ncons'].values, bins = np.logspace(0, np.log10(df['ncons'].max()), 15));
@@ -854,7 +854,61 @@ def _writestatistics(data) :
     plt.xlabel('Number of constraints');
     plt.ylabel('Number of instances');
     plt.title('histogram w.r.t. #constraints');
+    _saveplot(htmlout, 'ncons_hist');
+    print >> htmlout, "</P>";
+
+    print >> htmlout, "<P>";
+    plt.clf();
+    varsize = df[['nvars']].copy();
+    varsize['ndiscrvars' ] = (df['nbinvars'] + df['nintvars']).clip_lower(1e-1);
+    varsize.sort_values('nvars', inplace = True);
+    p1 = plt.plot(varsize['nvars'].values, color = 'r', marker = '+', linestyle = 'None');
+    p2 = plt.plot(varsize['ndiscrvars'].values, color = 'blue', marker = '*', linestyle = 'None');
+    plt.gca().set_yscale("log");
+    plt.legend( (p1[0], p2[0]), ('# variables', '# discrete variables'), loc = 'upper left' );
+    plt.xlabel('Instances');
+    plt.title('Number of variables');
+    _saveplot(htmlout, 'nvars');
+
+    plt.clf();
+    conssize = df[['ncons']].copy();
+    conssize['nquadcons' ] = df['nquadcons'].clip_lower(1e-1);
+    conssize.sort_values('ncons', inplace = True);
+    p1 = plt.plot(conssize['ncons'].values, color = 'r', marker = '+', linestyle = 'None');
+    p2 = plt.plot(conssize['nquadcons'].values, color = 'blue', marker = '*', linestyle = 'None');
+    plt.gca().set_yscale("log");
+    plt.legend( (p1[0], p2[0]), ('# constraints', '# quadratic constraints'), loc = 'upper left' );
+    plt.xlabel('Instances');
+    plt.title('Number of constraints');
     _saveplot(htmlout, 'ncons');
+
+    plt.clf();
+    conssize = df[df['nquadcons']>0][['nquadcons','nconvexnlcons']].copy();
+    conssize['nnonconvexquadcons' ] = (conssize['nquadcons'] - conssize['nconvexnlcons']).clip_lower(1e-1);
+    print conssize;
+    conssize.sort_values('nquadcons', inplace = True);
+    p1 = plt.plot(conssize['nquadcons'].values, color = 'r', marker = '+', linestyle = 'None');
+    p2 = plt.plot(conssize['nnonconvexquadcons'].values, color = 'blue', marker = '*', linestyle = 'None');
+    plt.gca().set_yscale("log");
+    plt.legend( (p1[0], p2[0]), ('# quadratic constraints', '# nonconvex quadratic constraints'), loc = 'upper left' );
+    plt.xlabel('Instances with at least one quadratic constraint');
+    plt.title('Number of quadratic constraints');
+    _saveplot(htmlout, 'nquadcons');
+    print >> htmlout, "</P>";
+
+    print >> htmlout, "<P>";
+    plt.clf();
+    continuous = df[df['nbinvars'] + df['nintvars'] == 0];
+    discrete = df[df['nbinvars'] + df['nintvars'] > 0];
+    p1 = plt.scatter(continuous['nvars'], continuous['ncons']+1, c = 'r', marker = '+');
+    p2 = plt.scatter(discrete['nvars'] + 1, discrete['ncons']+1, c = 'blue', marker = 'x');
+    plt.gca().set_xscale("log");
+    plt.gca().set_yscale("log");
+    plt.legend( (p1, p2), ('Continuous instances', 'Discrete instances'), loc = 'upper left' );
+    plt.xlabel('Number of variables');
+    plt.ylabel('Number of constraints (+1)');
+    plt.title('Distribution of number of variables and constraints');
+    _saveplot(htmlout, 'nvarsncons');
     print >> htmlout, "</P>";
 
     print >> htmlout, "<h3>Density</h3>";
