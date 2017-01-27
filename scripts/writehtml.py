@@ -392,27 +392,23 @@ def _writeinstancepage(data) :
     print >> instances, '$(document).ready(function() {'
     print >> instances, 'var table = $("#instancelisting").dataTable({"iDisplayLength": -1, "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],'
 
-    print >> instances, '"columnDefs":[ {"type": "numWithNull", "targets": [7,8]} ],'
+    print >> instances, '"columnDefs":[ {"type": "numWithNull", "targets": [6,7,9,10]} ],'
     
     print >> instances, '"aoColumns": ['
-    print >> instances, '{"sType": "string" },'
-    print >> instances, '{"bSortable": false},'
-    print >> instances, '{"sType": "string" },'
-    print >> instances, '{"sType": "string" },'
-    print >> instances, '{"sType": "string" },'
-    print >> instances, '{"sType": "string" },'
-    print >> instances, 'null,'
-    print >> instances, 'null,'
-    print >> instances, 'null,'
-    print >> instances, 'null,'
-    #print >> instances, 'null,'
-    #print >> instances, 'null,'
-    print >> instances, 'null,'
-    #print >> instances, 'null,'
-    #print >> instances, 'null,'
-    #print >> instances, '{"bSortable": false},'
-    #print >> instances, '{"bSortable": false},'
-    #print >> instances, '{"bSortable": false}
+    print >> instances, '{"sType": "string" },'  #Name
+    print >> instances, '{"bSortable": false},'  #Formats
+    print >> instances, '{"sType": "string" },'  #Cvx
+    print >> instances, '{"sType": "string" },'  #V
+    print >> instances, 'null,'  #Vars
+    print >> instances, 'null,'  #BinVars
+    print >> instances, 'null,'  #IntVars
+    print >> instances, '{"sType": "string" },'  #O
+    print >> instances, 'null,'  #Q0 density
+    print >> instances, 'null,'  #Q0 hard ev
+    print >> instances, '{"sType": "string" },'  #C
+    print >> instances, 'null,'  #Cons
+    print >> instances, 'null,'  #QuadCons
+    print >> instances, 'null,'  #NZ
     print >> instances, ']});'
     print >> instances, 'new $.fn.dataTable.FixedHeader( table );'
     print >> instances, '} );'
@@ -420,28 +416,24 @@ def _writeinstancepage(data) :
 
 
     
-    col_align = ['left', 'left', 'left', 'left', 'left'] + ['right'] * 6;
+    col_align = ['left', 'left', 'center', 'center', 'right', 'right', 'right', 'center', 'right', 'right', 'center', 'right', 'right', 'right']
 
-    t = HTML.Table([], col_align = col_align, border = 0, style = '', cellspacing = 0, cellpadding = 2, attribs = {'id' : 'instancelisting', 'class' : 'compact display'},
+    t = HTML.Table([], border = 0, col_align = col_align, style = '', cellspacing = 0, cellpadding = 2, attribs = {'id' : 'instancelisting', 'class' : 'compact display'},
     header_row = [
-        HTML.TableCell('Name', attribs = {'title' : 'Instance Name', 'align': 'left'}, header = True),
-        HTML.TableCell('Formats', attribs = {'title' : 'Available Fileformats', 'align': 'left'}, header = True),
-        HTML.TableCell('O', attribs = {'title' : 'Objective type', 'align': 'left'}, header = True),
-        HTML.TableCell('V', attribs = {'title' : 'Variables type', 'align': 'left'}, header = True),
-        HTML.TableCell('C', attribs = {'title' : 'Constraints type', 'align': 'left'}, header = True),
-        HTML.TableCell('Cvx', attribs = {'title' : 'Continuous Relaxation proven to be convex?', 'align': 'center'}, header = True),
-        HTML.TableCell('#Vars', attribs = {'title' : 'Number of Variables', 'align': 'center'}, header = True),
-        HTML.TableCell('#BinVars', attribs = {'title' : 'Number of Binary Variables', 'align': 'center'}, header = True),
-        HTML.TableCell('#IntVars', attribs = {'title' : 'Number of Integer Variables', 'align': 'center'}, header = True),
-        HTML.TableCell('#Cons', attribs = {'title' : 'Number of Constraints (equations)', 'align': 'center'}, header = True),
-        #HTML.TableCell('#SOS', attribs = {'title' : 'Number of Special Ordered Set Constraints', 'align': 'center'}, header = True),
-        #HTML.TableCell('#Semi', attribs = {'title' : 'Number of Semicontinuity/Semiintegrality Constraints', 'align': 'center'}, header = True),
-        HTML.TableCell('#NZ', attribs = {'title' : 'Number of Nonzeros in Jacobian and Objective', 'align': 'center'}, header = True),
-        #HTML.TableCell('CoefRange', attribs = {'title' : 'Quotient maximal by minimal coefficient of objective gradient and Jacobian w.r.t. initial and solution points.', 'align': 'center'}, header = True),
-        #HTML.TableCell('S', attribs = {'title' : 'Proven optimal value by at least 3 solvers?', 'align': 'center'}, header = True),
-        #HTML.TableCell('Dual Bound', attribs = {'title' : 'Dual bound as reported by at least 3 solvers', 'align': 'right'}, header = True),
-        #HTML.TableCell('Primal Bound', attribs = {'title' : 'Best known objective value', 'align': 'right'}, header = True),
-        #HTML.TableCell('Points', attribs = {'title' : 'Available Solution Points', 'align': 'left'}, header = True)
+        HTML.TableCell('Name', attribs = {'title' : 'Instance Name'}, header = True),
+        HTML.TableCell('Formats', attribs = {'title' : 'Available Fileformats'}, header = True),
+        HTML.TableCell('Cvx', attribs = {'title' : 'Continuous Relaxation proven to be convex?'}, header = True),
+        HTML.TableCell('V', attribs = {'title' : 'Variables type'}, header = True),
+        HTML.TableCell('#Vars', attribs = {'title' : 'Number of Variables'}, header = True),
+        HTML.TableCell('#BinVars', attribs = {'title' : 'Number of Binary Variables'}, header = True),
+        HTML.TableCell('#IntVars', attribs = {'title' : 'Number of Integer Variables'}, header = True),
+        HTML.TableCell('O', attribs = {'title' : 'Objective type'}, header = True),
+        HTML.TableCell('Q<sub>0</sub> density', attribs = {'title' : 'Objective density % in quad. part coef. matrix'}, header = True),
+        HTML.TableCell('Q<sub>0</sub> hard ev', attribs = {'title' : 'Objective hard eigenvalues % in quad. part coef. matrix'}, header = True),
+        HTML.TableCell('C', attribs = {'title' : 'Constraints type'}, header = True),
+        HTML.TableCell('#Cons', attribs = {'title' : 'Number of Constraints (excluding variable bounds)'}, header = True),
+        HTML.TableCell('#QuadCons', attribs = {'title' : 'Number of Quadratic Constraints'}, header = True),
+        HTML.TableCell('#NZ', attribs = {'title' : 'Number of Nonzeros in Jacobian and Objective'}, header = True),
     ]);
     
     count = 0;
@@ -450,38 +442,39 @@ def _writeinstancepage(data) :
         # skip removed instances here
         if 'removedate' in mattribs :
             continue;
-                
-        row = [HTML.TableCell('<A href=' + m + '.html>' + m + '</A>')];
         
         formats = '';
         for f in sorted(mattribs['formats']) :
             formats += '<A href="' + f + '/' + m + '.' + f + '">' + f + "</A> ";
-        row.append(HTML.TableCell(formats));
+
+        probtype = mattribs['probtype'];
 
         def inttostr(x) :
             if x == 0 :
                 return '';
             return str(x);
 
-        probtype = mattribs['probtype'];
-        row.append(HTML.TableCell(probtype[0]));
-        row.append(HTML.TableCell(probtype[1]));
-        row.append(HTML.TableCell(probtype[2]));
+        row = [HTML.TableCell('<A href=' + m + '.html>' + m + '</A>')];
+        row.append(HTML.TableCell(formats));
         row.append(HTML.TableCell('*' if metadata.isconvex(mattribs) else '-' if metadata.isnotconvex(mattribs) else ''));
+        row.append(HTML.TableCell(probtype[1]));
         row.append(HTML.TableCell(inttostr(mattribs['nvars']) if 'nvars' in mattribs else '?'));
         row.append(HTML.TableCell(inttostr(mattribs['nbinvars']) if 'nbinvars' in mattribs else '?'));
         row.append(HTML.TableCell(inttostr(mattribs['nintvars']) if 'nintvars' in mattribs else '?'));
-        row.append(HTML.TableCell(str(mattribs['ncons']) if 'ncons' in mattribs else '?'));
-        #row.append(HTML.TableCell(inttostr(mattribs['nsos1'] + mattribs['nsos2']) if 'nsos1' in mattribs and 'nsos2' in mattribs else '?'));
-        #row.append(HTML.TableCell(inttostr(mattribs['nsemi']) if 'nsemi' in mattribs else '?'));
+        row.append(HTML.TableCell(probtype[0]));
+        if mattribs['nobjnlnz'] > 0 :
+           row.append(HTML.TableCell('{0:.1f}'.format(100.0*(2.0*mattribs['nobjquadnz']-mattribs['nobjquaddiagnz'])/(mattribs['nobjnlnz']*mattribs['nobjnlnz']))));
+           if 'nobjquadnegev' in mattribs and 'nobjquadposev' in mattribs :
+              row.append(HTML.TableCell('{0:.1f}'.format((100.0*(mattribs['nobjquadnegev'] if mattribs['objsense'] == 'min' else mattribs['nobjquadposev']))/mattribs['nvars'])));
+           else :
+              row.append(HTML.TableCell('?'));
+        else :
+           row.append(HTML.TableCell(''));
+           row.append(HTML.TableCell(''));
+        row.append(HTML.TableCell(probtype[2]));
+        row.append(HTML.TableCell(str(mattribs['ncons'])));
+        row.append(HTML.TableCell(str(mattribs['nquadcons'])));
         row.append(HTML.TableCell(inttostr(mattribs['njacobiannz'] + mattribs['nobjnz']) if 'njacobiannz' in mattribs and 'nobjnz' in mattribs else '?'));
-        #range = metadata.getcoefrange(mattribs);
-        #row.append(HTML.TableCell('{0:.2e}'.format(range) if range is not None else '?'));
-        #row.append(HTML.TableCell('*' if metadata.issolved(mattribs) else '&nbsp;'));
-        #bestdual = metadata.gettrusteddual(mattribs);
-        #bestprimal = metadata.getbestprimal(mattribs);
-        #row.append(HTML.TableCell('{0:.4f}'.format(bestdual) if bestdual is not None else '')); # TODO treat unboundedness / infeasibility
-        #row.append(HTML.TableCell('{0:.4f}'.format(bestprimal) if bestprimal is not None else '')); # TODO treat unboundedness / infeasibility
 
         points = '';
         for p, pattribs in sorted(mattribs['points'].iteritems()) :
