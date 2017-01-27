@@ -872,7 +872,7 @@ def _writestatistics(data) :
     varsize['ndiscrvars' ] = (df['nbinvars'] + df['nintvars']).clip_lower(1e-1);
     varsize.sort_values('nvars', inplace = True);
     p1 = plt.plot(varsize['nvars'].values, color = 'r', marker = '+', linestyle = 'None');
-    p2 = plt.plot(varsize['ndiscrvars'].values, color = 'blue', marker = '*', linestyle = 'None');
+    p2 = plt.plot(varsize['ndiscrvars'].values, color = 'blue', marker = 'x', linestyle = 'None');
     plt.gca().set_yscale("log");
     plt.legend( (p1[0], p2[0]), ('# variables', '# discrete variables'), loc = 'upper left' );
     plt.xlabel('Instances');
@@ -884,7 +884,7 @@ def _writestatistics(data) :
     conssize['nquadcons' ] = df['nquadcons'].clip_lower(1e-1);
     conssize.sort_values('ncons', inplace = True);
     p1 = plt.plot(conssize['ncons'].values, color = 'r', marker = '+', linestyle = 'None');
-    p2 = plt.plot(conssize['nquadcons'].values, color = 'blue', marker = '*', linestyle = 'None');
+    p2 = plt.plot(conssize['nquadcons'].values, color = 'blue', marker = 'x', linestyle = 'None');
     plt.gca().set_yscale("log");
     plt.legend( (p1[0], p2[0]), ('# constraints', '# quadratic constraints'), loc = 'upper left' );
     plt.xlabel('Instances');
@@ -896,7 +896,7 @@ def _writestatistics(data) :
     conssize['nnonconvexquadcons' ] = (conssize['nquadcons'] - conssize['nconvexnlcons']).clip_lower(1e-1);
     conssize.sort_values('nquadcons', inplace = True);
     p1 = plt.plot(conssize['nquadcons'].values, color = 'r', marker = '+', linestyle = 'None');
-    p2 = plt.plot(conssize['nnonconvexquadcons'].values, color = 'blue', marker = '*', linestyle = 'None');
+    p2 = plt.plot(conssize['nnonconvexquadcons'].values, color = 'blue', marker = 'x', linestyle = 'None');
     plt.gca().set_yscale("log");
     plt.legend( (p1[0], p2[0]), ('# quadratic constraints', '# nonconvex quadratic constraints'), loc = 'upper left' );
     plt.xlabel('Instances with at least one quadratic constraint');
