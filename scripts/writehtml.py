@@ -843,7 +843,7 @@ def _writestatistics(data) :
     negeigs.sort_values('negevpercent', inplace = True);
     plt.plot(negeigs['negevpercent'].values, color = 'r', marker = '+', linestyle = 'None');
     plt.xlabel('Instances with quadratic objective function');
-    plt.ylabel('% negative eigenvalues');
+    plt.ylabel('% negative eigenvalues in objective');
     _saveplot(htmlout, 'negev');
     print >> htmlout, "</P>";
 
@@ -947,6 +947,17 @@ def _writestatistics(data) :
     print >> htmlout, "<LI> The density in right scatter plot is defined as (#nonlinear nonzeros in objective and jacobian) / (#nonlinear vars * (#nonlinear cons + 1 if objective is nonlinear)).", "</LI>";
     print >> htmlout, "<LI> Densities below 0.05 are shown as 0.05.", "</LI>";
     print >> htmlout, "</UL>"
+    print >> htmlout, "</P>";
+
+    print >> htmlout, "<P>";
+    plt.clf();
+    density = df[df['nobjquadnz']>0][['nobjquadnz','nobjquaddiagnz','nobjnlnz']];  # TODO do one wants only instances with linear constraints?
+    density['density'] = (2*density['nobjquadnz']-density['nobjquaddiagnz']).div(density['nobjnlnz'].apply(lambda x : x**2)) * 100.0;
+    density.sort_values('density', inplace = True);
+    plt.plot(density['density'].values, color = 'r', marker = '+', linestyle = 'None');
+    plt.xlabel('Instances with quadratic objective function');
+    plt.ylabel('% density of objective coef. matrix');
+    _saveplot(htmlout, 'objquaddensity');
     print >> htmlout, "</P>";
 
     print >> htmlout, _htmlendbody(), "</HTML>";
