@@ -838,7 +838,7 @@ def _writestatistics(data) :
     _saveplot(htmlout, 'convexity');
 
     plt.clf();
-    negeigs = df[df['nobjquadnz']>0][['nobjquadnegev','nvars']];  # TODO do one wants only instances with linear constraints?
+    negeigs = df[df['nobjquadnz']>0][['nobjquadnegev','nvars']];
     negeigs['negevpercent'] = negeigs['nobjquadnegev'].div(negeigs['nvars']) * 100.0;
     negeigs.sort_values('negevpercent', inplace = True);
     plt.plot(negeigs['negevpercent'].values, color = 'r', marker = '+', linestyle = 'None');
@@ -951,7 +951,7 @@ def _writestatistics(data) :
 
     print >> htmlout, "<P>";
     plt.clf();
-    density = df[df['nobjquadnz']>0][['nobjquadnz','nobjquaddiagnz','nobjnlnz']];  # TODO do one wants only instances with linear constraints?
+    density = df[df['nobjquadnz']>0][['nobjquadnz','nobjquaddiagnz','nobjnlnz']];
     density['density'] = (2*density['nobjquadnz']-density['nobjquaddiagnz']).div(density['nobjnlnz'].apply(lambda x : x**2)) * 100.0;
     density.sort_values('density', inplace = True);
     plt.plot(density['density'].values, color = 'r', marker = '+', linestyle = 'None');
