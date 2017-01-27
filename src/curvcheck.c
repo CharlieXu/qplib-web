@@ -402,7 +402,12 @@ RETURN curvQuad(
    a = (double*)malloc(dim * dim * sizeof(double));
    if( a == NULL ) /* out of memory */
    {
-      fputs("Out of memory in curvQuad\n", stderr);
+      fprintf(stderr, "Out of memory in curvQuad when trying to allocate %lu MB\n", dim * dim * sizeof(double) / 1024 / 1024);
+      if( evcount != NULL )
+      {
+         evcount->nposeigvals = -1;
+         evcount->nnegeigvals = -1;
+      }
       goto TERMINATE;
    }
    memset(a, 0, dim * dim * sizeof(double));
