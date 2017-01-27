@@ -392,11 +392,10 @@ def _writeinstancepage(data) :
     print >> instances, '$(document).ready(function() {'
     print >> instances, 'var table = $("#instancelisting").dataTable({"iDisplayLength": -1, "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],'
 
-    print >> instances, '"columnDefs":[ {"type": "numWithNull", "targets": [6,7,9,10]} ],'
+    print >> instances, '"columnDefs":[ {"type": "numWithNull", "targets": [5,6,8,9]} ],'
     
     print >> instances, '"aoColumns": ['
-    print >> instances, '{"sType": "string" },'  #Name
-    print >> instances, '{"bSortable": false},'  #Formats
+    print >> instances, '{"sType": "string" },'  #Name and formats
     print >> instances, '{"sType": "string" },'  #Cvx
     print >> instances, '{"sType": "string" },'  #V
     print >> instances, 'null,'  #Vars
@@ -416,12 +415,11 @@ def _writeinstancepage(data) :
 
 
     
-    col_align = ['left', 'left', 'center', 'center', 'right', 'right', 'right', 'center', 'right', 'right', 'center', 'right', 'right', 'right']
+    col_align = ['left', 'center', 'center', 'right', 'right', 'right', 'center', 'right', 'right', 'center', 'right', 'right', 'right']
 
     t = HTML.Table([], border = 0, col_align = col_align, style = '', cellspacing = 0, cellpadding = 2, attribs = {'id' : 'instancelisting', 'class' : 'compact display'},
     header_row = [
-        HTML.TableCell('Name', attribs = {'title' : 'Instance Name'}, header = True),
-        HTML.TableCell('Formats', attribs = {'title' : 'Available Fileformats'}, header = True),
+        HTML.TableCell('Instance', attribs = {'title' : 'Name and fileformats'}, header = True),
         HTML.TableCell('Cvx', attribs = {'title' : 'Continuous Relaxation convex'}, header = True),
         HTML.TableCell('V', attribs = {'title' : 'Variables type'}, header = True),
         HTML.TableCell('#Vars', attribs = {'title' : 'Number of Variables'}, header = True),
@@ -443,9 +441,7 @@ def _writeinstancepage(data) :
         if 'removedate' in mattribs :
             continue;
         
-        formats = '';
-        for f in sorted(mattribs['formats']) :
-            formats += '<A href="' + f + '/' + m + '.' + f + '">' + f + "</A> ";
+        formats = ', '.join('<A href="' + f + '/' + m + '.' + f + '">' + f + "</A>" for f in sorted(mattribs['formats']));
 
         probtype = mattribs['probtype'];
 
@@ -454,8 +450,7 @@ def _writeinstancepage(data) :
                 return '';
             return str(x);
 
-        row = [HTML.TableCell('<A href=' + m + '.html>' + m + '</A>')];
-        row.append(HTML.TableCell(formats));
+        row = [HTML.TableCell('<A href=' + m + '.html>' + m[6:] + '</A> (' + formats + ')')];
         row.append(HTML.TableCell('&#10004;' if metadata.isconvex(mattribs) else '-' if metadata.isnotconvex(mattribs) else ''));
         row.append(HTML.TableCell(probtype[1]));
         row.append(HTML.TableCell(inttostr(mattribs['nvars']) if 'nvars' in mattribs else '?'));
@@ -464,10 +459,7 @@ def _writeinstancepage(data) :
         row.append(HTML.TableCell(probtype[0]));
         if mattribs['nobjnlnz'] > 0 :
            row.append(HTML.TableCell('{0:.1f}'.format(100.0*(2.0*mattribs['nobjquadnz']-mattribs['nobjquaddiagnz'])/(mattribs['nobjnlnz']*mattribs['nobjnlnz']))));
-           if 'nobjquadnegev' in mattribs and 'nobjquadposev' in mattribs :
-              row.append(HTML.TableCell('{0:.1f}'.format((100.0*(mattribs['nobjquadnegev'] if mattribs['objsense'] == 'min' else mattribs['nobjquadposev']))/mattribs['nvars'])));
-           else :
-              row.append(HTML.TableCell('?'));
+           row.append(HTML.TableCell('{0:.1f}'.format((100.0*(mattribs['nobjquadnegev'] if mattribs['objsense'] == 'min' else mattribs['nobjquadposev']))/mattribs['nvars'])));
         else :
            row.append(HTML.TableCell(''));
            row.append(HTML.TableCell(''));
