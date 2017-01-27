@@ -363,6 +363,8 @@ RETURN instanceCheck(
             {
                 printf("NOBJQUADNZ        = 0\n");
                 printf("NOBJQUADDIAGNZ    = 0\n");
+                printf("NOBJQUADNEGEV     = 0\n");
+                printf("NOBJQUADPOSEV     = 0\n");
             }
             break;
 
