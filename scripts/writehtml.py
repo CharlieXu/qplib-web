@@ -836,6 +836,15 @@ def _writestatistics(data) :
     plt.gca().set_aspect(1);
     plt.title('instances convexity');
     _saveplot(htmlout, 'convexity');
+
+    plt.clf();
+    negeigs = df[df['nobjquadnz']>0][['nobjquadnegev','nvars']];  # TODO do one wants only instances with linear constraints?
+    negeigs['negevpercent'] = negeigs['nobjquadnegev'].div(negeigs['nvars']) * 100.0;
+    negeigs.sort_values('negevpercent', inplace = True);
+    plt.plot(negeigs['negevpercent'].values, color = 'r', marker = '+', linestyle = 'None');
+    plt.xlabel('Instances with quadratic objective function');
+    plt.ylabel('% negative eigenvalues');
+    _saveplot(htmlout, 'negev');
     print >> htmlout, "</P>";
 
     print >> htmlout, "<h3>Dimensions</h3>";
@@ -885,7 +894,6 @@ def _writestatistics(data) :
     plt.clf();
     conssize = df[df['nquadcons']>0][['nquadcons','nconvexnlcons']].copy();
     conssize['nnonconvexquadcons' ] = (conssize['nquadcons'] - conssize['nconvexnlcons']).clip_lower(1e-1);
-    print conssize;
     conssize.sort_values('nquadcons', inplace = True);
     p1 = plt.plot(conssize['nquadcons'].values, color = 'r', marker = '+', linestyle = 'None');
     p2 = plt.plot(conssize['nnonconvexquadcons'].values, color = 'blue', marker = '*', linestyle = 'None');
