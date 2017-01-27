@@ -422,7 +422,7 @@ def _writeinstancepage(data) :
     header_row = [
         HTML.TableCell('Name', attribs = {'title' : 'Instance Name'}, header = True),
         HTML.TableCell('Formats', attribs = {'title' : 'Available Fileformats'}, header = True),
-        HTML.TableCell('Cvx', attribs = {'title' : 'Continuous Relaxation proven to be convex?'}, header = True),
+        HTML.TableCell('Cvx', attribs = {'title' : 'Continuous Relaxation convex'}, header = True),
         HTML.TableCell('V', attribs = {'title' : 'Variables type'}, header = True),
         HTML.TableCell('#Vars', attribs = {'title' : 'Number of Variables'}, header = True),
         HTML.TableCell('#BinVars', attribs = {'title' : 'Number of Binary Variables'}, header = True),
@@ -456,7 +456,7 @@ def _writeinstancepage(data) :
 
         row = [HTML.TableCell('<A href=' + m + '.html>' + m + '</A>')];
         row.append(HTML.TableCell(formats));
-        row.append(HTML.TableCell('*' if metadata.isconvex(mattribs) else '-' if metadata.isnotconvex(mattribs) else ''));
+        row.append(HTML.TableCell('&#10004;' if metadata.isconvex(mattribs) else '-' if metadata.isnotconvex(mattribs) else ''));
         row.append(HTML.TableCell(probtype[1]));
         row.append(HTML.TableCell(inttostr(mattribs['nvars']) if 'nvars' in mattribs else '?'));
         row.append(HTML.TableCell(inttostr(mattribs['nbinvars']) if 'nbinvars' in mattribs else '?'));
