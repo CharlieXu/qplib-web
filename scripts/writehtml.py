@@ -765,27 +765,17 @@ def _writestatistics(data) :
     htmlout = open(os.path.join(HTMLDIR, "statistics.html"), 'w');
     print >> htmlout, '<HTML>', _htmlheader("QPLIB Statistics"), _htmlstartbody();
 
-    print >> htmlout, '''<p>
-        The following diagrams provide aggregated statistics on sources and characteristics of the instances in QPLIB.
-        You can access the raw data:
-      </p>
-      <ul>''';
-    if _havepandas :
-        print >> htmlout, '''
-        <li> in <a href="instancedata.csv">csv format</a>,
-        </li>''';
-    print >> htmlout, '''
-        <li> as <a href="instancedata.xlsx">xlsx spreadsheet</a>, and
-        </li>
-        <li> as <a href="instancedata.ods">ods spreadsheet</a>.
-        </li>
-      </ul>''';
-
     if not _havepandas :
         print >> htmlout, 'Python PANDAS not available, cannot generate statistics.';
         print >> htmlout, "</BODY></HTML>";
         htmlout.close();
         return
+
+    print >> htmlout, '''<p>
+        The following diagrams provide aggregated statistics on sources and characteristics of the instances in QPLIB.
+        You can access the raw data:
+      </p>
+      <ul><li> in <a href="instancedata.csv">csv format</a></li></ul>''';
 
     # create instancedata.csv
     df = metadata.todataframe(data);
