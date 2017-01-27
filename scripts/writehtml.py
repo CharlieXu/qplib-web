@@ -845,11 +845,12 @@ def _writestatistics(data) :
     _saveplot(htmlout, 'convexity');
 
     plt.clf();
-    negeigs = df[df['nobjquadnz']>0]['objquadnegevfrac'].sort_values() * 100.0;
+    negeigs = df[df['nobjquadnz']>0]['objquadhardevfrac'].sort_values() * 100.0;
     plt.plot(negeigs.values, color = 'r', marker = '+', linestyle = 'None');
     plt.xlabel('Instances with quadratic objective function');
-    plt.ylabel('% negative eigenvalues in objective');
-    _saveplot(htmlout, 'negev');
+    plt.ylabel('% hard eigenvalues in objective');
+    _saveplot(htmlout, 'hardev');
+    print >> htmlout, '<br/>The picture on the right shows the fraction of negative (positive) eigenvalues in the coefficient matrix of the objective function for a minimisation (maximisation) instance w.r.t. the total number of variables.';
     print >> htmlout, "</P>";
 
     print >> htmlout, "<h3>Dimensions</h3>";

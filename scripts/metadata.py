@@ -654,7 +654,12 @@ def todataframe(data, includeremoved = False) :
     df['density'] = df['nz'] / (df['nvars'] * (df['ncons']+1.0));
     df['nldensity'] = df['nlnz'] / (df['nnlvars'] * (df['nnlfunc'] + 0.0));
     df['objquaddensity'] = (2*df['nobjquadnz']-df['nobjquaddiagnz']).div(df['nobjnlnz'].apply(lambda x : x**2)).fillna(0.0);
-    df['objquadnegevfrac'] = df['nobjquadnegev'].div(df['nvars']).fillna(0.0);
+
+    # fraction on hard eigenvalues: negative ev's if min, positive ev's if max
+    hardev = pd.Series(index = df.index);
+    hardev[df['objsense']=='min'] = df['nobjquadnegev'];
+    hardev[df['objsense']=='max'] = df['nobjquadposev'];
+    df['objquadhardevfrac'] = hardev.div(df['nvars']);
     
     df.index.name = 'name';
     
@@ -675,6 +680,9 @@ if __name__ == '__main__' :
     #            refs.add(r);
     #print sorted(refs);
     
+    #d = todataframe(data);
+    #print d[['objquadhardevfrac','objsense','nobjquadposev','nobjquadnegev']].to_string();
+
     exit(0);
     
     for model, vals in sorted(data.iteritems()) :
