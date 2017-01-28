@@ -577,7 +577,7 @@ def getprobtype(instanceattribs) :
        s += 'B';
     elif nintvars == 0 :
        s += 'M';
-    elif nintvars == nvars :
+    elif nintvars + nbinvars == nvars :
        s += 'I';
     else :
        s += 'G';
