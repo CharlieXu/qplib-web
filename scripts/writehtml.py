@@ -829,6 +829,7 @@ def _writestatistics(data) :
     plt.plot(negeigs.values, color = 'r', marker = '+', linestyle = 'None');
     plt.xlabel('Instances with quadratic objective function');
     plt.ylabel('% hard eigenvalues in objective');
+    plt.ylim(ymin = -1);
     _saveplot(htmlout, 'hardev');
     print >> htmlout, "</P>";
 
@@ -844,11 +845,12 @@ def _writestatistics(data) :
 
     plt.clf();
     varsize = df[['nvars']].copy();
-    varsize['ndiscrvars' ] = (df['nbinvars'] + df['nintvars']).clip_lower(1e-1);
+    varsize['ndiscrvars' ] = df['nbinvars'] + df['nintvars'];
     varsize.sort_values('nvars', inplace = True);
     p1 = plt.plot(varsize['nvars'].values, color = 'r', marker = '+', linestyle = 'None');
     p2 = plt.plot(varsize['ndiscrvars'].values, color = 'blue', marker = 'x', linestyle = 'None');
-    plt.gca().set_yscale("log");
+    plt.gca().set_yscale("symlog");
+    plt.ylim(ymin = -0.1);
     plt.legend( (p1[0], p2[0]), ('# variables', '# discrete variables'), loc = 'upper left' );
     plt.xlabel('Instances');
     #plt.title('Number of variables');
@@ -866,11 +868,12 @@ def _writestatistics(data) :
 
     plt.clf();
     conssize = df[['ncons']].copy();
-    conssize['nquadcons' ] = df['nquadcons'].clip_lower(1e-1);
+    conssize['nquadcons' ] = df['nquadcons'];
     conssize.sort_values('ncons', inplace = True);
     p1 = plt.plot(conssize['ncons'].values, color = 'r', marker = '+', linestyle = 'None');
     p2 = plt.plot(conssize['nquadcons'].values, color = 'blue', marker = 'x', linestyle = 'None');
-    plt.gca().set_yscale("log");
+    plt.gca().set_yscale("symlog");
+    plt.ylim(ymin = -0.1);
     plt.legend( (p1[0], p2[0]), ('# constraints', '# quadratic constraints'), loc = 'upper left' );
     plt.xlabel('Instances');
     #plt.title('Number of constraints');
@@ -881,23 +884,25 @@ def _writestatistics(data) :
     plt.clf();
     continuous = df[df['nbinvars'] + df['nintvars'] == 0];
     discrete = df[df['nbinvars'] + df['nintvars'] > 0];
-    p1 = plt.scatter(continuous['nvars'], continuous['ncons']+1, c = 'r', marker = '+');
-    p2 = plt.scatter(discrete['nvars'] + 1, discrete['ncons']+1, c = 'blue', marker = 'x');
+    p1 = plt.scatter(continuous['nvars'], continuous['ncons'], c = 'r', marker = '+');
+    p2 = plt.scatter(discrete['nvars'], discrete['ncons'], c = 'blue', marker = 'x');
     plt.gca().set_xscale("log");
-    plt.gca().set_yscale("log");
+    plt.gca().set_yscale("symlog");
+    plt.ylim(ymin = -0.1);
     plt.legend( (p1, p2), ('Continuous instances', 'Discrete instances'), loc = 'upper left' );
     plt.xlabel('Number of variables');
-    plt.ylabel('Number of constraints (+1)');
+    plt.ylabel('Number of constraints');
     #plt.title('Distribution of number of variables and constraints');
     _saveplot(htmlout, 'nvarsncons');
 
     plt.clf();
     conssize = df[df['nquadcons']>0][['nquadcons','nconvexnlcons']].copy();
-    conssize['nnonconvexquadcons' ] = (conssize['nquadcons'] - conssize['nconvexnlcons']).clip_lower(1e-1);
+    conssize['nnonconvexquadcons' ] = (conssize['nquadcons'] - conssize['nconvexnlcons']);
     conssize.sort_values('nquadcons', inplace = True);
     p1 = plt.plot(conssize['nquadcons'].values, color = 'r', marker = '+', linestyle = 'None');
     p2 = plt.plot(conssize['nnonconvexquadcons'].values, color = 'blue', marker = 'x', linestyle = 'None');
-    plt.gca().set_yscale("log");
+    plt.gca().set_yscale("symlog");
+    plt.ylim(ymin = -0.1);
     plt.legend( (p1[0], p2[0]), ('# quadratic constraints', '# nonconvex quadratic constraints'), loc = 'upper left' );
     plt.xlabel('Instances with at least one quadratic constraint');
     #plt.title('Number of quadratic constraints');
@@ -944,6 +949,7 @@ def _writestatistics(data) :
     plt.plot(density.values, color = 'r', marker = '+', linestyle = 'None');
     plt.xlabel('Instances with quadratic objective function');
     plt.ylabel('% density of objective coef. matrix');
+    plt.ylim(ymin = -1);
     _saveplot(htmlout, 'objquaddensity');
     print >> htmlout, "</P>";
 
