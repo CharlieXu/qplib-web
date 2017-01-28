@@ -1008,9 +1008,9 @@ def writehtml() :
         following values:
       </p>
       <ol>
-        <li>objective function: (L)inear, (D)iagonal convex quadratic, (C)onvex quadratic, nonconvex (Q)uadratic;
+        <li>objective function: (L)inear, (D)iagonal convex (if minimization) or concave (if maximization) quadratic, (C)onvex (if minimization) or (C)oncave (if maximization) quadratic, (Q)uadratic (all other cases);
         </li>
-        <li>variables: (C)ontinuous only, (B)inary only, (M)ixed binary and continuous, (I)nteger only, (G)eneral (all three types);
+        <li>variables: (C)ontinuous only, (B)inary only, (M)ixed binary and continuous, (I)nteger (incl. binary) only, (G)eneral (all other cases);
         </li>
         <li>constraints: (N)one, (B)ox, (L)inear, (D)iagonal convex quadratic, (C)onvex quadratic, nonconvex (Q)uadratic.
         </li>
