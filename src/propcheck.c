@@ -282,12 +282,15 @@ RETURN instanceCheck(
             break;
       }
 
-      haslb = (gmoGetVarLowerOne(gmo, i) != gmoMinf(gmo));
-      hasub = (gmoGetVarUpperOne(gmo, i) != gmoPinf(gmo));
-      if( haslb && hasub )
-         ++nbounded;
-      else if( haslb || hasub )
-         ++nhalfbounded;
+      if( gmoGetVarTypeOne(gmo, i) != gmovar_B )
+      {
+         haslb = (gmoGetVarLowerOne(gmo, i) != gmoMinf(gmo));
+         hasub = (gmoGetVarUpperOne(gmo, i) != gmoPinf(gmo));
+         if( haslb && hasub )
+            ++nbounded;
+         else if( haslb || hasub )
+            ++nhalfbounded;
+      }
    }
 
    printf("NVARS             = %d\n", gmoN(gmo));

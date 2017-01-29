@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import os;
-import subprocess;
 import datetime;
 import sys;
 import shutil;
@@ -164,8 +163,8 @@ INSTANCEATTRS = [
     ('nvars', '#Variables', str),
     ('nbinvars', '#Binary Variables', str),
     ('nintvars', '#Integer Variables', str),
-    ('nboundedvars', '#Bounded Variables', str),
-    ('nsingleboundedvars', '#Variables with one bound', str),
+    ('nboundedvars', '#Bounded non-binary Variables', str),
+    ('nsingleboundedvars', '#Variables with only one bound', str),
     ('nnlvars', '#Nonlinear Variables', str),
     ('nnlbinvars', '#Nonlinear Binary Variables', str),
     ('nnlintvars', '#Nonlinear Integer Variables', str),
