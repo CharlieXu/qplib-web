@@ -94,7 +94,7 @@ INSTANCEPROPATTRS = {
     'laghessianavgblocksize' : float
     }
 
-INSTANCEFORMATS = (['ams', 'gms', 'lp', 'mod', 'nl', 'osil', 'pip']);
+INSTANCEFORMATS = (['ams', 'gms', 'lp', 'mod', 'nl', 'osil', 'pip', 'qplib']);
 
 # TODO allow references for points
 POINTINFOATTRS = {

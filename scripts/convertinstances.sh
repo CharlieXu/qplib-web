@@ -8,6 +8,7 @@ DONL=0
 DOOSIL=0
 DOLP=1
 DOPYOMO=0
+DOQPLIB=1
 
 DATADIR="$SCRIPTDIR/../data"
 BINDIR="$SCRIPTDIR/../bin"
@@ -18,6 +19,7 @@ NLDIR="$DATADIR/nl"
 OSILDIR="$DATADIR/osil"
 LPDIR="$DATADIR/lp"
 PYOMODIR="$DATADIR/pyomo"
+QPLIBDIR="$DATADIR/qplib"
 
 AMPL=$SCRIPTDIR/../ampl
 
@@ -26,6 +28,7 @@ AMPL=$SCRIPTDIR/../ampl
 [ $DOOSIL == 1 ] && mkdir -p $OSILDIR
 [ $DOLP == 1 ] && mkdir -p $LPDIR
 [ $DOPYOMO == 1 ] && mkdir -p $PYOMODIR
+[ $DOPYOMO == 1 ] && mkdir -p $QPLIBDIR
 
 for i in $GMSDIR/*.gms ; do
 
@@ -103,6 +106,16 @@ if [ $DOLP == 1 -a ! -e $lpfile ]; then
 
     # convert to .lp file
     $BINDIR/convert $i $lpfile
+fi
+
+qplibfile="${QPLIBDIR}/${iname}.qplib"
+
+if [ $DOQPLIB == 1 -a ! -e $qplibfile ]; then
+
+    echo "Converting $iname to .qplib"
+
+    # convert to .qplib file
+    $BINDIR/convert $i $qplibfile
 fi
 
 done
