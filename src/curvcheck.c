@@ -285,7 +285,12 @@ RETURN curvSample(
       /* compute x'*Q*x */
       prod = 0.0;
       for( i = 0; i < qnz; ++i )
-         prod += qcoef[i] * x[qcol[i]] * x[qrow[i]];
+      {
+         if( qcol[i] == qrow[i] )
+            prod += qcoef[i] * x[qcol[i]] * x[qrow[i]];
+         else
+            prod += 2.0 * qcoef[i] * x[qcol[i]] * x[qrow[i]]; /* because half of the non-diagonal elements are not specified */
+      }
 
       /* conclude on curvature of Q */
       if( prod > 1e-9 )
