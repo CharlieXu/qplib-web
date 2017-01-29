@@ -28,7 +28,7 @@ AMPL=$SCRIPTDIR/../ampl
 [ $DOOSIL == 1 ] && mkdir -p $OSILDIR
 [ $DOLP == 1 ] && mkdir -p $LPDIR
 [ $DOPYOMO == 1 ] && mkdir -p $PYOMODIR
-[ $DOPYOMO == 1 ] && mkdir -p $QPLIBDIR
+[ $DOQPLIB == 1 ] && mkdir -p $QPLIBDIR
 
 for i in $GMSDIR/*.gms ; do
 
