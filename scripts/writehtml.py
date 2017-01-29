@@ -909,6 +909,20 @@ def _writestatistics(data) :
     _saveplot(htmlout, 'nquadcons');
     print >> htmlout, "</P>";
 
+    print >> htmlout, "<P>";
+    plt.clf();
+    nz = df[['nz','nlnz']].sort_values('nz');
+    p1 = plt.plot(nz['nz'].values, color = 'r', marker = '+', linestyle = 'None');
+    p2 = plt.plot(nz['nlnz'].values, color = 'blue', marker = 'x', linestyle = 'None');
+    plt.gca().set_yscale("symlog");
+    #plt.ylim(ymin = -0.1);
+    plt.legend( (p1[0], p2[0]), ('# nonzeros', '# nonlinear nonzeros'), loc = 'upper left' );
+    plt.xlabel('Instances');
+    #plt.title('Number of nonzeros');
+    _saveplot(htmlout, 'nz');
+    print >> htmlout, "</P>";
+
+
     print >> htmlout, "<h3>Density</h3>";
     print >> htmlout, "<P>";
     print >> htmlout, "In these scatter plots, each bubble represents an instance and the area of the bubble corresponds to (nonlinear) density of the instance:", "<BR>";
