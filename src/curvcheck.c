@@ -276,7 +276,7 @@ RETURN curvSample(
 
    x = (double*) malloc(n * sizeof(double));
 
-   for( iter = 0; iter < n/10 && !curvdecided[*curv]; ++iter )
+   for( iter = 0; iter <= n/10 && !curvdecided[*curv]; ++iter )
    {
       /* generate random trial point (values in [-1.0,1.0]) */
       for( i = 0; i < n; ++i )

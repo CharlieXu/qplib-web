@@ -41,4 +41,11 @@ RETURN writeLP(
    const char*    filename
 );
 
+extern
+RETURN writeQPLIB(
+   struct gmoRec* gmo,
+   struct gevRec* gev,
+   const char*    filename
+);
+
 #endif /* CONVERT_H_ */

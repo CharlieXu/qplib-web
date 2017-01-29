@@ -38,6 +38,10 @@ int main(
    {
       CHECK( writeLP(gmo, gev, argv[2]) );
    }
+   else if( gmo != NULL && strlen(argv[2]) >= 6 && strcmp(&argv[2][strlen(argv[2])-6], ".qplib") == 0 )
+   {
+      CHECK( writeQPLIB(gmo, gev, argv[2]) );
+   }
    else
    {
       fputs("Input or Output format not recognized or not supported from filename.\n", stderr);

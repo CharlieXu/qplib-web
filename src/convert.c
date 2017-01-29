@@ -3,6 +3,7 @@
 #include <string.h>
 #include <assert.h>
 #include <math.h>
+#include <float.h>  /* for DBL_MAX */
 
 #include "convert.h"
 
@@ -659,6 +660,240 @@ RETURN writeLP(
 
 
    fclose(f);
+
+   return RETURN_OK;
+}
+
+static
+int getNNondefaultEntries(
+   double* x,
+   int n,
+   double def
+   )
+{
+   int i;
+   int cnt = 0;
+   for( i = 0; i < n; ++i )
+      if( x[i] != def )
+         ++cnt;
+
+   return cnt;
+}
+
+/* float format */
+#define FF "%.15g"
+
+RETURN writeQPLIB(
+   gmoHandle_t gmo,
+   gevHandle_t gev,
+   const char* filename
+)
+{
+   char linebuffer[MAX_PRINTLEN];
+   int  linecnt;
+
+   FILE* f;
+   char buffer[GMS_SSSIZE+10];
+
+   int* lincolidx;
+   double* lincoef;
+   int linnz;
+
+   int* quadrowidx;
+   int* quadcolidx;
+   double* quadcoef;
+   int quadnz;
+
+   double* x;
+
+   int nlnz;
+   int i;
+   int j;
+
+   assert(gmo != NULL);
+   assert(gev != NULL);
+   assert(filename != NULL);
+
+   gmoPinfSet(gmo,  DBL_MAX);
+   gmoMinfSet(gmo, -DBL_MAX);
+
+   gmoUseQSet(gmo, 1);
+
+   if( (gmoObjStyle(gmo) == gmoObjType_Fun && gmoGetObjOrder(gmo) == gmoorder_NL) || gmoNLM(gmo) > 0 )
+   {
+      fputs("Instance has general nonlinear equations, cannot write in .qplib format.\n", stderr);
+      return RETURN_ERROR;
+   }
+
+   if( gmoGetEquTypeCnt(gmo, gmoequ_C) )
+   {
+      /* TODO we could reformulate as quadratic */
+      fputs("Instance has conic equations, cannot write in .qplib format.\n", stderr);
+      return RETURN_ERROR;
+   }
+
+   f = fopen(filename, "w");
+   if( f == NULL )
+   {
+      fprintf(stderr, "Could not open file %s for writing.\n", filename);
+      return RETURN_ERROR;
+   }
+
+   linebuffer[0] = '\0';
+   linecnt = 0;
+
+   CHECK( writeStatistics(gmo, f, linebuffer, &linecnt, "# ") );
+
+   lincolidx = (int*) malloc(gmoN(gmo) * sizeof(int));
+   lincoef   = (double*) malloc(gmoN(gmo) * sizeof(double));
+   quadrowidx = (int*) malloc(gmoMaxQNZ(gmo) * sizeof(int));
+   quadcolidx = (int*) malloc(gmoMaxQNZ(gmo) * sizeof(int));
+   quadcoef   = (double*) malloc(gmoMaxQNZ(gmo) * sizeof(double));
+   x = (double*) malloc(MAX(gmoN(gmo),gmoM(gmo)) * sizeof(double));
+
+   fputs(gmoNameInput(gmo, buffer), f);
+   fputs("\n", f);
+   /* TODO could be improved; these are the most general types, thus always ok */
+   if( gmoNDisc(gmo) )
+      fputs("MIQPQC\n", f);
+   else
+      fputs("QPQC\n", f);
+
+   if( gmoSense(gmo) == gmoObj_Min )
+      fputs("minimize\n", f);
+   else
+      fputs("maximize\n", f);
+
+   fprintf(f, "%d\n", gmoN(gmo));
+   fprintf(f, "%d\n", gmoM(gmo));
+
+   quadnz = gmoObjQNZ(gmo);
+   gmoGetObjQ(gmo, quadcolidx, quadrowidx, quadcoef);
+
+   fprintf(f, "%d\n", quadnz);
+   for( i = 0; i < quadnz; ++i )
+      fprintf(f, "%d %d " FF "\n", MAX(quadrowidx[i], quadcolidx[i]), MIN(quadrowidx[i], quadcolidx[i]), (quadrowidx[i] == quadcolidx[i]) ? quadcoef[i]/2.0 : quadcoef[i]);
+
+   gmoGetObjVector(gmo, lincoef, NULL);
+   linnz = 0;
+   for( i = 0; i < gmoN(gmo); ++i )
+      if( lincoef[i] != 0.0 )
+         ++linnz;
+
+   fputs("0.0\n", f);
+   fprintf(f, "%d\n", linnz);
+   for( i = 0; i < linnz; ++i )
+      if( lincoef[i] != 0.0 )
+         fprintf(f, "%d " FF "\n", i, lincoef[i]);
+
+   fprintf(f, FF "\n", gmoObjConst(gmo));
+
+   /* constraints quad coef matrices */
+   for( i = 0; i < gmoM(gmo); ++i )
+   {
+      quadnz = 0;
+      if( gmoGetEquOrderOne(gmo, i) == gmoorder_Q )
+      {
+         quadnz = gmoGetRowQNZOne(gmo, i);
+         assert(quadnz <= gmoMaxQNZ(gmo));
+         gmoGetRowQ(gmo, i, quadcolidx, quadrowidx, quadcoef);
+      }
+
+      fprintf(f, "%d\n", quadnz);
+      for( j = 0; j < quadnz; ++j )
+         fprintf(f, "%d %d %d " FF "\n", i, MAX(quadrowidx[i], quadcolidx[i]), MIN(quadrowidx[i], quadcolidx[i]), (quadrowidx[j] == quadcolidx[j]) ? quadcoef[j]/2.0 : quadcoef[j]);
+   }
+
+   /* constraints linear coefs */
+   for( i = 0; i < gmoM(gmo); ++i )
+   {
+      gmoGetRowSparse(gmo, i, lincolidx, lincoef, NULL, &linnz, &nlnz);
+
+      fprintf(f, "%d\n", linnz);
+      for( j = 0; j < linnz; ++j )
+         fprintf(f, "%d %d " FF "\n", i, lincolidx[j], lincoef[j]);
+   }
+
+   fprintf(f, FF "\n", gmoPinf(gmo));
+
+   /* left-hand side */
+   fprintf(f, FF "\n", gmoMinf(gmo)); /* default lhs is -inf */
+   /* =G= and =E= equations have lhs */
+   fprintf(f, "%d\n", gmoGetEquTypeCnt(gmo, gmoequ_G) + gmoGetEquTypeCnt(gmo, gmoequ_E));
+   for( i = 0; i < gmoM(gmo); ++i )
+   {
+      if( (gmoGetEquTypeOne(gmo, i) == gmoequ_G) || (gmoGetEquTypeOne(gmo, i) == gmoequ_E) )
+         fprintf(f, "%d " FF "\n", i, gmoGetRhsOne(gmo, i));
+      else
+         assert(gmoGetEquTypeOne(gmo, i) == gmoequ_L);
+   }
+
+   /* right-hand side */
+   fprintf(f, FF "\n", gmoPinf(gmo)); /* default rhs is +inf */
+   /* =L= and =E= equations have rhs */
+   fprintf(f, "%d\n", gmoGetEquTypeCnt(gmo, gmoequ_L) + gmoGetEquTypeCnt(gmo, gmoequ_E));
+   for( i = 0; i < gmoM(gmo); ++i )
+      if( (gmoGetEquTypeOne(gmo, i) == gmoequ_L) || (gmoGetEquTypeOne(gmo, i) == gmoequ_E) )
+         fprintf(f, "%d " FF "\n", i, gmoGetRhsOne(gmo, i));
+
+   /* variable lower bounds */
+   gmoGetVarLower(gmo, x);
+   fprintf(f, FF "\n", gmoMinf(gmo)); /* default lb is -inf */
+   fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), gmoMinf(gmo)));
+   for( i = 0; i < gmoN(gmo); ++i )
+      if( x[i] != gmoMinf(gmo) )
+         fprintf(f, "%d " FF "\n", i, x[i]);
+
+   /* variable upper bounds */
+   gmoGetVarUpper(gmo, x);
+   fprintf(f, FF "\n", gmoPinf(gmo)); /* default ub is +inf */
+   fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), gmoPinf(gmo)));
+   for( i = 0; i < gmoN(gmo); ++i )
+      if( x[i] != gmoPinf(gmo) )
+         fprintf(f, "%d " FF "\n", i, x[i]);
+
+   /* variable types */
+   fputs("0\n", f);  /* default variable type is "continuous" */
+   fprintf(f, "%d\n", gmoNDisc(gmo));
+   for( i = 0; i < gmoN(gmo); ++i )
+      if( x[i] != gmovar_X )
+         fprintf(f, "%d 1\n", i);
+
+   /* starting point: variable values */
+   gmoGetVarL(gmo, x);
+   fputs("0.0\n", f);  /* default value is 0 */
+   fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), 0.0));
+   for( i = 0; i < gmoN(gmo); ++i )
+      if( x[i] != 0.0 )
+         fprintf(f, "%d " FF "\n", i, x[i]);
+
+   /* starting point: equation marginals */
+   gmoGetEquM(gmo, x);
+   fputs("0.0\n", f);  /* default value is 0 */
+   fprintf(f, "%d\n", getNNondefaultEntries(x, gmoM(gmo), 0.0));
+   for( i = 0; i < gmoM(gmo); ++i )
+      if( x[i] != 0.0 )
+         fprintf(f, "%d " FF "\n", i, x[i]);
+
+   /* starting point: variable marginals */
+   gmoGetVarM(gmo, x);
+   fputs("0.0\n", f);  /* default value is 0 */
+   fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), 0.0));
+   for( i = 0; i < gmoN(gmo); ++i )
+      if( x[i] != 0.0 )
+         fprintf(f, "%d " FF "\n", i, x[i]);
+
+   fputs("0\n", f); /* no nondefault variable names (TODO?) */
+   fputs("0\n", f); /* no nondefault equation names (TODO?) */
+
+   fclose(f);
+
+   free(lincolidx);
+   free(lincoef);
+   free(quadrowidx);
+   free(quadcolidx);
+   free(quadcoef);
+   free(x);
 
    return RETURN_OK;
 }
