@@ -10,6 +10,10 @@
 #include "gmomcc.h"
 #include "gevmcc.h"
 
+#if (GMOAPIVERSION >= 13) && (GMOAPIVERSION < 15)  /* or 14? */
+#define gmoNameInput gmoNameOutput
+#endif
+
 #define MAX_PRINTLEN 561
 #define PRINTLEN     100
 
