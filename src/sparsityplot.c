@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include "png.h"        /* libpng header; includes zlib.h and setjmp.h */
+#include "png.h"        /* libpng header; includes setjmp.h */
+#include "zlib.h"
 
 #include "gmomcc.h"
 #include "gevmcc.h"
@@ -298,6 +299,9 @@ RETURN plotSparsityJacobianPNG(
    }
 
    png_init_io(png_ptr, f);
+
+   /* let zlib try its best */
+   png_set_compression_level(png_ptr, Z_BEST_COMPRESSION);
 
    /* write header */
    png_set_IHDR(png_ptr, info_ptr, gmoN(gmo), gmoM(gmo)+1,
