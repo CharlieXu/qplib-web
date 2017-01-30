@@ -913,7 +913,7 @@ def _writestatistics(data) :
     nz = df[['nz','nlnz']].sort_values('nz');
     p1 = plt.plot(nz['nz'].values, color = 'r', marker = '+', linestyle = 'None');
     p2 = plt.plot(nz['nlnz'].values, color = 'blue', marker = 'x', linestyle = 'None');
-    plt.gca().set_yscale("symlog");
+    plt.gca().set_yscale("log");
     #plt.ylim(ymin = -0.1);
     plt.legend( (p1[0], p2[0]), ('# nonzeros', '# nonlinear nonzeros'), loc = 'upper left' );
     plt.xlabel('Instances');
