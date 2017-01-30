@@ -757,11 +757,39 @@ RETURN writeQPLIB(
 
    fputs(gmoNameInput(gmo, buffer), f);
    fputs("\n", f);
-   /* TODO could be improved; these are the most general types, thus always ok */
-   if( gmoNDisc(gmo) )
-      fputs("MIQPQC\n", f);
+
+   /* variable classification */
+   if( gmoNDisc(gmo) == gmoN(gmo) )
+      fputs("I", f);
+   else if( gmoNDisc(gmo) > 0 )
+      fputs("MI", f);
+
+   /* objective and constraint classification: LP, QCP, BQP, QP, QCQP */
+   if( gmoM(gmo) == 0 )
+   {
+      /* no constraints */
+      if( gmoObjQNZ(gmo) > 0 )
+         fputs("BQP", f);
+      else
+         fputs("LP", f);
+   }
+   else if( gmoNLM(gmo) == 0 )
+   {
+      /* only linear constraints: LP or QP */
+      if( gmoObjQNZ(gmo) > 0 )
+         fputs("QP", f);
+      else
+         fputs("LP", f);
+   }
    else
-      fputs("QPQC\n", f);
+   {
+      /* quadratic constraints: QCP or QCQP */
+      if( gmoObjQNZ(gmo) > 0 )
+         fputs("QCQP", f);
+      else
+         fputs("QCP", f);
+   }
+   fputs("\n", f);
 
    if( gmoSense(gmo) == gmoObj_Min )
       fputs("minimize\n", f);
@@ -769,14 +797,19 @@ RETURN writeQPLIB(
       fputs("maximize\n", f);
 
    fprintf(f, "%d\n", gmoN(gmo));
-   fprintf(f, "%d\n", gmoM(gmo));
+   if( gmoM(gmo) == 0 && gmoObjQNZ(gmo) > 0 )  /* omit constraint number for BQP */
+      fprintf(f, "%d\n", gmoM(gmo));
 
    quadnz = gmoObjQNZ(gmo);
-   gmoGetObjQ(gmo, quadcolidx, quadrowidx, quadcoef);
+   if( quadnz > 0 )
+   {
+      /* obj quad nz is omitted for LPs and QCPs */
+      gmoGetObjQ(gmo, quadcolidx, quadrowidx, quadcoef);
 
-   fprintf(f, "%d\n", quadnz);
-   for( i = 0; i < quadnz; ++i )
-      fprintf(f, "%d %d " FF "\n", MAX(quadrowidx[i], quadcolidx[i]), MIN(quadrowidx[i], quadcolidx[i]), (quadrowidx[i] == quadcolidx[i]) ? quadcoef[i]/2.0 : quadcoef[i]);
+      fprintf(f, "%d\n", quadnz);
+      for( i = 0; i < quadnz; ++i )
+         fprintf(f, "%d %d " FF "\n", MAX(quadrowidx[i], quadcolidx[i]), MIN(quadrowidx[i], quadcolidx[i]), (quadrowidx[i] == quadcolidx[i]) ? quadcoef[i]/2.0 : quadcoef[i]);
+   }
 
    gmoGetObjVector(gmo, lincoef, NULL);
    linnz = 0;
@@ -793,19 +826,23 @@ RETURN writeQPLIB(
    fprintf(f, FF "\n", gmoObjConst(gmo));
 
    /* constraints quad coef matrices */
-   for( i = 0; i < gmoM(gmo); ++i )
+   if( gmoNLM(gmo) == 0 )
    {
-      quadnz = 0;
-      if( gmoGetEquOrderOne(gmo, i) == gmoorder_Q )
+      /* this section is omitted when no quadratic constraints */
+      for( i = 0; i < gmoM(gmo); ++i )
       {
-         quadnz = gmoGetRowQNZOne(gmo, i);
-         assert(quadnz <= gmoMaxQNZ(gmo));
-         gmoGetRowQ(gmo, i, quadcolidx, quadrowidx, quadcoef);
-      }
+         quadnz = 0;
+         if( gmoGetEquOrderOne(gmo, i) == gmoorder_Q )
+         {
+            quadnz = gmoGetRowQNZOne(gmo, i);
+            assert(quadnz <= gmoMaxQNZ(gmo));
+            gmoGetRowQ(gmo, i, quadcolidx, quadrowidx, quadcoef);
+         }
 
-      fprintf(f, "%d\n", quadnz);
-      for( j = 0; j < quadnz; ++j )
-         fprintf(f, "%d %d %d " FF "\n", i, MAX(quadrowidx[i], quadcolidx[i]), MIN(quadrowidx[i], quadcolidx[i]), (quadrowidx[j] == quadcolidx[j]) ? quadcoef[j]/2.0 : quadcoef[j]);
+         fprintf(f, "%d\n", quadnz);
+         for( j = 0; j < quadnz; ++j )
+            fprintf(f, "%d %d %d " FF "\n", i, MAX(quadrowidx[i], quadcolidx[i]), MIN(quadrowidx[i], quadcolidx[i]), (quadrowidx[j] == quadcolidx[j]) ? quadcoef[j]/2.0 : quadcoef[j]);
+      }
    }
 
    /* constraints linear coefs */
@@ -820,25 +857,28 @@ RETURN writeQPLIB(
 
    fprintf(f, FF "\n", gmoPinf(gmo));
 
-   /* left-hand side */
-   fprintf(f, FF "\n", gmoMinf(gmo)); /* default lhs is -inf */
-   /* =G= and =E= equations have lhs */
-   fprintf(f, "%d\n", gmoGetEquTypeCnt(gmo, gmoequ_G) + gmoGetEquTypeCnt(gmo, gmoequ_E));
-   for( i = 0; i < gmoM(gmo); ++i )
+   if( gmoM(gmo) > 0 )
    {
-      if( (gmoGetEquTypeOne(gmo, i) == gmoequ_G) || (gmoGetEquTypeOne(gmo, i) == gmoequ_E) )
-         fprintf(f, "%d " FF "\n", i, gmoGetRhsOne(gmo, i));
-      else
-         assert(gmoGetEquTypeOne(gmo, i) == gmoequ_L);
-   }
+      /* left-hand side */
+      fprintf(f, FF "\n", gmoMinf(gmo)); /* default lhs is -inf */
+      /* =G= and =E= equations have lhs */
+      fprintf(f, "%d\n", gmoGetEquTypeCnt(gmo, gmoequ_G) + gmoGetEquTypeCnt(gmo, gmoequ_E));
+      for( i = 0; i < gmoM(gmo); ++i )
+      {
+         if( (gmoGetEquTypeOne(gmo, i) == gmoequ_G) || (gmoGetEquTypeOne(gmo, i) == gmoequ_E) )
+            fprintf(f, "%d " FF "\n", i, gmoGetRhsOne(gmo, i));
+         else
+            assert(gmoGetEquTypeOne(gmo, i) == gmoequ_L);
+      }
 
-   /* right-hand side */
-   fprintf(f, FF "\n", gmoPinf(gmo)); /* default rhs is +inf */
-   /* =L= and =E= equations have rhs */
-   fprintf(f, "%d\n", gmoGetEquTypeCnt(gmo, gmoequ_L) + gmoGetEquTypeCnt(gmo, gmoequ_E));
-   for( i = 0; i < gmoM(gmo); ++i )
-      if( (gmoGetEquTypeOne(gmo, i) == gmoequ_L) || (gmoGetEquTypeOne(gmo, i) == gmoequ_E) )
-         fprintf(f, "%d " FF "\n", i, gmoGetRhsOne(gmo, i));
+      /* right-hand side */
+      fprintf(f, FF "\n", gmoPinf(gmo)); /* default rhs is +inf */
+      /* =L= and =E= equations have rhs */
+      fprintf(f, "%d\n", gmoGetEquTypeCnt(gmo, gmoequ_L) + gmoGetEquTypeCnt(gmo, gmoequ_E));
+      for( i = 0; i < gmoM(gmo); ++i )
+         if( (gmoGetEquTypeOne(gmo, i) == gmoequ_L) || (gmoGetEquTypeOne(gmo, i) == gmoequ_E) )
+            fprintf(f, "%d " FF "\n", i, gmoGetRhsOne(gmo, i));
+   }
 
    /* variable lower bounds */
    gmoGetVarLower(gmo, x);
@@ -857,11 +897,14 @@ RETURN writeQPLIB(
          fprintf(f, "%d " FF "\n", i, x[i]);
 
    /* variable types */
-   fputs("0\n", f);  /* default variable type is "continuous" */
-   fprintf(f, "%d\n", gmoNDisc(gmo));
-   for( i = 0; i < gmoN(gmo); ++i )
-      if( x[i] != gmovar_X )
-         fprintf(f, "%d 1\n", i);
+   if( gmoNDisc(gmo) > 0 && gmoNDisc(gmo) < gmoN(gmo) )
+   {
+      fputs("0\n", f);  /* default variable type is "continuous" */
+      fprintf(f, "%d\n", gmoNDisc(gmo));
+      for( i = 0; i < gmoN(gmo); ++i )
+         if( x[i] != gmovar_X )
+            fprintf(f, "%d 1\n", i);
+   }
 
    /* starting point: variable values */
    gmoGetVarL(gmo, x);
@@ -872,12 +915,15 @@ RETURN writeQPLIB(
          fprintf(f, "%d " FF "\n", i, x[i]);
 
    /* starting point: equation marginals */
-   gmoGetEquM(gmo, x);
-   fputs("0.0\n", f);  /* default value is 0 */
-   fprintf(f, "%d\n", getNNondefaultEntries(x, gmoM(gmo), 0.0));
-   for( i = 0; i < gmoM(gmo); ++i )
-      if( x[i] != 0.0 )
-         fprintf(f, "%d " FF "\n", i, x[i]);
+   if( gmoM(gmo) > 0 )
+   {
+      gmoGetEquM(gmo, x);
+      fputs("0.0\n", f);  /* default value is 0 */
+      fprintf(f, "%d\n", getNNondefaultEntries(x, gmoM(gmo), 0.0));
+      for( i = 0; i < gmoM(gmo); ++i )
+         if( x[i] != 0.0 )
+            fprintf(f, "%d " FF "\n", i, x[i]);
+   }
 
    /* starting point: variable marginals */
    gmoGetVarM(gmo, x);
