@@ -780,7 +780,7 @@ def _writestatistics(data) :
     discrtypecounts['total'] = discrtypecounts.sum();
     conttypecounts = df[df['nbinvars']+df['nintvars']==0]['probtype'].map(simplifyprobtype).value_counts().sort_index();  # continuous only
     conttypecounts['total'] = conttypecounts.sum();
-    print >> htmlout, '<table><tr><th valign="top"><h3>Continuous Instances&nbsp;&nbsp;&nbsp;/</h3></th><th>&nbsp;&nbsp;&nbsp;</th><th valign="top"><h3>Discrete Instances</h3></th></tr>'
+    print >> htmlout, '<table><tr><th valign="top"><h4>Continuous Instances&nbsp;&nbsp;&nbsp;/</h4></th><th>&nbsp;&nbsp;&nbsp;</th><th valign="top"><h4>Discrete Instances</h4></th></tr>'
     print >> htmlout, '<tr><td valign="top">';
     print >> htmlout, pd.DataFrame(conttypecounts).to_html(header = False).replace('border="1"','border="0"');
     print >> htmlout, '</td><td/><td valign="top">';
