@@ -4,6 +4,7 @@ obj/
 bin/
 html/
 data/lp
+data/qplib
 gams
 depend
 make.local
