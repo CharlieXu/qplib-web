@@ -409,6 +409,9 @@ $(document).ready(function() {
     ]});
   new $.fn.dataTable.FixedHeader( table );
 
+  // columns with numeric values for which we have InputMin/InputMax filter
+  var numcols = [3,4,5,7,8,10,11,12];
+
   $.fn.dataTable.ext.search.push(
     function( settings, data, dataIndex ) {
       var inputV = $('#InputV').val();
@@ -429,11 +432,28 @@ $(document).ready(function() {
       if( inputCvx == "N" && data[1] != "-" )
         return false;
 
+      for( var c in numcols ) {
+         col = numcols[c];
+         var min = parseFloat($('#InputMin' + col).val());
+         var max = parseFloat($('#InputMax' + col).val());
+         var colval = parseFloat(data[col]);
+         if( isNaN(colval) )
+            colval = 0;
+         if( !isNaN(min) && colval < min )
+            return false;
+         if( !isNaN(max) && colval > max )
+            return false;
+      }
+
       return true;
     }
   );
 
   $('#InputCvx, #InputV, #InputO, #InputC').keyup( function() { table.draw(); } );
+  for( var c in numcols ) {
+     $('#InputMin' + numcols[c]).keyup( function() { table.draw(); } );
+     $('#InputMax' + numcols[c]).keyup( function() { table.draw(); } );
+  }
 });
 </script>'''
 
@@ -508,23 +528,22 @@ $(document).ready(function() {
     tStr = str(t)
     tStr = tStr.replace('<TR>', '<THEAD bgcolor="white"><TR>', 1)
     tStr = tStr.replace('</TR>', '</TR></THEAD><TBODY>', 1)
-    tStr = tStr.replace('</TABLE>', '''</TBODY>
-    <TFOOT><TR>
+    tStr = tStr.replace('</TABLE>', '''</TBODY><TFOOT valign="top">
+    <TR>
      <TH>Filter:</TH>
      <TH title="Y or N"><input name="InputCvx" id="InputCvx" type="text" maxlength="1" size="1"/></TH>
-     <TH><input name="InputV" id="InputV" type="text" maxlength="3" size="1"/></TH>
-     <TH></TH>
-     <TH></TH>
-     <TH></TH>
-     <TH><input name="InputO" id="InputO" type="text" maxlength="3" size="1"/></TH>
-     <TH></TH>
-     <TH></TH>
-     <TH><input name="InputC" id="InputC" type="text" maxlength="3" size="1"/></TH>
-     <TH></TH>
-     <TH></TH>
-     <TH></TH>
-    </TR></TFOOT>
-    </TABLE>''', 1)
+     <TH title="B, C, G, I, or M (0-3 times)"><input name="InputV" id="InputV" type="text" maxlength="3" size="1"/></TH>
+     <TH align="right"><input title="min" name="InputMin3" id="InputMin3" type="text" size="3"/><BR/><input title="max" name="InputMax3" id="InputMax3" type="text" size="3"/></TH>
+     <TH align="right"><input title="min" name="InputMin4" id="InputMin4" type="text" size="3"/><BR/><input title="max" name="InputMax4" id="InputMax4" type="text" size="3"/></TH>
+     <TH align="right"><input title="min" name="InputMin5" id="InputMin5" type="text" size="3"/><BR/><input title="max" name="InputMax5" id="InputMax5" type="text" size="3"/></TH>
+     <TH title="C, D, L, or Q (0-3 times)"><input name="InputO" id="InputO" type="text" maxlength="3" size="1"/></TH>
+     <TH align="right"><input title="min" name="InputMin7" id="InputMin7" type="text" size="1"/><BR/><input title="max" name="InputMax7" id="InputMax7" type="text" size="1"/></TH>
+     <TH align="right"><input title="min" name="InputMin8" id="InputMin8" type="text" size="1"/><BR/><input title="max" name="InputMax8" id="InputMax8" type="text" size="1"/></TH>
+     <TH title="C, D, L, N, or Q (0-3 times)"><input name="InputC" id="InputC" type="text" maxlength="3" size="1"/></TH>
+     <TH align="right"><input title="min" name="InputMin10" id="InputMin10" type="text" size="3"/><BR/><input title="max" name="InputMax10" id="InputMax10" type="text" size="3"/></TH>
+     <TH align="right"><input title="min" name="InputMin11" id="InputMin11" type="text" size="3"/><BR/><input title="max" name="InputMax11" id="InputMax11" type="text" size="3"/></TH>
+     <TH align="right"><input title="min" name="InputMin12" id="InputMin12" type="text" size="3"/><BR/><input title="max" name="InputMax12" id="InputMax12" type="text" size="3"/></TH>
+    </TR></TFOOT></TABLE>''', 1)
 
     print >> instances, '<P>', tStr, '</P>';
 
