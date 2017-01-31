@@ -826,6 +826,7 @@ def _writestatistics(data) :
     ptypecounts = ptypecounts.reindex_like(cont);
     #print ptypecounts.to_string();
     plt.pie(ptypecounts, labels = ptypecounts.index, colors = ['b' if x else 'r' for x in cont]);
+    plt.gca().set_aspect(1);
     #plt.title('problem type');
     _saveplot(htmlout, 'probtype');
     print >> htmlout, "</P>";
