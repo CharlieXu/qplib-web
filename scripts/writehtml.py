@@ -379,13 +379,13 @@ def _writeinstancepage(data) :
 <script type="text/javascript" src="FixedHeader/js/dataTables.fixedHeader.min.js"></script>
 <script type="text/javascript" class="init">
 jQuery.fn.dataTableExt.oSort["numWithNull-asc"] = function(a,b) {
-  var x = parseInt(a);
-  var y = parseInt(b);
+  var x = parseFloat(a);
+  var y = parseFloat(b);
   return ((isNaN(x) || x < y) ? -1 : ((isNaN(y) || x > y) ? 1 : 0));
 };
 jQuery.fn.dataTableExt.oSort["numWithNull-desc"] = function(a,b) {
-  var x = parseInt(a);
-  var y = parseInt(b);
+  var x = parseFloat(a);
+  var y = parseFloat(b);
   return ((isNaN(x) || x < y) ? 1 : ((isNaN(y) || x > y) ? -1 : 0));
 };
 $(document).ready(function() {
@@ -400,8 +400,8 @@ $(document).ready(function() {
       {"type": "numWithNull"},  // BinVars
       {"type": "numWithNull"},  // IntVars
       {"type": "string" },  // O
-      {"type": "numWithNull"},  // Q0 density  #TODO its not an int
-      {"type": "numWithNull"},  // Q0 hard ev  #TODO its not an int
+      {"type": "numWithNull"},  // Q0 density
+      {"type": "numWithNull"},  // Q0 hard ev
       {"type": "string" },  // C
       null,  // Cons
       {"type": "numWithNull"},  // QuadCons
