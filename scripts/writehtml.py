@@ -389,21 +389,22 @@ jQuery.fn.dataTableExt.oSort["numWithNull-desc"] = function(a,b) {
   return ((isNaN(x) || x < y) ? 1 : ((isNaN(y) || x > y) ? -1 : 0));
 };
 $(document).ready(function() {
-  var table = $("#instancelisting").dataTable({"iDisplayLength": -1, "bLengthChange": false,  "bPaginate": false,
-    "columnDefs":[ {"type": "numWithNull", "targets": [5,6,8,9]} ],
-    "aoColumns": [
-      {"sType": "string" },  // Name and formats
-      {"sType": "string" },  // Cvx
-      {"sType": "string" },  // V
+  var table = $("#instancelisting").DataTable({
+    "lengthChange": false,
+    "paging": false,
+    "columns": [
+      {"type": "string" },  // Name and formats
+      {"type": "string" },  // Cvx
+      {"type": "string" },  // V
       null,  // Vars
-      null,  // BinVars
-      null,  // IntVars
-      {"sType": "string" },  // O
-      null,  // Q0 density
-      null,  // Q0 hard ev
-      {"sType": "string" },  // C
+      {"type": "numWithNull"},  // BinVars
+      {"type": "numWithNull"},  // IntVars
+      {"type": "string" },  // O
+      {"type": "numWithNull"},  // Q0 density  #TODO its not an int
+      {"type": "numWithNull"},  // Q0 hard ev  #TODO its not an int
+      {"type": "string" },  // C
       null,  // Cons
-      null,  // QuadCons
+      {"type": "numWithNull"},  // QuadCons
       null,  // NZ
     ]});
   new $.fn.dataTable.FixedHeader( table );
