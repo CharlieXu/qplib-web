@@ -408,6 +408,26 @@ $(document).ready(function() {
       null,  // NZ
     ]});
   new $.fn.dataTable.FixedHeader( table );
+
+  $.fn.dataTable.ext.search.push(
+    function( settings, data, dataIndex ) {
+      var inputV = $('#InputV').val();
+      var inputO = $('#InputO').val();
+      var inputC = $('#InputC').val();
+      if( inputV != "" && inputV.indexOf(data[2]) < 0 )
+        return false;
+
+      if( inputO != "" && inputO.indexOf(data[6]) < 0 )
+        return false;
+
+      if( inputC != "" && inputC.indexOf(data[9]) < 0 )
+        return false;
+
+      return true;
+    }
+  );
+
+  $('#InputV, #InputO, #InputC').keyup( function() { table.draw(); } );
 });
 </script>'''
 
@@ -482,7 +502,24 @@ $(document).ready(function() {
     tStr = str(t)
     tStr = tStr.replace('<TR>', '<THEAD bgcolor="white"><TR>', 1)
     tStr = tStr.replace('</TR>', '</TR></THEAD><TBODY>', 1)
-    tStr = tStr.replace('</TABLE>', '</TBODY></TABLE>', 1)
+    tStr = tStr.replace('</TABLE>', '''</TBODY>
+    <TFOOT><TR>
+     <TH>Filter:</TH>
+     <TH></TH>
+     <TH><input name="InputV" id="InputV" type="text" maxlength="3" size="1"/></TH>
+     <TH></TH>
+     <TH></TH>
+     <TH></TH>
+     <TH><input name="InputO" id="InputO" type="text" maxlength="3" size="1"/></TH>
+     <TH></TH>
+     <TH></TH>
+     <TH><input name="InputC" id="InputC" type="text" maxlength="3" size="1"/></TH>
+     <TH></TH>
+     <TH></TH>
+     <TH></TH>
+    </TR></TFOOT>
+    </TABLE>''', 1)
+
     print >> instances, '<P>', tStr, '</P>';
 
 
