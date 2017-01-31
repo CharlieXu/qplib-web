@@ -412,22 +412,28 @@ $(document).ready(function() {
   $.fn.dataTable.ext.search.push(
     function( settings, data, dataIndex ) {
       var inputV = $('#InputV').val();
-      var inputO = $('#InputO').val();
-      var inputC = $('#InputC').val();
       if( inputV != "" && inputV.indexOf(data[2]) < 0 )
         return false;
 
+      var inputO = $('#InputO').val();
       if( inputO != "" && inputO.indexOf(data[6]) < 0 )
         return false;
 
+      var inputC = $('#InputC').val();
       if( inputC != "" && inputC.indexOf(data[9]) < 0 )
+        return false;
+
+      var inputCvx = $('#InputCvx').val();
+      if( inputCvx == "Y" && data[1] == "-" )
+        return false;
+      if( inputCvx == "N" && data[1] != "-" )
         return false;
 
       return true;
     }
   );
 
-  $('#InputV, #InputO, #InputC').keyup( function() { table.draw(); } );
+  $('#InputCvx, #InputV, #InputO, #InputC').keyup( function() { table.draw(); } );
 });
 </script>'''
 
@@ -438,16 +444,16 @@ $(document).ready(function() {
         HTML.TableCell('Instance', attribs = {'title' : 'Name and fileformats'}, header = True),
         HTML.TableCell('Cvx', attribs = {'title' : 'Continuous Relaxation convex'}, header = True),
         HTML.TableCell('V', attribs = {'title' : 'Variables type'}, header = True),
-        HTML.TableCell('#Vars', attribs = {'title' : 'Number of Variables'}, header = True),
-        HTML.TableCell('#Binary', attribs = {'title' : 'Number of Binary Variables'}, header = True),
-        HTML.TableCell('#Integer', attribs = {'title' : 'Number of Integer Variables'}, header = True),
+        HTML.TableCell('Vars', attribs = {'title' : 'Number of Variables'}, header = True),
+        HTML.TableCell('Binary', attribs = {'title' : 'Number of Binary Variables'}, header = True),
+        HTML.TableCell('Integer', attribs = {'title' : 'Number of Integer Variables'}, header = True),
         HTML.TableCell('O', attribs = {'title' : 'Objective type'}, header = True),
         HTML.TableCell('Q<sup>0</sup> density', attribs = {'title' : 'Objective density % in quad. part coef. matrix'}, header = True),
         HTML.TableCell('Q<sup>0</sup> hard ev', attribs = {'title' : 'Objective hard eigenvalues % in quad. part coef. matrix'}, header = True),
         HTML.TableCell('C', attribs = {'title' : 'Constraints type'}, header = True),
-        HTML.TableCell('#Cons', attribs = {'title' : 'Number of Constraints (excluding variable bounds)'}, header = True),
-        HTML.TableCell('#QuadCons', attribs = {'title' : 'Number of Quadratic Constraints'}, header = True),
-        HTML.TableCell('#NZ', attribs = {'title' : 'Number of Nonzeros in Jacobian and Objective'}, header = True),
+        HTML.TableCell('Cons', attribs = {'title' : 'Number of Constraints (excluding variable bounds)'}, header = True),
+        HTML.TableCell('QuadCons', attribs = {'title' : 'Number of Quadratic Constraints'}, header = True),
+        HTML.TableCell('NZ', attribs = {'title' : 'Number of Nonzeros in Jacobian and Objective'}, header = True),
     ]);
     
     bgcolor = '#e0e0e0';
@@ -505,7 +511,7 @@ $(document).ready(function() {
     tStr = tStr.replace('</TABLE>', '''</TBODY>
     <TFOOT><TR>
      <TH>Filter:</TH>
-     <TH></TH>
+     <TH title="Y or N"><input name="InputCvx" id="InputCvx" type="text" maxlength="1" size="1"/></TH>
      <TH><input name="InputV" id="InputV" type="text" maxlength="3" size="1"/></TH>
      <TH></TH>
      <TH></TH>
