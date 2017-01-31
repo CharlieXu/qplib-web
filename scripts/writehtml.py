@@ -454,6 +454,7 @@ $(document).ready(function() {
      $('#InputMin' + numcols[c]).keyup( function() { table.draw(); } );
      $('#InputMax' + numcols[c]).keyup( function() { table.draw(); } );
   }
+  $('#InputReset').click( function() { setTimeout(function(){table.draw();}, 500); } );
 });
 </script>'''
 
@@ -530,7 +531,7 @@ $(document).ready(function() {
     tStr = tStr.replace('</TR>', '</TR></THEAD><TBODY>', 1)
     tStr = tStr.replace('</TABLE>', '''</TBODY><TFOOT valign="top">
     <TR>
-     <TH>Filter:</TH>
+     <TH>Filter:</br><input name="InputReset" id="InputReset" type="reset"/></TH>
      <TH title="Y or N"><input name="InputCvx" id="InputCvx" type="text" maxlength="1" size="1"/></TH>
      <TH title="B, C, G, I, or M (0-3 times)"><input name="InputV" id="InputV" type="text" maxlength="3" size="1"/></TH>
      <TH align="right"><input title="min" name="InputMin3" id="InputMin3" type="text" size="3"/><BR/><input title="max" name="InputMax3" id="InputMax3" type="text" size="3"/></TH>
@@ -545,7 +546,7 @@ $(document).ready(function() {
      <TH align="right"><input title="min" name="InputMin12" id="InputMin12" type="text" size="3"/><BR/><input title="max" name="InputMax12" id="InputMax12" type="text" size="3"/></TH>
     </TR></TFOOT></TABLE>''', 1)
 
-    print >> instances, '<P>', tStr, '</P>';
+    print >> instances, '<P><FORM>', tStr, '</FORM></P>';
 
 
     # print removed instances    
