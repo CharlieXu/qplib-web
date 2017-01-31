@@ -372,11 +372,12 @@ def _writeinstancepage(data) :
 
     instances = open(os.path.join(HTMLDIR, 'instances.html'), 'w');
     print >> instances, '<HTML>', _htmlheader("QPLIB Instance Listing"), _htmlstartbody(), '''
-<link rel="stylesheet" type="text/css" href="datatables/media/css/jquery.dataTables.css">
-<script type="text/javascript" language="javascript" src="datatables/media/js/jquery.js"></script>
-<script type="text/javascript" language="javascript" src="datatables/media/js/jquery.dataTables.js"></script>
-<script type="text/javascript" language="javascript" src="datatables/extensions/FixedHeader/js/dataTables.fixedHeader.js"></script>
-<script type="text/javascript" language="javascript" class="init">
+<link rel="stylesheet" type="text/css" href="DataTables/css/jquery.dataTables.min.css">
+<link rel="stylesheet" type="text/css" href="FixedHeader/css/fixedHeader.dataTables.min.css">
+<script type="text/javascript" src="jQuery/jquery-2.2.4.min.js"></script>
+<script type="text/javascript" src="DataTables/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="FixedHeader/js/dataTables.fixedHeader.min.js"></script>
+<script type="text/javascript" class="init">
 jQuery.fn.dataTableExt.oSort["numWithNull-asc"] = function(a,b) {
   var x = parseInt(a);
   var y = parseInt(b);
@@ -417,8 +418,8 @@ $(document).ready(function() {
         HTML.TableCell('Cvx', attribs = {'title' : 'Continuous Relaxation convex'}, header = True),
         HTML.TableCell('V', attribs = {'title' : 'Variables type'}, header = True),
         HTML.TableCell('#Vars', attribs = {'title' : 'Number of Variables'}, header = True),
-        HTML.TableCell('#BinVars', attribs = {'title' : 'Number of Binary Variables'}, header = True),
-        HTML.TableCell('#IntVars', attribs = {'title' : 'Number of Integer Variables'}, header = True),
+        HTML.TableCell('#Binary', attribs = {'title' : 'Number of Binary Variables'}, header = True),
+        HTML.TableCell('#Integer', attribs = {'title' : 'Number of Integer Variables'}, header = True),
         HTML.TableCell('O', attribs = {'title' : 'Objective type'}, header = True),
         HTML.TableCell('Q<sup>0</sup> density', attribs = {'title' : 'Objective density % in quad. part coef. matrix'}, header = True),
         HTML.TableCell('Q<sup>0</sup> hard ev', attribs = {'title' : 'Objective hard eigenvalues % in quad. part coef. matrix'}, header = True),
