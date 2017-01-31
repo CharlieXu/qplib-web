@@ -390,8 +390,8 @@ jQuery.fn.dataTableExt.oSort["numWithNull-desc"] = function(a,b) {
 };
 $(document).ready(function() {
   var table = $("#instancelisting").DataTable({
-    "lengthChange": false,
     "paging": false,
+    "fixedHeader" : { "header" : true, "footer" : true },  // fixing footer doesn't work when paging is disabled, unfortunately
     "columns": [
       {"type": "string" },  // Name and formats
       {"type": "string" },  // Cvx
@@ -407,7 +407,6 @@ $(document).ready(function() {
       {"type": "numWithNull"},  // QuadCons
       null,  // NZ
     ]});
-  new $.fn.dataTable.FixedHeader( table );
 
   // columns with numeric values for which we have InputMin/InputMax filter
   var numcols = [3,4,5,7,8,10,11,12];
