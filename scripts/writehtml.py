@@ -371,49 +371,44 @@ def _writepointpage(m, p, pattribs) :
 def _writeinstancepage(data) :
 
     instances = open(os.path.join(HTMLDIR, 'instances.html'), 'w');
-    print >> instances, '<HTML>', _htmlheader("QPLIB Instance Listing"), _htmlstartbody();
+    print >> instances, '<HTML>', _htmlheader("QPLIB Instance Listing"), _htmlstartbody(), '''
+<link rel="stylesheet" type="text/css" href="datatables/media/css/jquery.dataTables.css">
+<script type="text/javascript" language="javascript" src="datatables/media/js/jquery.js"></script>
+<script type="text/javascript" language="javascript" src="datatables/media/js/jquery.dataTables.js"></script>
+<script type="text/javascript" language="javascript" src="datatables/extensions/FixedHeader/js/dataTables.fixedHeader.js"></script>
+<script type="text/javascript" language="javascript" class="init">
+jQuery.fn.dataTableExt.oSort["numWithNull-asc"] = function(a,b) {
+  var x = parseInt(a);
+  var y = parseInt(b);
+  return ((isNaN(x) || x < y) ? -1 : ((isNaN(y) || x > y) ? 1 : 0));
+};
+jQuery.fn.dataTableExt.oSort["numWithNull-desc"] = function(a,b) {
+  var x = parseInt(a);
+  var y = parseInt(b);
+  return ((isNaN(x) || x < y) ? 1 : ((isNaN(y) || x > y) ? -1 : 0));
+};
+$(document).ready(function() {
+  var table = $("#instancelisting").dataTable({"iDisplayLength": -1, "bLengthChange": false,  "bPaginate": false,
+    "columnDefs":[ {"type": "numWithNull", "targets": [5,6,8,9]} ],
+    "aoColumns": [
+      {"sType": "string" },  // Name and formats
+      {"sType": "string" },  // Cvx
+      {"sType": "string" },  // V
+      null,  // Vars
+      null,  // BinVars
+      null,  // IntVars
+      {"sType": "string" },  // O
+      null,  // Q0 density
+      null,  // Q0 hard ev
+      {"sType": "string" },  // C
+      null,  // Cons
+      null,  // QuadCons
+      null,  // NZ
+    ]});
+  new $.fn.dataTable.FixedHeader( table );
+});
+</script>'''
 
-    print >> instances, '<link rel="stylesheet" type="text/css" href="datatables/media/css/jquery.dataTables.css">'
-    print >> instances, '<script type="text/javascript" language="javascript" src="datatables/media/js/jquery.js"></script>'
-    print >> instances, '<script type="text/javascript" language="javascript" src="datatables/media/js/jquery.dataTables.js"></script>'
-    print >> instances, '<script type="text/javascript" language="javascript" src="datatables/extensions/FixedHeader/js/dataTables.fixedHeader.js"></script>'
-    print >> instances, '<script type="text/javascript" language="javascript" class="init">'
-    print >> instances, 'jQuery.fn.dataTableExt.oSort["numWithNull-asc"] = function(a,b) {'
-    print >> instances, 'var x = parseInt(a);'
-    print >> instances, 'var y = parseInt(b);'
-    print >> instances, 'return ((isNaN(x) || x < y) ? -1 : ((isNaN(y) || x > y) ? 1 : 0));'
-    print >> instances, '};'
-    print >> instances, 'jQuery.fn.dataTableExt.oSort["numWithNull-desc"] = function(a,b) {'
-    print >> instances, 'var x = parseInt(a);'
-    print >> instances, 'var y = parseInt(b);'
-    print >> instances, 'return ((isNaN(x) || x < y) ? 1 : ((isNaN(y) || x > y) ? -1 : 0));'
-    print >> instances, '};'
-    print >> instances, '$(document).ready(function() {'
-    print >> instances, 'var table = $("#instancelisting").dataTable({"iDisplayLength": -1, "bLengthChange": false,  "bPaginate": false,'
-
-    print >> instances, '"columnDefs":[ {"type": "numWithNull", "targets": [5,6,8,9]} ],'
-    
-    print >> instances, '"aoColumns": ['
-    print >> instances, '{"sType": "string" },'  #Name and formats
-    print >> instances, '{"sType": "string" },'  #Cvx
-    print >> instances, '{"sType": "string" },'  #V
-    print >> instances, 'null,'  #Vars
-    print >> instances, 'null,'  #BinVars
-    print >> instances, 'null,'  #IntVars
-    print >> instances, '{"sType": "string" },'  #O
-    print >> instances, 'null,'  #Q0 density
-    print >> instances, 'null,'  #Q0 hard ev
-    print >> instances, '{"sType": "string" },'  #C
-    print >> instances, 'null,'  #Cons
-    print >> instances, 'null,'  #QuadCons
-    print >> instances, 'null,'  #NZ
-    print >> instances, ']});'
-    print >> instances, 'new $.fn.dataTable.FixedHeader( table );'
-    print >> instances, '} );'
-    print >> instances, '</script>'
-
-
-    
     col_align = ['left', 'center', 'center', 'right', 'right', 'right', 'center', 'right', 'right', 'center', 'right', 'right', 'right']
 
     t = HTML.Table([], border = 0, col_align = col_align, style = '', cellspacing = 0, cellpadding = 2, attribs = {'id' : 'instancelisting', 'class' : 'compact display'},
