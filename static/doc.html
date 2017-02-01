@@ -1,0 +1,315 @@
+<HTML>
+   <HEAD>
+        <META http-equiv="content-type" content="text/html;charset=UTF-8" />
+        <META name="author" content="Stefan Vigerske, Ambros Gleixner" />
+        <META name="description" content="QPLIB: A Library of Quadratic Programming Instances" />
+        <META name="keywords" content="QPLIB" />
+        <META name="robots" content="index|follow" />
+        <link rel="stylesheet" type="text/css" href="qplib.css" />
+        <TITLE>QPLIB Documentation</TITLE>
+        
+        
+        <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/SVG"],
+});
+</script>
+><script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+
+        </HEAD>
+<BODY>
+    <div id="content">
+      <h1>QPLIB</h1>
+      <h2>A Library of Quadratic Programming Instances</h2>
+
+      <a href="index.html">Home</a> //
+      <a href="instances.html">browse instances</a> //
+      <a href="statistics.html">view statistics</a> //
+      <a href="qplib.zip">download QPLIB archive [ <!--#fsize virtual="qplib.zip" --> ]</a>
+      <hr />
+
+QPLIB contains quadratic optimiation problems of the form
+\[
+ 
+\begin{align*}
+ \textrm{sense} \;\;
+ & x^\top Q^0 x + b^0 x + q^0 \\
+ \textrm{such that}\;\;
+ & c^i_l \leq x^\top Q^i x + b^i x \leq c^i_u & i \in \mathcal{M} \\
+ %
+ & l_j \leq x_j \leq u_j & j \in \mathcal{N}  \\
+ %
+ & x_j \in \mathbb{Z} & j \in \mathcal{Z}
+\end{align*}
+\]
+
+where
+<UL>
+  <LI>\(\mathcal{N} = \{ 1, \ldots, n \}\) is the set of (indices) of variables;</LI>
+  <LI>\(\mathcal{M} = \{ 1, \ldots, m \}\) is the set of (indices) of constraints;</LI>
+  <LI>\(x = [x_j]_{j = 1}^n \in \mathbb{R}^n\) is a finite vector of real variables;</LI>
+  <LI>\(\textrm{sense}\in\{\min,\max\}\) is the objective sense;</LI>
+  <LI>\(Q^i\in\mathbb{R}^{n\times n}\) for \(i \in \{ 0 \} \cup \mathcal{M}\) are lower-left triangle (\(Q^i_{row,col}=0\) for \(row < col\)) matrices holding the coefficients of quadratic terms;</LI>
+  <LI>\(b^i\in\mathbb{R}^n\) for \(i \in \{0\}\cup\mathcal{M}\) are vectors holding the coefficients of linear terms;</LI>
+  <LI>\(q^0\in\mathbb{R}\) is the constant term in the objective;</LI>
+  <LI>\(c_l^i\in\mathbb{R}\cup\{-\infty\}, c_u^i\in\mathbb{R}\cup\{+\infty\}\), \(c_l^i\leq c_u^i\), for \(i \in \mathcal{M}\) are the left- and right-hand side, respectively, of each constraint;</LI>
+  <LI>\(l_j\in\mathbb{R}\cup\{-\infty\}, u_j\in\mathbb{R}\cup\{+\infty\}\), \(l_j\leq u_j\), for \(j \in \mathcal{N}\) are the lower and upper bounds, respectively, on each variable \(x_j\);</LI>
+  <LI>\(\mathcal{Z} \subseteq \mathcal{N}\) are the variables restricted to only attain integer values.</LI>
+</UL>
+
+Further, let
+<UL>
+  <LI>\(\mathcal{B} := \{j\in\mathcal{Z} \,:\, \{l_j,u_j\}=\{0,1\}\) be the set of binary variables,</LI>
+  <LI>\(\mathcal{N}^Q := \{j\in\mathcal{N} \,:\, \exists i\in\mathcal{M}\cup\{0\}, k\in\mathcal{N} : Q^i_{j,k}+Q^i_{k,j} \neq 0\}\) be the set of nonlinear variables (that is, variables appearing in at least one quadratic term),</LI>
+  <LI>\(\mathcal{L} := \{i\in\mathcal\{M\} \,:\, Q^i = 0\}\) be the set of linear constraints,</LI>
+  <LI>\(\mathcal{Q} := \mathcal{M} \setminus \mathcal{L}\) be the set of (truely) quadratic constraints, and</LI>
+  <LI>\(P := \{P_k\}_{k\in\mathcal{P}}\), \(\mathcal{P} := \{1,\ldots,p\}\), be the finest partitioning of \(\mathcal{N}^Q\) (i.e., \(P_k\subseteq\mathcal{N}^Q, P_k \cap P_k' = \emptyset, k,k'\in\mathcal{P}, k\neq k'\)),
+      such that \(\forall i\in\mathcal{Q}\cup\{0\}\; \forall j,k\in\mathcal{N}^Q, Q_{j,k}^i \neq 0\; \exists p\in\mathcal{P} : j,k\in P_p\).
+      That is, \(P\) describes the block structure of the Hessian of the Lagrangian.
+   </LI>
+     
+     
+</UL>
+
+For each instance, we collect the following information:
+<TABLE>
+ <TR>
+  <TD><A name="probtype">PROBTYPE</A></TD>
+  <TD>Problem Type</TD>
+  <TD><B>OVC</B>, where<BR/>
+   <B>O</B> = <B>L</B>, if \(Q^0=0\), or<BR/>
+   <B>O</B> = <B>D</B>, if \(Q^0\succeq 0, \textrm{sense}=\min, Q^0 = {Q^0}^\top\), or<BR/>
+   <B>O</B> = <B>D</B>, if \(Q^0\preceq 0, \textrm{sense}=\max, Q^0 = {Q^0}^\top\), or<BR/>
+   <B>O</B> = <B>C</B>, if \(Q^0\succeq 0, \textrm{sense}=\min\), or<BR/>
+   <B>O</B> = <B>C</B>, if \(Q^0\preceq 0, \textrm{sense}=\max\), or<BR/>
+   <B>O</B> = <B>Q</B>, otherwise;<BR/>
+   <B>V</B> = <B>C</B>, if \(\mathcal{Z} = \emptyset\), or<BR/>
+   <B>V</B> = <B>B</B>, if \(\mathcal{N} = \mathcal{B}\), or<BR/>
+   <B>V</B> = <B>M</B>, if \(\mathcal{Z} \setminus \mathcal{B} = \emptyset\), or<BR/>
+   <B>V</B> = <B>I</B>, if \(\mathcal{N} = \mathcal{Z}\), or<BR/>
+   <B>V</B> = <B>G</B>, otherwise;<BR/>
+   <B>C</B> = <B>N</B>, if \(\mathcal{M} = \emptyset\), \(l_j=-\infty, u_j=+\infty, j\in\mathcal{N}\setminus\mathcal{B}\), or<BR/>
+   <B>C</B> = <B>B</B>, if \(\mathcal{M} = \emptyset\), or<BR/>
+   <B>C</B> = <B>L</B>, if \(\mathcal{Q} = \emptyset\), or<BR/>
+   <B>C</B> = <B>D</B>, if \(\forall i\in\mathcal{Q}: Q^i\succeq 0 \textrm{ if } c_l^i\neq-\infty\) and \(Q^i\preceq 0 \textrm{ if } c_u^i\neq+\infty\) and \(Q^i={Q^i}^\top\) <BR/>
+   <B>C</B> = <B>C</B>, if \(\forall i\in\mathcal{Q}: Q^i\succeq 0 \textrm{ if } c_l^i\neq-\infty\) and \(Q^i\preceq 0 \textrm{ if } c_u^i\neq+\infty\)<BR/>
+   <B>Q</B>, otherwise.
+  </TD>
+ </TR>
+ <TR>
+  <TD><A name="nvars">NVARS</A></TD>
+  <TD>Number of Variables</TD>
+  <TD>\(|\mathcal{N}|\)</TD>
+ </TR>
+ <TR>
+  <TD><A name="ncons">NCONS</A></TD>
+  <TD>Number of Constraints</TD>
+  <TD>\(|\mathcal{M}|\)</TD>
+ </TR>
+ <TR>
+  <TD><A name="nbinvars">NBINVARS</A></TD>
+  <TD>Number of Binary Variables</TD>
+  <TD>\(|\mathcal{B}|\)</TD>
+ </TR>
+ <TR>
+  <TD><A name="nintvars">NINTVARS</A></TD>
+  <TD>Number of (General) Integer Variables</TD>
+  <TD>\(|\mathcal{Z} \setminus \mathcal{B}|\)</TD>
+ </TR>
+ <!--   'nsemi' : int, -->
+ <TR>
+  <TD><A name="nnlvars">NNLVARS</A></TD>
+  <TD>Number of Nonlinear Variables</TD>
+  <TD>\(|\mathcal{N}^Q|\)</TD>
+ </TR>
+ <TR>
+  <TD><A name="nnlbinvars">NNLBINVARS</A></TD>
+  <TD>Number of Nonlinear Binary Variables</TD>
+  <TD>\(|\mathcal{N}^Q\cap\mathcal{B}|\)</TD>
+ </TR>
+ <TR>
+  <TD><A name="nnlbinvars">NNLINTVARS</A></TD>
+  <TD>Number of Nonlinear Integer Variables</TD>
+  <TD>\(|\mathcal{N}^Q\cap\mathcal{Z}|\)</TD>
+ </TR>
+ <!--   'nnlsemi' : int, -->
+ <TR>
+  <TD><A name="nboundedvars">NBOUNDEDVARS</A></TD>
+  <TD>Number of Bounded Non-Binary Variables</TD>
+  <TD>\(|\{j\in \mathcal{N}\setminus\mathcal{B} : l_j \neq -\infty, u_j \neq \infty\}|\)</TD>
+ </TR>
+ <TR>
+  <TD><A name="nsingleboundedvars">NSINGLEBOUNDEDVARS</A></TD>
+  <TD>Number of Variables with only one bound</TD>
+  <TD>\(|\{j\in \mathcal{N} : \textrm{either}\; l_j = -\infty \;\textrm{or}\; u_j = \infty\}|\)</TD>
+ </TR>
+ <TR>
+ <!--   'nsos1' : int, -->
+ <!--   'nsos2' : int, -->
+ <TR>
+  <TD><A name="objsense">OBJSENSE</A></TD>
+  <TD>Objective sense</TD>
+  <TD>\(\textrm{sense}\)</TD>
+ </TR>
+ <TR>
+  <TD><A name="objtype">OBJTYPE</A></TD>
+  <TD>Objective type</TD>
+  <TD><B>linear</B> if \(Q^0=0\), <B>quadratic</B> if \(Q^0\neq 0\)</TD>
+ </TR>
+ <TR>
+  <TD><A name="nlincons">NLINCONS</A></TD>
+  <TD>Number of linear constraints</TD>
+  <TD>\(|\mathcal{L}|\)</TD>
+ </TR>
+ <TR>
+  <TD><A name="nquadcons">NQUADCONS</A></TD>
+  <TD>Number of quadratic constraints</TD>
+  <TD>\(|\mathcal{Q}|\)</TD>
+ </TR>
+ <TR>
+  <TD><A name="ndiagquadcons">NDIAGQUADCONS</A></TD>
+  <TD>Number of diagonal quadratic constraints</TD>
+  <TD>\(|\{i\in\mathcal{Q} : \forall j,k\in\mathcal{N},j\neq k: Q^i_{j,k} = 0\}|\)</TD>
+ </TR>
+  <!--  'npolynomcons' : int, -->
+  <!--  'nsignomcons' : int, -->
+  <!--  'ngennlcons' : int, -->
+  <!--  'nloperands' : lambda x: set(x.split()), -->
+ <TR>
+  <TD><A name="nobjnz">NOBJNZ</A></TD>
+  <TD>Number of nonzeros in objective</TD>
+  <TD>\(|\{j\in\mathcal{N} \,:\, b^0_j\neq 0 \;\textrm{or}\; \exists k\in\mathcal{N} : Q^0_{j,k}+Q^0_{k,j} \neq 0\}|\)</TD>
+ </TR>
+ <TR>
+  <TD><A name="nobjnlnz">NOBJNLNZ</A></TD>
+  <TD>Number of nonlinear nonzeros in objective</TD>
+  <TD>\(|\{j\in\mathcal{N} \,:\, \exists k\in\mathcal{N} : Q^0_{j,k}+Q^0_{k,j} \neq 0\}|\)</TD>
+ </TR>
+ <TR>
+  <TD><A name="nobjquadnz">NOBJQUADNZ</A></TD>
+  <TD>Number of quadratic terms in objective</TD>
+  <TD>\(|\{(j,k)\in\mathcal{N}\times\mathcal{N} \,:\, Q^0_{j,k}\neq 0\}|\)</TD>
+ </TR>
+ <TR>
+  <TD><A name="nobjquaddiagnz">NOBJQUADDIAGNZ</A></TD>
+  <TD>Number of square terms in objective</TD>
+  <TD>\(|\{j\in\mathcal{N} \,:\, Q^0_{j,j}\neq 0\}|\)</TD>
+ </TR>
+ <TR>
+  <TD><A name="njacobiannz">NJACOBIANNZ</A></TD>
+  <TD>Number of nonzeros in Jacobian</TD>
+  <TD>\(\sum_{i\in\mathcal{M}} |\{j\in\mathcal{N} \,:\, b^i_j\neq 0 \;\textrm{or}\; \exists k\in\mathcal{N} : Q^i_{j,k}+Q^i_{k,j} \neq 0\}|\)</TD>
+ </TR>
+ <TR>
+  <TD><A name="njacobiannlnz">NJACOBIANNLNZ</A></TD>
+  <TD>Number of nonlinear nonzeros in Jacobian</TD>
+  <TD>\(\sum_{i\in\mathcal{M}} |\{j\in\mathcal{N} \,:\, \exists k\in\mathcal{N} : Q^i_{j,k}+Q^i_{k,j} \neq 0\}|\)</TD>
+ </TR>
+ <TR>
+  <TD><A name="nlaghessiannz">NLAGHESSIANNZ</A></TD>
+  <TD>Number of nonzeros in Hessian of Lagrangian</TD>
+  <TD>\(|\{(j,k)\in\mathcal{N}\times\mathcal{N} \,:\, \exists i\in\mathcal{M}\cup\{0\} : Q^i_{j,k}\neq 0\}|\)
+ </TR>
+ <TR>
+  <TD><A name="nlaghessiandiagnz">NLAGHESSIANDIAGNZ</A></TD>
+  <TD>Number of nonzeros in diagonal of Hessian of Lagrangian</TD>
+  <TD>\(|\{j\in\mathcal{N} \,:\, \exists i\in\mathcal{M}\cup\{0\} : Q^i_{j,j}\neq 0\}|\)
+ </TR>
+ <TR>
+  <TD><A name="objcurvature">OBJCURVATURE</A></TD>
+  <TD>Convexity/Concavity of objective</TD>
+  <TD><B>linear</B>, if \(Q^0=0\), or<BR/>
+      <B>convex</B>, if \(Q^0\succeq 0\) and \(\textrm{sense} = \min\), or<BR/>
+      <B>convex</B>, if \(Q^0\preceq 0\) and \(\textrm{sense} = \max\), or<BR/>
+      <B>concave</B>, if \(Q^0\succeq 0\) and \(\textrm{sense} = \max\), or<BR/>
+      <B>concave</B>, if \(Q^0\preceq 0\) and \(\textrm{sense} = \min\), or<BR/>
+      <B>indefinite</B>, otherwise
+  </TD>
+ </TR>
+ <TR>
+  <TD><A name="nobjquadnegev">NOBJQUADNEGEV</A></TD>
+  <TD>Number of negative eigenvalues in \(Q^0\)</TD>
+  <TD>\(|\{\lambda \leq -10^{-9} \,:\, \exists v\neq 0 : Q^0v = \lambda v\}|\)
+ </TR>
+ <TR>
+  <TD><A name="nobjquadnegev">NOBJQUADPOSEV</A></TD>
+  <TD>Number of positive eigenvalues in \(Q^0\)</TD>
+  <TD>\(|\{\lambda \geq 10^{-9} \,:\, \exists v\neq 0 : Q^0v = \lambda v\}|\)
+ </TR>
+ <TR>
+  <TD><A name="conscurvature">CONSCURVATURE</A></TD>
+  <TD>Convexity/Concavity of constraints</TD>
+  <TD><B>linear</B>, if \(\mathcal{L}=\mathcal{M}\), or<BR/>
+      <B>convex</B>, if \(\forall i\in\mathcal{Q}, c_u^i\neq+\infty: Q^i\succeq 0\) and \(\forall i\in\mathcal{Q}, c_l^i\neq-\infty: Q^i\preceq 0\), or<BR/>
+      <B>concave</B>, if \(\forall i\in\mathcal{Q}, c_u^i\neq+\infty: Q^i\preceq 0\) and \(\forall i\in\mathcal{Q}, c_l^i\neq-\infty: Q^i\succeq 0\), or<BR/>
+      <B>indefinite</B>, otherwise
+  </TD>
+ </TR>
+ <TR>
+  <TD><A name="nconvexnlcons">NCONVEXNLCONS</A></TD>
+  <TD>Number of convex nonlinear constraints</TD>
+  <TD>\(|\{i\in\mathcal{Q} \;:\; Q^i\succeq 0 \textrm{ if } c_u^i\neq+\infty \textrm{ and } Q^i\preceq 0 \textrm{ if }  c_l^i\neq-\infty\}|\)</TD>
+ </TR>
+ <TR>
+  <TD><A name="nconcavenlcons">NCONCAVENLCONS</A></TD>
+  <TD>Number of concave nonlinear constraints</TD>
+  <TD>\(|\{i\in\mathcal{Q} \;:\; Q^i\preceq 0 \textrm{ if } c_u^i\neq+\infty \textrm{ and } Q^i\succeq 0 \textrm{ if }  c_l^i\neq-\infty\}|\)</TD>
+ </TR>
+ <TR>
+  <TD><A name="nindefinitenlcons">NINDEFINITENLCONS</A></TD>
+  <TD>Number of indefinite nonlinear constraints</TD>
+  <TD>\(|\{i\in\mathcal{Q} \;:\; Q^i\not\succeq 0 \textrm{ and } Q^i\not\preceq 0 \}|\)</TD>
+ </TR>
+ <!--
+    'minobjcoef' : float,
+    'minobjcoefvar' : str,
+    'maxobjcoef' : float,
+    'maxobjcoefvar' : str,
+    'minjaccoef' : float,
+    'minjaccoefvar' : str,
+    'minjaccoefequ' : str,
+    'maxjaccoef' : float,
+    'maxjaccoefvar' : str,
+    'maxjaccoefequ' : str,
+    'minscale' : float,
+    'minscalevar' : str,
+    'minscaleequ' : str,
+    'maxscale' : float,
+    'maxscalevar' : str,
+    'maxscaleequ' : str,
+ -->
+ <TR>
+  <TD><A name="nlaghessianblocks">NLAGHESSIANBLOCKS</A></TD>
+  <TD>Number of blocks in Hessian of Lagrangian</TD>
+  <TD>\(|\mathcal{P}|\)</TD>
+ </TR>
+ <TR>
+  <TD><A name="laghessianminblocksize">LAGHESSIANMINBLOCKSIZE</A></TD>
+  <TD>Minimal blocksize in Hessian of Lagrangian</TD>
+  <TD>\(\min\{|P_k| \;:\; k\in\mathcal{P}\}\) </TD>
+ </TR>
+ <TR>
+  <TD><A name="laghessianmaxblocksize">LAGHESSIANMAXBLOCKSIZE</A></TD>
+  <TD>Maximal blocksize in Hessian of Lagrangian</TD>
+  <TD>\(\max\{|P_k| \;:\; k\in\mathcal{P}\}\)</TD>
+ </TR>
+ <TR>
+  <TD><A name="laghessianavgblocksize">LAGHESSIANAVGBLOCKSIZE</A></TD>
+  <TD>Average blocksize in Hessian of Lagrangian</TD>
+  <TD>\(\frac{1}{|\mathcal{P}|}\sum_{k\in\mathcal{P}} |P_k|\)</TD>
+ </TR>
+</TABLE>
+
+</UL>
+<br /><br /><br /><hr />
+      <p>
+        Website &copy; 2017 by <a href="http://www.zib.de">Zuse Institute Berlin</a>. All rights reserved.
+      <a href="http://www.zib.de/en/imprint.html">Imprint</a>.<br /><br />
+      <!-- <a href="http://validator.w3.org/check/referer"><img class="logo" src="valid-xhtml11.png" alt="Valid XHTML 1.1!" /></a>&nbsp; -->
+      <a href="http://jigsaw.w3.org/css-validator/check/referer"><img class="logo" src="valid-css.png" alt="Valid CSS!" /></a>
+      </p>
+    </div>
+
+    </BODY>
+</HTML>
