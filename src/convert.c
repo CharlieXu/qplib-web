@@ -758,37 +758,31 @@ RETURN writeQPLIB(
    fputs(gmoNameInput(gmo, buffer), f);
    fputs("\n", f);
 
+   /* objective classification */
+   if( gmoObjQNZ(gmo) > 0 )
+      fputs("Q", f);  /* quadratic objective - we are not going to check convexity here... */
+   else
+      fputs("L", f);
+
    /* variable classification */
    if( gmoNDisc(gmo) == gmoN(gmo) )
-      fputs("I", f);
+      fputs("I", f); /* binary and general integer only */
    else if( gmoNDisc(gmo) > 0 )
-      fputs("MI", f);
-
-   /* objective and constraint classification: LP, QCP, BQP, QP, QCQP */
-   if( gmoM(gmo) == 0 )
-   {
-      /* no constraints */
-      if( gmoObjQNZ(gmo) > 0 )
-         fputs("BQP", f);
-      else
-         fputs("LP", f);
-   }
-   else if( gmoNLM(gmo) == 0 )
-   {
-      /* only linear constraints: LP or QP */
-      if( gmoObjQNZ(gmo) > 0 )
-         fputs("QP", f);
-      else
-         fputs("LP", f);
-   }
+      fputs("G", f);  /* mixed integer and continuous */
    else
-   {
-      /* quadratic constraints: QCP or QCQP */
-      if( gmoObjQNZ(gmo) > 0 )
-         fputs("QCQP", f);
-      else
-         fputs("QCP", f);
-   }
+      fputs("C", f);  /* continuous only */
+   /* QPLIB format also allows for binary variables, but in certain situation,
+    * one may still have to specify bounds for them; for now, we just treat
+    * binaries like general integers
+    */
+
+   /* constraints classification */
+   if( gmoM(gmo) == 0 )
+      fputs("B", f); /* no constraints other than bounds, possibly */
+   else if( gmoNLM(gmo) == 0 )
+      fputs("L", f); /* only linear constraints */
+   else
+      fputs("Q", f); /* quadratic constraints */
    fputs("\n", f);
 
    if( gmoSense(gmo) == gmoObj_Min )
@@ -803,7 +797,7 @@ RETURN writeQPLIB(
    quadnz = gmoObjQNZ(gmo);
    if( quadnz > 0 )
    {
-      /* obj quad nz is omitted for LPs and QCPs */
+      /* obj quad nz is omitted for Q** */
       gmoGetObjQ(gmo, quadcolidx, quadrowidx, quadcoef);
 
       fprintf(f, "%d\n", quadnz);
@@ -828,7 +822,7 @@ RETURN writeQPLIB(
    /* constraints quad coef matrices */
    if( gmoNLM(gmo) == 0 )
    {
-      /* this section is omitted when no quadratic constraints */
+      /* this section is omitted when no quadratic constraints (**B or **L) */
       for( i = 0; i < gmoM(gmo); ++i )
       {
          quadnz = 0;
