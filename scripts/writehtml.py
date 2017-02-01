@@ -187,7 +187,7 @@ INSTANCEATTRS = [
     ('njacobiannz', '#Nonzeros in Jacobian', str),
     ('njacobiannlnz', '#Nonlinear Nonzeros in Jacobian', str),
     ('nlaghessiannz', '#Nonzeros in (Upper-Left) Hessian of Lagrangian', str),
-    ('nlaghessiannz', '#Nonzeros in Diagonal of Hessian of Lagrangian', str),
+    ('nlaghessiandiagnz', '#Nonzeros in Diagonal of Hessian of Lagrangian', str),
     ('nlaghessianblocks', '#Blocks in Hessian of Lagrangian', str),
     ('laghessianminblocksize', 'Minimal blocksize in Hessian of Lagrangian', str),
     ('laghessianmaxblocksize', 'Maximal blocksize in Hessian of Lagrangian', str),
