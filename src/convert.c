@@ -808,7 +808,7 @@ RETURN writeQPLIB(
 
       fprintf(f, "%d\n", quadnz);
       for( i = 0; i < quadnz; ++i )
-         fprintf(f, "%d %d " FF "\n", MAX(quadrowidx[i], quadcolidx[i]), MIN(quadrowidx[i], quadcolidx[i]), (quadrowidx[i] == quadcolidx[i]) ? quadcoef[i]/2.0 : quadcoef[i]);
+         fprintf(f, "%d %d " FF "\n", MAX(quadrowidx[i], quadcolidx[i]), MIN(quadrowidx[i], quadcolidx[i]), (quadrowidx[i] == quadcolidx[i]) ? quadcoef[i] : 2.0*quadcoef[i]);
    }
 
    gmoGetObjVector(gmo, lincoef, NULL);
@@ -841,7 +841,7 @@ RETURN writeQPLIB(
 
          fprintf(f, "%d\n", quadnz);
          for( j = 0; j < quadnz; ++j )
-            fprintf(f, "%d %d %d " FF "\n", i, MAX(quadrowidx[i], quadcolidx[i]), MIN(quadrowidx[i], quadcolidx[i]), (quadrowidx[j] == quadcolidx[j]) ? quadcoef[j]/2.0 : quadcoef[j]);
+            fprintf(f, "%d %d %d " FF "\n", i, MAX(quadrowidx[i], quadcolidx[i]), MIN(quadrowidx[i], quadcolidx[i]), (quadrowidx[j] == quadcolidx[j]) ? quadcoef[j] : 2.0*quadcoef[j]);
       }
    }
 
