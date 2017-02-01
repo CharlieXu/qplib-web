@@ -197,6 +197,10 @@ For each instance, we collect the following information:
   <TD>\(|\{j\in\mathcal{N} \,:\, Q^0_{j,j}\neq 0\}|\)</TD>
  </TR>
  <TR>
+  <TD><A name="objquaddensity">OBJQUADDENSITY</A></TD>
+  <TD>Density of \(Q^0\)</TD>
+  <TD>\(\frac{2\times\textrm{NOBJQUADNZ}-\textrm{NOBJQUADDIAGNZ}}{\textrm{NOBJNLNZ}^2}\), if \(Q^0\neq 0\), otherwise 0</TD>
+ <TR>
   <TD><A name="njacobiannz">NJACOBIANNZ</A></TD>
   <TD>Number of nonzeros in Jacobian</TD>
   <TD>\(\sum_{i\in\mathcal{M}} |\{j\in\mathcal{N} \,:\, b^i_j\neq 0 \;\textrm{or}\; \exists k\in\mathcal{N} : Q^i_{j,k}+Q^i_{k,j} \neq 0\}|\)</TD>
@@ -205,6 +209,16 @@ For each instance, we collect the following information:
   <TD><A name="njacobiannlnz">NJACOBIANNLNZ</A></TD>
   <TD>Number of nonlinear nonzeros in Jacobian</TD>
   <TD>\(\sum_{i\in\mathcal{M}} |\{j\in\mathcal{N} \,:\, \exists k\in\mathcal{N} : Q^i_{j,k}+Q^i_{k,j} \neq 0\}|\)</TD>
+ </TR>
+ <TR>
+  <TD><A name="nz">NZ</A></TD>
+  <TD>Number of nonzeros in Objective Gradient and Jacobian</TD>
+  <TD>\(\textrm{NOBJNZ} + \textrm{NJACOBIANNZ}\)</TD>
+ </TR>
+ <TR>
+  <TD><A name="nlnz">NLNZ</A></TD>
+  <TD>Number of nonlinear nonzeros in Objective Gradient and Jacobian</TD>
+  <TD>\(\textrm{NOBJNLNZ} + \textrm{NJACOBIANNLNZ}\)</TD>
  </TR>
  <TR>
   <TD><A name="nlaghessiannz">NLAGHESSIANNZ</A></TD>
@@ -236,6 +250,13 @@ For each instance, we collect the following information:
   <TD>\(|\{\lambda \geq 10^{-9} \,:\, \exists v\neq 0 : Q^0v = \lambda v\}|\)
  </TR>
  <TR>
+  <TD><A name="objquadhardevfrac">OBJQUADHARDEVFRAC</A></TD>
+  <TD>Fraction of hard eigenvalues of \(Q^0\)</TD>
+  <TD>\(\frac{\textrm{NOBJQUADNEGEV}}{|\mathcal{N}|}\), if \(\textrm{sense}=\min\);<BR/>
+      \(\frac{\textrm{NOBJQUADPOSEV}}{|\mathcal{N}|}\), if \(\textrm{sense}=\max\)
+  </TD>
+ </TR>
+TR>
   <TD><A name="conscurvature">CONSCURVATURE</A></TD>
   <TD>Convexity/Concavity of constraints</TD>
   <TD><B>linear</B>, if \(\mathcal{L}=\mathcal{M}\), or<BR/>
@@ -244,6 +265,14 @@ For each instance, we collect the following information:
       <B>indefinite</B>, otherwise
   </TD>
  </TR>
+ <TR>
+  <TD><A name="convex">CONVEX</A></TD>
+  <TD>Convexity of continuous relaxation</TD>
+  <TD><B>True</B>, if \(\textrm{CONSCURVATURE}\) = <B>convex</B> and \(\textrm{OBJCURVATURE}\) = <B>convex</B>, if \(\textrm{sense}=\min\), and \(\textrm{OBJCURVATURE}\) = <B>concave</B>, if \(\textrm{sense}=\max\).<BR/>
+      <B>False</B>, otherwise.
+  </TD>
+ </TR>
+ convex
  <TR>
   <TD><A name="nconvexnlcons">NCONVEXNLCONS</A></TD>
   <TD>Number of convex nonlinear constraints</TD>
@@ -298,7 +327,6 @@ For each instance, we collect the following information:
   <TD>\(\frac{1}{|\mathcal{P}|}\sum_{k\in\mathcal{P}} |P_k|\)</TD>
  </TR>
 </TABLE>
-
 </UL>
 <br /><br /><br /><hr />
       <p>

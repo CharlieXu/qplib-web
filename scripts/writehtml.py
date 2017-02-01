@@ -251,6 +251,8 @@ def _writemodelpage(m, mattribs, bib) :
                 title = '<span title="' + a[1][1] + '">' + a[1][0] + '</span>';
             else :
                 title = '<span>' + str(a[1]) + '</span>';
+            if a[0] != 'formats' :
+               title += ' <a href="doc.html#' + a[0] + '"><SUP>' + a[0] + '</SUP></a>';
             t.rows.append(HTML.TableRow([title, a[2](mattribs[a[0]])], attribs={"style":rowstyle}));
             
     if os.path.exists(os.path.join(PNGDIR, m + '.jac.png')) :
@@ -457,18 +459,18 @@ $(document).ready(function() {
     t = HTML.Table([], border = 0, col_align = col_align, style = '', cellspacing = 0, cellpadding = 2, attribs = {'id' : 'instancelisting', 'class' : 'compact display'},
     header_row = [
         HTML.TableCell('Instance', attribs = {'title' : 'Name and fileformats'}, header = True),
-        HTML.TableCell('Cvx', attribs = {'title' : 'Continuous Relaxation convex'}, header = True),
-        HTML.TableCell('V', attribs = {'title' : 'Variables type'}, header = True),
-        HTML.TableCell('Total</br>Vars.', attribs = {'title' : 'Number of Variables'}, header = True),
-        HTML.TableCell('Binary<br/>Vars.', attribs = {'title' : 'Number of Binary Variables'}, header = True),
-        HTML.TableCell('Integer<br/>Vars.', attribs = {'title' : 'Number of Integer Variables'}, header = True),
-        HTML.TableCell('O', attribs = {'title' : 'Objective type'}, header = True),
-        HTML.TableCell('Q<sup>0</sup><br/>density', attribs = {'title' : 'Objective density % in quad. part coef. matrix'}, header = True),
-        HTML.TableCell('Q<sup>0</sup><br/>hard ev', attribs = {'title' : 'Objective hard eigenvalues % in quad. part coef. matrix'}, header = True),
-        HTML.TableCell('C', attribs = {'title' : 'Constraints type'}, header = True),
-        HTML.TableCell('Total<br/>Cons.', attribs = {'title' : 'Number of Constraints (excluding variable bounds)'}, header = True),
-        HTML.TableCell('Quad.<br/>Cons.', attribs = {'title' : 'Number of Quadratic Constraints'}, header = True),
-        HTML.TableCell('Non-<br/>zeros', attribs = {'title' : 'Number of Nonzeros in Jacobian and Objective'}, header = True),
+        HTML.TableCell('<A href="doc.html#convex">Cvx</A>', attribs = {'title' : 'Continuous Relaxation convex'}, header = True),
+        HTML.TableCell('<A href="doc.html#probtype">V</A>', attribs = {'title' : 'Variables type'}, header = True),
+        HTML.TableCell('<A href="doc.html#nvars">Total</br>Vars.</A>', attribs = {'title' : 'Number of Variables'}, header = True),
+        HTML.TableCell('<A href="doc.html#nbinvars">Binary<br/>Vars.</A>', attribs = {'title' : 'Number of Binary Variables'}, header = True),
+        HTML.TableCell('<A href="doc.html#nintvars">Integer<br/>Vars.</A>', attribs = {'title' : 'Number of Integer Variables'}, header = True),
+        HTML.TableCell('<A href="doc.html#probtype">O</A>', attribs = {'title' : 'Objective type'}, header = True),
+        HTML.TableCell('<A href="doc.html#objquaddensity">Q<sup>0</sup><br/>density</A>', attribs = {'title' : 'Objective density % in quad. part coef. matrix'}, header = True),
+        HTML.TableCell('<A href="doc.html#objquadhardevfrac">Q<sup>0</sup><br/>hard ev</A>', attribs = {'title' : 'Objective hard eigenvalues % in quad. part coef. matrix'}, header = True),
+        HTML.TableCell('<A href="doc.html#probtype">C</A>', attribs = {'title' : 'Constraints type'}, header = True),
+        HTML.TableCell('<A href="doc.html#ncons">Total<br/>Cons.</A>', attribs = {'title' : 'Number of Constraints (excluding variable bounds)'}, header = True),
+        HTML.TableCell('<A href="doc.html#nquadcons">Quad.<br/>Cons.</A>', attribs = {'title' : 'Number of Quadratic Constraints'}, header = True),
+        HTML.TableCell('<A href="doc.html#nz">Non-<br/>zeros</A>', attribs = {'title' : 'Number of Nonzeros in Jacobian and Objective'}, header = True),
     ]);
     
     bgcolor = '#e0e0e0';
@@ -804,7 +806,8 @@ def _writestatistics(data) :
 
     print >> htmlout, '''<p>
         The following diagrams provide aggregated statistics on sources and characteristics of the instances in QPLIB.
-        You can download the raw data in <a href="instancedata.csv">csv format</a>.''';
+        You can download the raw data in <a href="instancedata.csv">csv format</a>.
+        The data fields are documented in <a href="doc.html">the documentation</a>.''';
 
     # create instancedata.csv
     df = metadata.todataframe(data);
@@ -813,6 +816,7 @@ def _writestatistics(data) :
     ninstances = len(df.index);
 
     print >> htmlout, "<h3>Problem types</h3>";
+    print >> htmlout, '<P>See also documentation of <a href="doc.html#probtype">probtype</a>.</P>';
     print >> htmlout, "<P>";
     plt.clf();
     ptypecounts = df['probtype'].value_counts();
@@ -861,7 +865,8 @@ def _writestatistics(data) :
 
     print >> htmlout, "<h3>Convexity</h3>";
     print >> htmlout, "<P>";
-    print >> htmlout, 'The picture on the right shows the fraction of negative (positive) eigenvalues in the coefficient matrix of the objective function for a minimisation (maximisation) instance w.r.t. the total number of variables.';
+    print >> htmlout, 'Left: <a href="doc.html#convex">Convexity of the continuous relaxation</a>.<br/>'
+    print >> htmlout, 'Right: <a href="doc.html#objquadhardevfrac">Fraction of hard eigenvalues</a> in the coefficient matrix of the objective function w.r.t. the total number of variables.';
     print >> htmlout, "</P>";
 
     print >> htmlout, "<P>";
@@ -974,6 +979,7 @@ def _writestatistics(data) :
     plt.xlabel('Instances');
     #plt.title('Number of nonzeros');
     _saveplot(htmlout, 'nz');
+    print >> htmlout, 'See also: <a href="doc.html#nz">nonzeros</a>, <a href="doc.html#nlnz">nonlinear nonzeros</a>'
     print >> htmlout, "</P>";
 
 
@@ -1001,14 +1007,14 @@ def _writestatistics(data) :
     _saveplot(htmlout, 'sizenlscatter');
 
     print >> htmlout, "<UL>";
-    print >> htmlout, "<LI>The density in left scatter plot is defined as (#nonzeros in objective and jacobian) / (#vars * (#cons + 1)).", "</LI>";
-    print >> htmlout, "<LI> The density in right scatter plot is defined as (#nonlinear nonzeros in objective and jacobian) / (#nonlinear vars * (#nonlinear cons + 1 if objective is nonlinear)).", "</LI>";
+    print >> htmlout, '<LI> The density in left scatter plot is defined as (<a href="doc.html#nz">#nonzeros</a>) / (<a href="doc.html#nvars">#vars</a> * (<a href="doc.html#ncons">#cons</a> + 1)).', "</LI>";
+    print >> htmlout, '<LI> The density in right scatter plot is defined as (<a href="doc.html#nlnz">#nonlinear nonzeros</a>) / (<a href="doc.html#nnlvars">#nonlinear vars</a> * (<a href="doc.html#nquadcons">#quadratic cons</a> + 1 if <a href="doc.html#objtype">objective is nonlinear</a>)).', "</LI>";
     print >> htmlout, "<LI> Densities below 0.05 are shown as 0.05.", "</LI>";
     print >> htmlout, "</UL>"
     print >> htmlout, "</P>";
 
     print >> htmlout, "<P>";
-    print >> htmlout, "The diagram below shows the instances with a quadratic objective function sorted according to the density of the quadratic objective function coefficient matrix.";
+    print >> htmlout, 'The diagram below shows the instances with a quadratic objective function sorted according to the <a href="doc.html#objquaddensity">density of the quadratic objective function coefficient matrix</a>.';
     print >> htmlout, "</P>";
 
     print >> htmlout, "<P>";
@@ -1070,20 +1076,20 @@ def writehtml() :
     print >> index, '''      <p>
         This website hosts a collection of problem instances from the diverse class of <i>quadratic programming
         problems</i>.  Starting from 8,164&nbsp;submitted instances, the final version of QPLIB contains
-        251&nbsp;discrete and 116&nbsp;continuous instances of different characteristics.  During this process, we
-        developed a taxonomy based on a three-fields code of the form <b>OVC</b>, where <b>O</b> indicates the objective
-        function, <b>V</b> the variables, and <b>C</b> the constraints of the problem. The fields can be given the
-        following values:
-      </p>
-      <ol>
-        <li>objective function: (L)inear, (D)iagonal convex (if minimization) or concave (if maximization) quadratic, (C)onvex (if minimization) or (C)oncave (if maximization) quadratic, (Q)uadratic (all other cases);
-        </li>
-        <li>variables: (C)ontinuous only, (B)inary only, (M)ixed binary and continuous, (I)nteger (incl. binary) only, (G)eneral (all other cases);
-        </li>
-        <li>constraints: (N)one, (B)ox, (L)inear, (D)iagonal convex quadratic, (C)onvex quadratic, nonconvex (Q)uadratic.
-        </li>
-      </ol>
-      <p>
+        251&nbsp;discrete and 116&nbsp;continuous instances of different characteristics.</p>''' # During this process, we
+        #developed a taxonomy based on a three-fields code of the form <b>OVC</b>, where <b>O</b> indicates the objective
+        #function, <b>V</b> the variables, and <b>C</b> the constraints of the problem. The fields can be given the
+        #following values:
+      #</p>
+      #<ol>
+      #  <li>objective function: (L)inear, (D)iagonal convex (if minimization) or concave (if maximization) quadratic, (C)onvex (if minimization) or (C)oncave (if maximization) quadratic, (Q)uadratic (all other cases);
+      #  </li>
+      #  <li>variables: (C)ontinuous only, (B)inary only, (M)ixed binary and continuous, (I)nteger (incl. binary) only, (G)eneral (all other cases);
+      #  </li>
+      #  <li>constraints: (N)one, (B)ox, (L)inear, (D)iagonal convex quadratic, (C)onvex quadratic, nonconvex (Q)uadratic.
+      #  </li>
+      #</ol>
+    print >> index, '''<p>
         For more details, see the preprint
       </p>
       <ul>
