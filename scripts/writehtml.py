@@ -35,11 +35,6 @@ def _htmlheader(title) :
         <META name="description" content="QPLIB: A Library of Quadratic Programming Instances" />
         <META name="keywords" content="QPLIB" />
         <META name="robots" content="index|follow" />
-        <STYLE>
-        table.dataframe { text-align: right; font-size: 12px; border: 1px; border-collapse: collapse}
-        </STYLE>
-        <link rel="stylesheet" media="all" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Sans" />
-        <link rel="stylesheet" media="all" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800" />
         <link rel="stylesheet" type="text/css" href="qplib.css" />
         <TITLE>''' + title + '''</TITLE>
         </HEAD>
