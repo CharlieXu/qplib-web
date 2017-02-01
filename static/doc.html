@@ -7,15 +7,14 @@
         <META name="robots" content="index|follow" />
         <link rel="stylesheet" type="text/css" href="qplib.css" />
         <TITLE>QPLIB Documentation</TITLE>
-        
-        
         <script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX","output/SVG"],
-});
-</script>
-<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+          MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX","output/SVG"],
+            SVG: { scale: 90 }
+          });
+        </script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
 
         </HEAD>
 <BODY>
@@ -31,7 +30,6 @@
 
 QPLIB contains quadratic optimiation problems of the form
 \[
- 
 \begin{align*}
  \textrm{sense} \;\;
  & x^\top Q^0 x + b^0 x + q^0 \\
@@ -60,7 +58,7 @@ where
 
 Further, let
 <UL>
-  <LI>\(\mathcal{B} := \{j\in\mathcal{Z} \,:\, \{l_j,u_j\}=\{0,1\}\) be the set of binary variables,</LI>
+  <LI>\(\mathcal{B} := \{j\in\mathcal{Z} \,:\, \{l_j,u_j\}=\{0,1\}\}\) be the set of binary variables,</LI>
   <LI>\(\mathcal{N}^Q := \{j\in\mathcal{N} \,:\, \exists i\in\mathcal{M}\cup\{0\}, k\in\mathcal{N} : Q^i_{j,k}+Q^i_{k,j} \neq 0\}\) be the set of nonlinear variables (that is, variables appearing in at least one quadratic term),</LI>
   <LI>\(\mathcal{L} := \{i\in\mathcal\{M\} \,:\, Q^i = 0\}\) be the set of linear constraints,</LI>
   <LI>\(\mathcal{Q} := \mathcal{M} \setminus \mathcal{L}\) be the set of (truely) quadratic constraints, and</LI>
@@ -68,33 +66,47 @@ Further, let
       such that \(\forall i\in\mathcal{Q}\cup\{0\}\; \forall j,k\in\mathcal{N}^Q, Q_{j,k}^i \neq 0\; \exists p\in\mathcal{P} : j,k\in P_p\).
       That is, \(P\) describes the block structure of the Hessian of the Lagrangian.
    </LI>
-     
-     
 </UL>
 
 For each instance, we collect the following information:
-<TABLE>
+<TABLE cellspacing="5px">
+<THEAD>
+ <TR>
+  <TH>Identifier</TH>
+  <TH>Meaning</TH>
+  <TH>Definition</TH>
+ </TR>
+</THEAD>
+<TBODY>
  <TR>
   <TD><A name="probtype">PROBTYPE</A></TD>
   <TD>Problem Type</TD>
-  <TD><B>OVC</B>, where<BR/>
-   <B>O</B> = <B>L</B>, if \(Q^0=0\), or<BR/>
-   <B>O</B> = <B>D</B>, if \(Q^0\succeq 0, \textrm{sense}=\min, Q^0 = {Q^0}^\top\), or<BR/>
-   <B>O</B> = <B>D</B>, if \(Q^0\preceq 0, \textrm{sense}=\max, Q^0 = {Q^0}^\top\), or<BR/>
-   <B>O</B> = <B>C</B>, if \(Q^0\succeq 0, \textrm{sense}=\min\), or<BR/>
-   <B>O</B> = <B>C</B>, if \(Q^0\preceq 0, \textrm{sense}=\max\), or<BR/>
-   <B>O</B> = <B>Q</B>, otherwise;<BR/>
-   <B>V</B> = <B>C</B>, if \(\mathcal{Z} = \emptyset\), or<BR/>
-   <B>V</B> = <B>B</B>, if \(\mathcal{N} = \mathcal{B}\), or<BR/>
-   <B>V</B> = <B>M</B>, if \(\mathcal{Z} \setminus \mathcal{B} = \emptyset\), or<BR/>
-   <B>V</B> = <B>I</B>, if \(\mathcal{N} = \mathcal{Z}\), or<BR/>
-   <B>V</B> = <B>G</B>, otherwise;<BR/>
-   <B>C</B> = <B>N</B>, if \(\mathcal{M} = \emptyset\), \(l_j=-\infty, u_j=+\infty, j\in\mathcal{N}\setminus\mathcal{B}\), or<BR/>
-   <B>C</B> = <B>B</B>, if \(\mathcal{M} = \emptyset\), or<BR/>
-   <B>C</B> = <B>L</B>, if \(\mathcal{Q} = \emptyset\), or<BR/>
-   <B>C</B> = <B>D</B>, if \(\forall i\in\mathcal{Q}: Q^i\succeq 0 \textrm{ if } c_l^i\neq-\infty\) and \(Q^i\preceq 0 \textrm{ if } c_u^i\neq+\infty\) and \(Q^i={Q^i}^\top\) <BR/>
-   <B>C</B> = <B>C</B>, if \(\forall i\in\mathcal{Q}: Q^i\succeq 0 \textrm{ if } c_l^i\neq-\infty\) and \(Q^i\preceq 0 \textrm{ if } c_u^i\neq+\infty\)<BR/>
-   <B>Q</B>, otherwise.
+  <TD><B>OVC</B>, where <B>O</B> is<BR/>
+   <table>
+    <TR><TD><B>L</B>,</TD><TD>if \(Q^0=0\), else</TD></TR>
+    <TR><TD><B>D</B>,</TD><TD>if \(Q^0\succeq 0, \textrm{sense}=\min, Q^0 = {Q^0}^\top\), else</TD></TR>
+    <TR><TD><B>D</B>,</TD><TD>if \(Q^0\preceq 0, \textrm{sense}=\max, Q^0 = {Q^0}^\top\), else</TD></TR>
+    <TR><TD><B>C</B>,</TD><TD>if \(Q^0\succeq 0, \textrm{sense}=\min\), else</TD></TR>
+    <TR><TD><B>C</B>,</TD><TD>if \(Q^0\preceq 0, \textrm{sense}=\max\), else</TD></TR>
+    <TR><TD><B>Q</B>;</TD></TR>
+   </table>
+   <B>V</B> is
+   <table>
+    <TR><TD><B>C</B>,</TD><TD>if \(\mathcal{Z} = \emptyset\), else</TD></TR>
+    <TR><TD><B>B</B>,</TD><TD>if \(\mathcal{N} = \mathcal{B}\), else</TD></TR>
+    <TR><TD><B>M</B>,</TD><TD>if \(\mathcal{Z} \setminus \mathcal{B} = \emptyset\), else</TD></TR>
+    <TR><TD><B>I</B>,</TD><TD>if \(\mathcal{N} = \mathcal{Z}\), else</TD></TR>
+    <TR><TD><B>G</B>;</TD></TR>
+   </table>
+   <B>C</B> is
+   <table>
+    <TR><TD><B>N</B>,</TD><TD>if \(\mathcal{M} = \emptyset\), \(l_j=-\infty, u_j=+\infty, j\in\mathcal{N}\setminus\mathcal{B}\), else</TD></TR>
+    <TR><TD><B>B</B>,</TD><TD>if \(\mathcal{M} = \emptyset\), else</TD></TR>
+    <TR><TD><B>L</B>,</TD><TD>if \(\mathcal{Q} = \emptyset\), else</TD></TR>
+    <TR><TD><B>D</B>,</TD><TD>if \(\forall i\in\mathcal{Q}: Q^i\succeq 0 \textrm{ if } c_l^i\neq-\infty\) and \(Q^i\preceq 0 \textrm{ if } c_u^i\neq+\infty\) and \(Q^i={Q^i}^\top\), else</TD></TR>
+    <TR><TD><B>C</B>,</TD><TD>if \(\forall i\in\mathcal{Q}: Q^i\succeq 0 \textrm{ if } c_l^i\neq-\infty\) and \(Q^i\preceq 0 \textrm{ if } c_u^i\neq+\infty\), else</TD></TR>
+    <TR><TD><B>Q</B>.</TD></TR>
+   </table>
   </TD>
  </TR>
  <TR>
@@ -155,7 +167,8 @@ For each instance, we collect the following information:
  <TR>
   <TD><A name="objtype">OBJTYPE</A></TD>
   <TD>Objective type</TD>
-  <TD><B>linear</B> if \(Q^0=0\), <B>quadratic</B> if \(Q^0\neq 0\)</TD>
+  <TD><B>linear</B> if \(Q^0=0\)<BR/>
+      <B>quadratic</B> if \(Q^0\neq 0\)</TD>
  </TR>
  <TR>
   <TD><A name="nlincons">NLINCONS</A></TD>
@@ -233,10 +246,10 @@ For each instance, we collect the following information:
  <TR>
   <TD><A name="objcurvature">OBJCURVATURE</A></TD>
   <TD>Convexity/Concavity of objective function</TD>
-  <TD><B>linear</B>, if \(Q^0=0\), or<BR/>
-      <B>convex</B>, if \(Q^0\succeq 0\), or<BR/>
-      <B>concave</B>, if \(Q^0\preceq 0\), or<BR/>
-      <B>indefinite</B>, otherwise
+  <TD><B>linear</B>, if \(Q^0=0\), else<BR/>
+      <B>convex</B>, if \(Q^0\succeq 0\), else<BR/>
+      <B>concave</B>, if \(Q^0\preceq 0\), else<BR/>
+      <B>indefinite</B>.
   </TD>
  </TR>
  <TR>
@@ -256,23 +269,27 @@ For each instance, we collect the following information:
       \(\frac{\textrm{NOBJQUADPOSEV}}{|\mathcal{N}|}\), if \(\textrm{sense}=\max\)
   </TD>
  </TR>
-TR>
+ <TR>
   <TD><A name="conscurvature">CONSCURVATURE</A></TD>
   <TD>Convexity/Concavity of constraints</TD>
-  <TD><B>linear</B>, if \(\mathcal{L}=\mathcal{M}\), or<BR/>
-      <B>convex</B>, if \(\forall i\in\mathcal{Q}, c_u^i\neq+\infty: Q^i\succeq 0\) and \(\forall i\in\mathcal{Q}, c_l^i\neq-\infty: Q^i\preceq 0\), or<BR/>
-      <B>concave</B>, if \(\forall i\in\mathcal{Q}, c_u^i\neq+\infty: Q^i\preceq 0\) and \(\forall i\in\mathcal{Q}, c_l^i\neq-\infty: Q^i\succeq 0\), or<BR/>
-      <B>indefinite</B>, otherwise
+  <TD><table>
+     <TR><TD><B>linear</B>,</TD><TD>if \(\mathcal{L}=\mathcal{M}\), else</TD></TR>
+     <TR><TD><B>convex</B>,</TD><TD>if \(\forall i\in\mathcal{Q}, c_u^i\neq+\infty: Q^i\succeq 0\) and \(\forall i\in\mathcal{Q}, c_l^i\neq-\infty: Q^i\preceq 0\), else</TD></TR>
+     <TR><TD><B>concave</B>,</TD><TD>if \(\forall i\in\mathcal{Q}, c_u^i\neq+\infty: Q^i\preceq 0\) and \(\forall i\in\mathcal{Q}, c_l^i\neq-\infty: Q^i\succeq 0\), else</TD></TR>
+     <TR><TD><B>indefinite</B>.</TD></TR>
+    </table>
   </TD>
  </TR>
  <TR>
   <TD><A name="convex">CONVEX</A></TD>
   <TD>Convexity of continuous relaxation</TD>
-  <TD><B>True</B>, if \(\textrm{CONSCURVATURE}\) = <B>convex</B> and \(\textrm{OBJCURVATURE}\) = <B>convex</B>, if \(\textrm{sense}=\min\), and \(\textrm{OBJCURVATURE}\) = <B>concave</B>, if \(\textrm{sense}=\max\).<BR/>
-      <B>False</B>, otherwise.
+  <TD><table>
+     <TR><TD><B>True</B>,</TD><TD>if \(\textrm{CONSCURVATURE}\) = <B>convex</B> and \(\textrm{OBJCURVATURE}\) = <B>convex</B>, and \(\textrm{sense}=\min\), else</TD></TR>
+     <TR><TD><B>True</B>,</TD><TD>if \(\textrm{CONSCURVATURE}\) = <B>convex</B> and \(\textrm{OBJCURVATURE}\) = <B>concave</B>, and \(\textrm{sense}=\max\), else</TD></TR>
+     <TR><TD><B>False</B>.</TD></TR>
+    </table>
   </TD>
  </TR>
- convex
  <TR>
   <TD><A name="nconvexnlcons">NCONVEXNLCONS</A></TD>
   <TD>Number of convex nonlinear constraints</TD>
@@ -326,6 +343,7 @@ TR>
   <TD>Average blocksize in Hessian of Lagrangian</TD>
   <TD>\(\frac{1}{|\mathcal{P}|}\sum_{k\in\mathcal{P}} |P_k|\)</TD>
  </TR>
+</TBODY>
 </TABLE>
 </UL>
 <br /><br /><br /><hr />
