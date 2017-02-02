@@ -1126,12 +1126,10 @@ def writehtml() :
           Programming Computation, 2017
         </li>
       </ul>
-      and the <a href="statistics.html">statistics</a> and <a href="doc.html">documentation</a> pages on this website.  When using QPLIB, please cite the article above.''';
-    print >> index, '''
       <p>
+         and the <a href="statistics.html">statistics</a> and <a href="doc.html">documentation</a> pages on this website.
          When using QPLIB, please cite the article above.  The BibTeX entry is <a href="FuriniEtAl2017TR.bib">here</a>.
     </p>''';
-      
 
     print >> index, '''      <h3>History and updates</h3>
       <ul>
