@@ -21,7 +21,7 @@ where
   <LI>\(\mathcal{M} = \{ 1, \ldots, m \}\) is the set of (indices) of constraints,</LI>
   <LI>\(x = [x_j]_{j = 1}^n \in \mathbb{R}^n\) is a finite vector of real variables,</LI>
   <LI>\(\textrm{sense}\in\{\min,\max\}\) is the objective sense,</LI>
-  <LI>\(Q^i\in\mathbb{R}^{n\times n}\) for \(i \in \{ 0 \} \cup \mathcal{M}\) are lower-left triangle<sup title="In the paper, the Q matrices were required to be symmetric. For this page, it is easier to assume them as triangle matrices.">(i)</sup> (\(Q^i_{row,col}=0\) for \(row < col\)) matrices holding the coefficients of quadratic terms,</LI>
+  <LI>\(Q^i\in\mathbb{R}^{n\times n}\) for \(i \in \{ 0 \} \cup \mathcal{M}\) are lower-left triangle<sup title="In the QPLIB paper, the Q matrices were assumed to be symmetric. For this page, it is easier to assume them as triangle matrices.">(i)</sup> (\(Q^i_{row,col}=0\) for \(row < col\)) matrices holding the coefficients of quadratic terms,</LI>
   <LI>\(b^i\in\mathbb{R}^n\) for \(i \in \{0\}\cup\mathcal{M}\) are vectors holding the coefficients of linear terms,</LI>
   <LI>\(q^0\in\mathbb{R}\) is the constant term in the objective,</LI>
   <LI>\(c_l^i\in\mathbb{R}\cup\{-\infty\}, c_u^i\in\mathbb{R}\cup\{+\infty\}\), \(c_l^i\leq c_u^i\), for \(i \in \mathcal{M}\) are the left- and right-hand side, respectively, of each constraint,</LI>
