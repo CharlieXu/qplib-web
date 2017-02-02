@@ -49,6 +49,7 @@ def _htmlstartbody() :
       <a href="index.html">Home</a> //
       <a href="instances.html">browse instances</a> //
       <a href="statistics.html">view statistics</a> //
+      <a href="doc.html">read documentation</a> //
       <a href="qplib.zip">download QPLIB archive [ <!--#fsize virtual="qplib.zip" --> ]</a>
 
       <hr />
@@ -489,7 +490,7 @@ $(document).ready(function() {
                 return '';
             return str(x);
 
-        row = [HTML.TableCell('<A href=' + m + '.html>' + m[6:] + '</A> (' + formats + ')')];
+        row = [HTML.TableCell('<A href=' + m + '.html>' + m[6:] + '</A> <SUP>(' + formats + ')</SUP>')];
         row.append(HTML.TableCell('&#10004;' if metadata.isconvex(mattribs) else '-' if metadata.isnotconvex(mattribs) else ''));
         row.append(HTML.TableCell(probtype[1]));
         row.append(HTML.TableCell(inttostr(mattribs['nvars']) if 'nvars' in mattribs else '?'));
@@ -807,7 +808,7 @@ def _writestatistics(data) :
     print >> htmlout, '''<p>
         The following diagrams provide aggregated statistics on sources and characteristics of the instances in QPLIB.
         You can download the raw data in <a href="instancedata.csv">csv format</a>.
-        The data fields are documented in <a href="doc.html">the documentation</a>.''';
+        The data fields are defined in the <a href="doc.html">documentation</a>.''';
 
     # create instancedata.csv
     df = metadata.todataframe(data);
@@ -816,7 +817,7 @@ def _writestatistics(data) :
     ninstances = len(df.index);
 
     print >> htmlout, "<h3>Problem types</h3>";
-    print >> htmlout, '<P>See also documentation of <a href="doc.html#probtype">probtype</a>.</P>';
+    print >> htmlout, '<P>For a definition of the <a href="doc.html#probtype">three letter problem classification</a> see the documentation.';
     print >> htmlout, "<P>";
     plt.clf();
     ptypecounts = df['probtype'].value_counts();
@@ -865,7 +866,7 @@ def _writestatistics(data) :
 
     print >> htmlout, "<h3>Convexity</h3>";
     print >> htmlout, "<P>";
-    print >> htmlout, 'Left: <a href="doc.html#convex">Convexity of the continuous relaxation</a>.<br/>'
+    print >> htmlout, 'Left: <a href="doc.html#convex">Convexity of the continuous relaxation</a>.'
     print >> htmlout, 'Right: <a href="doc.html#objquadhardevfrac">Fraction of hard eigenvalues</a> in the coefficient matrix of the objective function w.r.t. the total number of variables.';
     print >> htmlout, "</P>";
 
@@ -892,7 +893,7 @@ def _writestatistics(data) :
     _saveplot(htmlout, 'hardev');
     print >> htmlout, "</P>";
 
-    print >> htmlout, "<h3>Dimensions</h3>";
+    print >> htmlout, "<h3>Problem sizes</h3>";
     print >> htmlout, "<P>";
     plt.clf();
     plt.hist(df['nvars'].values, bins = np.logspace(0, np.log10(df['nvars'].max()), 15));
@@ -979,13 +980,15 @@ def _writestatistics(data) :
     plt.xlabel('Instances');
     #plt.title('Number of nonzeros');
     _saveplot(htmlout, 'nz');
-    print >> htmlout, 'See also: <a href="doc.html#nz">nonzeros</a>, <a href="doc.html#nlnz">nonlinear nonzeros</a>'
+    print >> htmlout, "</P>";
+    print >> htmlout, "<P>";
+    print >> htmlout, 'See also the definition of <a href="doc.html#nz">nonzeros</a> and <a href="doc.html#nlnz">nonlinear nonzeros</a> in the documentation.';
     print >> htmlout, "</P>";
 
 
     print >> htmlout, "<h3>Density</h3>";
     print >> htmlout, "<P>";
-    print >> htmlout, "In these scatter plots, each bubble represents an instance and the area of the bubble corresponds to (nonlinear) density of the instance:", "<BR>";
+    print >> htmlout, "In these scatter plots, each bubble represents an instance and the area of the bubble corresponds to the (nonlinear) density of the instance:", "<BR>";
 
     plt.clf();
     #print df[['nvars', 'ncons', 'nz', 'density']].sort('density').to_string();
@@ -1030,6 +1033,29 @@ def _writestatistics(data) :
     print >> htmlout, _htmlendbody(), "</HTML>";
     htmlout.close();
 
+def _writedocpage() :
+    htmlout = open(os.path.join(HTMLDIR, "doc.html"), 'w');
+    print >> htmlout, '<HTML>', _htmlheader("QPLIB Documentation"), _htmlstartbody();
+
+    print >> htmlout, '''
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX","output/SVG"],
+            SVG: { scale: 90 }
+          });
+        </script>
+        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+    ''';
+
+    docin = open(os.path.join(metadata.BASEDIR, "static/doc.inc"), 'r');
+    docstring = docin.read();
+    print >> htmlout, docstring;
+    docin.close()
+
+    print >> htmlout, _htmlendbody(), "</HTML>";
+    htmlout.close();
+
 def writehtml() :
     data = metadata.read();
     
@@ -1042,15 +1068,16 @@ def writehtml() :
     if not os.access(HTMLDIR, os.X_OK | os.W_OK) :
         raise BaseException('Cannot write into directory ' + HTMLDIR);
 
-    # copy all files and directories from static/
+    # copy all files and directories from static/ except for doc.inc
     STATICDIR = os.path.join(metadata.BASEDIR, 'static');
     for f in os.listdir(STATICDIR) :
-       if os.path.isfile(os.path.join(STATICDIR, f)) :
-          shutil.copy(os.path.join(STATICDIR, f), HTMLDIR);
-       else :
-          if os.path.exists(os.path.join(HTMLDIR, f)) :
-             shutil.rmtree(os.path.join(HTMLDIR, f));
-          shutil.copytree(os.path.join(STATICDIR, f), os.path.join(HTMLDIR, f));
+       if f != "doc.inc" :
+          if os.path.isfile(os.path.join(STATICDIR, f)) :
+             shutil.copy(os.path.join(STATICDIR, f), HTMLDIR);
+          else :
+             if os.path.exists(os.path.join(HTMLDIR, f)) :
+                shutil.rmtree(os.path.join(HTMLDIR, f));
+             shutil.copytree(os.path.join(STATICDIR, f), os.path.join(HTMLDIR, f));
 
     # copy all files from data/{gms,lp,qplib,png}
     for d in ['gms', 'lp', 'qplib', 'png'] :
@@ -1076,7 +1103,8 @@ def writehtml() :
     print >> index, '''      <p>
         This website hosts a collection of problem instances from the diverse class of <i>quadratic programming
         problems</i>.  Starting from 8,164&nbsp;submitted instances, the final version of QPLIB contains
-        251&nbsp;discrete and 116&nbsp;continuous instances of different characteristics.</p>''' # During this process, we
+        251&nbsp;discrete and 116&nbsp;continuous instances of different characteristics.'''
+        # During this process, we
         #developed a taxonomy based on a three-fields code of the form <b>OVC</b>, where <b>O</b> indicates the objective
         #function, <b>V</b> the variables, and <b>C</b> the constraints of the problem. The fields can be given the
         #following values:
@@ -1089,16 +1117,21 @@ def writehtml() :
       #  <li>constraints: (N)one, (B)ox, (L)inear, (D)iagonal convex quadratic, (C)onvex quadratic, nonconvex (Q)uadratic.
       #  </li>
       #</ol>
-    print >> index, '''<p>
-        For more details, see the preprint
+    print >> index, '''
+        For details on the library see the preprint
       </p>
       <ul>
         <li> Fabio Furini, Emiliano Traversi, Pietro Belotti, Antonio Frangioni, Ambros Gleixner, Nick Gould, Leo
           Liberti, Andrea Lodi, Ruth Misener, Hans Mittelmann, Nick Sahinidis, Stefan Vigerske, and Angelika
           Wiegele. <a href="">QPLIB: A Library of Quadratic Programming Instances</a>, submitted to Mathematical
-          Programming Computation, 2017.
+          Programming Computation, 2017
         </li>
-      </ul>''';
+      </ul>
+      and the <a href="statistics.html">statistics</a> and <a href="doc.html">documentation</a> pages on this website.  When using QPLIB, please cite the article above.''';
+    print >> index, '''
+      <p>
+         When using QPLIB, please cite the article above.  The BibTeX entry is <a href="FuriniEtAl2017TR.bib">here</a>.
+    </p>''';
       
 
     print >> index, '''      <h3>History and updates</h3>
@@ -1166,6 +1199,7 @@ def writehtml() :
     # write instance and statistics page
     _writeinstancepage(data);
     _writestatistics(data);
+    _writedocpage();
 
 if __name__ == '__main__' :
     writehtml();
