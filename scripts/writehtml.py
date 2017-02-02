@@ -818,17 +818,16 @@ def _writestatistics(data) :
 
     print >> htmlout, "<h3>Problem types</h3>";
     print >> htmlout, '<P>For a definition of the <a href="doc.html#probtype">three letter problem classification</a> see the documentation.';
-    print >> htmlout, "<P>";
-    plt.clf();
-    ptypecounts = df['probtype'].value_counts();
-    cont = pd.Series(ptypecounts.index.map(lambda x : x[1] == 'C'), index = ptypecounts.index).sort_values();
-    ptypecounts = ptypecounts.reindex_like(cont);
-    #print ptypecounts.to_string();
-    plt.pie(ptypecounts, labels = ptypecounts.index, colors = ['b' if x else 'r' for x in cont]);
-    plt.gca().set_aspect(1);
-    #plt.title('problem type');
-    _saveplot(htmlout, 'probtype');
-    print >> htmlout, "</P>";
+    #print >> htmlout, "<P>";
+    #plt.clf();
+    #ptypecounts = df['probtype'].value_counts();
+    #cont = pd.Series(ptypecounts.index.map(lambda x : x[1] == 'C'), index = ptypecounts.index).sort_values();
+    #ptypecounts = ptypecounts.reindex_like(cont);
+    #plt.pie(ptypecounts, labels = ptypecounts.index, labeldistance = 1.2, colors = ['b' if x else 'r' for x in cont]);
+    #plt.gca().set_aspect(1);
+    ##plt.title('problem type');
+    #_saveplot(htmlout, 'probtype');
+    #print >> htmlout, "</P>";
 
     def simplifyprobtype(t) :
        r = '';
@@ -842,9 +841,9 @@ def _writestatistics(data) :
     conttypecounts['total'] = conttypecounts.sum();
     print >> htmlout, '<table><tr><th valign="top"><h4>Continuous Instances&nbsp;&nbsp;&nbsp;/</h4></th><th>&nbsp;&nbsp;&nbsp;</th><th valign="top"><h4>Discrete Instances</h4></th></tr>'
     print >> htmlout, '<tr><td valign="top">';
-    print >> htmlout, pd.DataFrame(conttypecounts).to_html(header = False).replace('border="1"','border="0"');
+    print >> htmlout, pd.DataFrame(conttypecounts).to_html(header = False).replace('border="1"','border="0"').replace('<th>', '<th align="left">');
     print >> htmlout, '</td><td/><td valign="top">';
-    print >> htmlout, pd.DataFrame(discrtypecounts).to_html(header = False).replace('border="1"','border="0"');
+    print >> htmlout, pd.DataFrame(discrtypecounts).to_html(header = False).replace('border="1"','border="0"').replace('<th>', '<th align="left">');
     print >> htmlout, '</td></tr></table>';
 
     print >> htmlout, "<h3>Variable types</h3>";
