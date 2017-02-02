@@ -5,9 +5,9 @@ QPLIB consists of quadratic optimization problems of the form
 \[
 \begin{align*}
  \textrm{sense} \;\;
- & x^\top Q^0 x + b^0 x + q^0 \\
+ & \frac{1}{2} x^\top Q^0 x + b^0 x + q^0 \\
  \textrm{such that}\;\;
- & c^i_l \leq x^\top Q^i x + b^i x \leq c^i_u & i \in \mathcal{M} \\
+ & c^i_l \leq \frac{1}{2} x^\top Q^i x + b^i x \leq c^i_u & i \in \mathcal{M} \\
  %
  & l_j \leq x_j \leq u_j & j \in \mathcal{N}  \\
  %
@@ -21,11 +21,11 @@ where
   <LI>\(\mathcal{M} = \{ 1, \ldots, m \}\) is the set of (indices) of constraints,</LI>
   <LI>\(x = [x_j]_{j = 1}^n \in \mathbb{R}^n\) is a finite vector of real variables,</LI>
   <LI>\(\textrm{sense}\in\{\min,\max\}\) is the objective sense,</LI>
-  <LI>\(Q^i\in\mathbb{R}^{n\times n}\) for \(i \in \{ 0 \} \cup \mathcal{M}\) are lower-left triangle (\(Q^i_{row,col}=0\) for \(row < col\)) matrices holding the coefficients of quadratic terms,</LI>
+  <LI>\(Q^i\in\mathbb{R}^{n\times n}\) for \(i \in \{ 0 \} \cup \mathcal{M}\) are lower-left triangle<sup title="In the paper, the Q matrices were required to be symmetric. For this page, it is easier to assume them as triangle matrices.">(i)</sup> (\(Q^i_{row,col}=0\) for \(row < col\)) matrices holding the coefficients of quadratic terms,</LI>
   <LI>\(b^i\in\mathbb{R}^n\) for \(i \in \{0\}\cup\mathcal{M}\) are vectors holding the coefficients of linear terms,</LI>
   <LI>\(q^0\in\mathbb{R}\) is the constant term in the objective,</LI>
   <LI>\(c_l^i\in\mathbb{R}\cup\{-\infty\}, c_u^i\in\mathbb{R}\cup\{+\infty\}\), \(c_l^i\leq c_u^i\), for \(i \in \mathcal{M}\) are the left- and right-hand side, respectively, of each constraint,</LI>
-  <LI>\(l_j\in\mathbb{R}\cup\{-\infty\}, u_j\in\mathbb{R}\cup\{+\infty\}\), \(l_j\leq u_j\), for \(j \in \mathcal{N}\) are the lower and upper bounds, respectively, on each variable \(x_j\);</LI>
+  <LI>\(l_j\in\mathbb{R}\cup\{-\infty\}, u_j\in\mathbb{R}\cup\{+\infty\}\), \(l_j\leq u_j\), for \(j \in \mathcal{N}\) are the lower and upper bounds, respectively, on each variable \(x_j\),</LI>
   <LI>\(\mathcal{Z} \subseteq \mathcal{N}\) are the variables restricted to only attain integer values.</LI>
 </UL>
 </p>
