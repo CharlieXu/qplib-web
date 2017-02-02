@@ -455,19 +455,19 @@ $(document).ready(function() {
 });
 </script>'''
 
-    col_align = ['left', 'center', 'center', 'right', 'right', 'right', 'center', 'right', 'right', 'center', 'right', 'right', 'right']
+    col_align = ['left', 'center', 'center', 'right', 'right', 'center', 'right', 'right', 'right', 'center', 'right', 'right', 'right']
 
     t = HTML.Table([], border = 0, col_align = col_align, style = '', cellspacing = 0, cellpadding = 2, attribs = {'id' : 'instancelisting', 'class' : 'compact display'},
     header_row = [
         HTML.TableCell('Instance', attribs = {'title' : 'Name and fileformats'}, header = True),
         HTML.TableCell('<A href="doc.html#convex">Cvx</A>', attribs = {'title' : 'Continuous Relaxation convex'}, header = True),
+        HTML.TableCell('<A href="doc.html#probtype">O</A>', attribs = {'title' : 'Objective type'}, header = True),
+        HTML.TableCell('<A href="doc.html#objquaddensity">Q<sup>0</sup><br/>density</A>', attribs = {'title' : 'Objective density % in quad. part coef. matrix'}, header = True),
+        HTML.TableCell('<A href="doc.html#objquadhardevfrac">Q<sup>0</sup><br/>hard ev</A>', attribs = {'title' : 'Objective hard eigenvalues % in quad. part coef. matrix'}, header = True),
         HTML.TableCell('<A href="doc.html#probtype">V</A>', attribs = {'title' : 'Variables type'}, header = True),
         HTML.TableCell('<A href="doc.html#nvars">Total</br>Vars.</A>', attribs = {'title' : 'Number of Variables'}, header = True),
         HTML.TableCell('<A href="doc.html#nbinvars">Binary<br/>Vars.</A>', attribs = {'title' : 'Number of Binary Variables'}, header = True),
         HTML.TableCell('<A href="doc.html#nintvars">Integer<br/>Vars.</A>', attribs = {'title' : 'Number of Integer Variables'}, header = True),
-        HTML.TableCell('<A href="doc.html#probtype">O</A>', attribs = {'title' : 'Objective type'}, header = True),
-        HTML.TableCell('<A href="doc.html#objquaddensity">Q<sup>0</sup><br/>density</A>', attribs = {'title' : 'Objective density % in quad. part coef. matrix'}, header = True),
-        HTML.TableCell('<A href="doc.html#objquadhardevfrac">Q<sup>0</sup><br/>hard ev</A>', attribs = {'title' : 'Objective hard eigenvalues % in quad. part coef. matrix'}, header = True),
         HTML.TableCell('<A href="doc.html#probtype">C</A>', attribs = {'title' : 'Constraints type'}, header = True),
         HTML.TableCell('<A href="doc.html#ncons">Total<br/>Cons.</A>', attribs = {'title' : 'Number of Constraints (excluding variable bounds)'}, header = True),
         HTML.TableCell('<A href="doc.html#nquadcons">Quad.<br/>Cons.</A>', attribs = {'title' : 'Number of Quadratic Constraints'}, header = True),
@@ -492,10 +492,6 @@ $(document).ready(function() {
 
         row = [HTML.TableCell('<A href=' + m + '.html>' + m[6:] + '</A> <SUP>(' + formats + ')</SUP>')];
         row.append(HTML.TableCell('&#10004;' if metadata.isconvex(mattribs) else '-' if metadata.isnotconvex(mattribs) else ''));
-        row.append(HTML.TableCell(probtype[1]));
-        row.append(HTML.TableCell(inttostr(mattribs['nvars']) if 'nvars' in mattribs else '?'));
-        row.append(HTML.TableCell(inttostr(mattribs['nbinvars']) if 'nbinvars' in mattribs else '?'));
-        row.append(HTML.TableCell(inttostr(mattribs['nintvars']) if 'nintvars' in mattribs else '?'));
         row.append(HTML.TableCell(probtype[0]));
         if mattribs['nobjnlnz'] > 0 :
            row.append(HTML.TableCell('{0:.1f}'.format(100.0*(2.0*mattribs['nobjquadnz']-mattribs['nobjquaddiagnz'])/(mattribs['nobjnlnz']*mattribs['nobjnlnz']))));
@@ -503,6 +499,10 @@ $(document).ready(function() {
         else :
            row.append(HTML.TableCell(''));
            row.append(HTML.TableCell(''));
+        row.append(HTML.TableCell(probtype[1]));
+        row.append(HTML.TableCell(inttostr(mattribs['nvars']) if 'nvars' in mattribs else '?'));
+        row.append(HTML.TableCell(inttostr(mattribs['nbinvars']) if 'nbinvars' in mattribs else '?'));
+        row.append(HTML.TableCell(inttostr(mattribs['nintvars']) if 'nintvars' in mattribs else '?'));
         row.append(HTML.TableCell(probtype[2]));
         row.append(HTML.TableCell(str(mattribs['ncons'])));
         row.append(HTML.TableCell(str(mattribs['nquadcons'])));
@@ -530,13 +530,13 @@ $(document).ready(function() {
     <TR>
      <TH>Filter:</br><input name="InputReset" id="InputReset" type="reset"/></TH>
      <TH title="Y or N"><input name="InputCvx" id="InputCvx" type="text" maxlength="1" size="1"/></TH>
+     <TH title="C, D, L, or Q (0-3 times)"><input name="InputO" id="InputO" type="text" maxlength="3" size="1"/></TH>
+     <TH align="right"><input title="min" name="InputMin7" id="InputMin7" type="text" size="1"/><BR/><input title="max" name="InputMax7" id="InputMax7" type="text" size="1"/></TH>
+     <TH align="right"><input title="min" name="InputMin8" id="InputMin8" type="text" size="1"/><BR/><input title="max" name="InputMax8" id="InputMax8" type="text" size="1"/></TH>
      <TH title="B, C, G, I, or M (0-3 times)"><input name="InputV" id="InputV" type="text" maxlength="3" size="1"/></TH>
      <TH align="right"><input title="min" name="InputMin3" id="InputMin3" type="text" size="3"/><BR/><input title="max" name="InputMax3" id="InputMax3" type="text" size="3"/></TH>
      <TH align="right"><input title="min" name="InputMin4" id="InputMin4" type="text" size="3"/><BR/><input title="max" name="InputMax4" id="InputMax4" type="text" size="3"/></TH>
      <TH align="right"><input title="min" name="InputMin5" id="InputMin5" type="text" size="3"/><BR/><input title="max" name="InputMax5" id="InputMax5" type="text" size="3"/></TH>
-     <TH title="C, D, L, or Q (0-3 times)"><input name="InputO" id="InputO" type="text" maxlength="3" size="1"/></TH>
-     <TH align="right"><input title="min" name="InputMin7" id="InputMin7" type="text" size="1"/><BR/><input title="max" name="InputMax7" id="InputMax7" type="text" size="1"/></TH>
-     <TH align="right"><input title="min" name="InputMin8" id="InputMin8" type="text" size="1"/><BR/><input title="max" name="InputMax8" id="InputMax8" type="text" size="1"/></TH>
      <TH title="C, D, L, N, or Q (0-3 times)"><input name="InputC" id="InputC" type="text" maxlength="3" size="1"/></TH>
      <TH align="right"><input title="min" name="InputMin10" id="InputMin10" type="text" size="3"/><BR/><input title="max" name="InputMax10" id="InputMax10" type="text" size="3"/></TH>
      <TH align="right"><input title="min" name="InputMin11" id="InputMin11" type="text" size="3"/><BR/><input title="max" name="InputMax11" id="InputMax11" type="text" size="3"/></TH>
