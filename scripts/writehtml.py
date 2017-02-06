@@ -1122,7 +1122,7 @@ def writehtml() :
       <ul>
         <li> Fabio Furini, Emiliano Traversi, Pietro Belotti, Antonio Frangioni, Ambros Gleixner, Nick Gould, Leo
           Liberti, Andrea Lodi, Ruth Misener, Hans Mittelmann, Nick Sahinidis, Stefan Vigerske, and Angelika
-          Wiegele. <a href="">QPLIB: A Library of Quadratic Programming Instances</a>, submitted to Mathematical
+          Wiegele. <a href="http://www.optimization-online.org/DB_HTML/2017/02/5846.html">QPLIB: A Library of Quadratic Programming Instances</a>, submitted to Mathematical
           Programming Computation, 2017
         </li>
       </ul>
@@ -1133,7 +1133,7 @@ def writehtml() :
 
     print >> index, '''      <h3>History and updates</h3>
       <ul>
-        <li>February 3, 2017: The finalized instance selection for QPLIB&nbsp;2014 goes online.
+        <li>February 6, 2017: The finalized instance selection for QPLIB&nbsp;2014 goes online.
         </li>
         <li>July 19, 2015: A first beta version containing 410&nbsp;discrete instances and 138&nbsp;continuous instances is online (<a href="http://www.lamsade.dauphine.fr/QPlib2014/doku.php?id=beta">here</a>).
         </li>
