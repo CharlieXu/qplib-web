@@ -1124,7 +1124,7 @@ def writehtml() :
       </p>
       <ul>
         <li> Fabio Furini, Emiliano Traversi, Pietro Belotti, Antonio Frangioni, Ambros Gleixner, Nick Gould, Leo
-          Liberti, Andrea Lodi, Ruth Misener, Hans Mittelmann, Nick Sahinidis, Stefan Vigerske, and Angelika
+          Liberti, Andrea Lodi, Ruth Misener, Hans Mittelmann, Nikolaos Sahinidis, Stefan Vigerske, and Angelika
           Wiegele. <a href="http://www.optimization-online.org/DB_HTML/2017/02/5846.html">QPLIB: A Library of Quadratic Programming Instances</a>, submitted to Mathematical
           Programming Computation, 2017
         </li>
@@ -1171,7 +1171,7 @@ def writehtml() :
         </li>
         <li> <a href="http://plato.la.asu.edu/" title="http://plato.la.asu.edu/">Hans Mittelmann</a>, School of Mathematical and Statistical Sciences, Arizona State University
         </li>
-        <li> <a href="http://www.cheme.cmu.edu/people/faculty/ns1b.htm" title="http://www.cheme.cmu.edu/people/faculty/ns1b.htm">Nick Sahinidis</a>, Chemical Engineering, Carnegie Mellon University
+        <li> <a href="http://www.cheme.cmu.edu/people/faculty/ns1b.htm" title="http://www.cheme.cmu.edu/people/faculty/ns1b.htm">Nikolaos Sahinidis</a>, Chemical Engineering, Carnegie Mellon University
         </li>
         <li> <a href="http://lipn.univ-paris13.fr/~traversi/" title="http://lipn.univ-paris13.fr/~traversi/">Emiliano Traversi</a>, LIPN, Université de Paris 13
         </li>
