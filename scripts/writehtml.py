@@ -370,6 +370,9 @@ def _writeinstancepage(data) :
 
     instances = open(os.path.join(HTMLDIR, 'instances.html'), 'w');
     print >> instances, '<HTML>', _htmlheader("QPLIB Instance Listing"), _htmlstartbody(), '''
+<p>
+This page lists all QPLIB instances. For column-wise filters, scroll to the <a href="#filter">end of the table</a>.
+</p>
 <link rel="stylesheet" type="text/css" href="DataTables/css/jquery.dataTables.min.css">
 <link rel="stylesheet" type="text/css" href="FixedHeader/css/fixedHeader.dataTables.min.css">
 <script type="text/javascript" src="jQuery/jquery-2.2.4.min.js"></script>
@@ -528,7 +531,7 @@ $(document).ready(function() {
     tStr = tStr.replace('</TR>', '</TR></THEAD><TBODY>', 1)
     tStr = tStr.replace('</TABLE>', '''</TBODY><TFOOT valign="top">
     <TR>
-     <TH>Filter:</br><input name="InputReset" id="InputReset" type="reset"/></TH>
+     <TH><a name="filter"></a>Filter:</br><input name="InputReset" id="InputReset" type="reset"/></TH>
      <TH title="Y or N"><input name="InputCvx" id="InputCvx" type="text" maxlength="1" size="1"/></TH>
      <TH title="C, D, L, or Q (0-3 times)"><input name="InputO" id="InputO" type="text" maxlength="3" size="1"/></TH>
      <TH align="right"><input title="min" name="InputMin7" id="InputMin7" type="text" size="1"/><BR/><input title="max" name="InputMax7" id="InputMax7" type="text" size="1"/></TH>
