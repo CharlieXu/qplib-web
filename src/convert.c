@@ -720,6 +720,8 @@ RETURN writeQPLIB(
    double* quadcoef;
    int quadnz;
 
+   int sumnz;
+
    double* x;
 
    int nlnz;
@@ -835,6 +837,13 @@ RETURN writeQPLIB(
    if( gmoNLM(gmo) == 0 )
    {
       /* this section is omitted when no quadratic constraints (**B or **L) */
+
+      sumnz = 0;
+      for( i = 0; i < gmoM(gmo); ++i )
+         if( gmoGetEquOrderOne(gmo, i) == gmoorder_Q )
+            sumnz += gmoGetRowQNZOne(gmo, i);
+      fprintf(f, "%d\n", sumnz);
+
       for( i = 0; i < gmoM(gmo); ++i )
       {
          quadnz = 0;
@@ -845,18 +854,25 @@ RETURN writeQPLIB(
             gmoGetRowQ(gmo, i, quadcolidx, quadrowidx, quadcoef);
          }
 
-         fprintf(f, "%d\n", quadnz);
          for( j = 0; j < quadnz; ++j )
             fprintf(f, "%d %d %d %s\n", i, MAX(quadrowidx[i], quadcolidx[i]), MIN(quadrowidx[i], quadcolidx[i]), formatDouble((quadrowidx[j] == quadcolidx[j]) ? quadcoef[j] : 2.0*quadcoef[j]));
       }
    }
 
    /* constraints linear coefs */
+   sumnz = 0;
+   for( i = 0; i < gmoM(gmo); ++i )
+   {
+      gmoGetRowSparse(gmo, i, lincolidx, lincoef, NULL, &linnz, &nlnz);
+      sumnz += linnz;
+   }
+   if( gmoM(gmo) > 0 )
+      fprintf(f, "%d\n", sumnz);
+
    for( i = 0; i < gmoM(gmo); ++i )
    {
       gmoGetRowSparse(gmo, i, lincolidx, lincoef, NULL, &linnz, &nlnz);
 
-      fprintf(f, "%d\n", linnz);
       for( j = 0; j < linnz; ++j )
          fprintf(f, "%d %d %s\n", i, lincolidx[j], formatDouble(lincoef[j]));
    }
