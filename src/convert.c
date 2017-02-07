@@ -867,9 +867,9 @@ RETURN writeQPLIB(
    else
       fputs("maximize\n", f);
 
-   fprintf(f, "%d\n", gmoN(gmo));
+   fprintf(f, "%d # number of variables\n", gmoN(gmo));
    if( gmoM(gmo) > 0 )  /* omit constraint number for BQP */
-      fprintf(f, "%d\n", gmoM(gmo));
+      fprintf(f, "%d # number of constraints\n", gmoM(gmo));
 
    quadnz = gmoObjQNZ(gmo);
    if( quadnz > 0 )
@@ -877,7 +877,7 @@ RETURN writeQPLIB(
       /* obj quad nz is omitted for Q** */
       gmoGetObjQ(gmo, quadcolidx, quadrowidx, quadcoef);
 
-      fprintf(f, "%d\n", quadnz);
+      fprintf(f, "%d # number of quadratic terms in objective\n", quadnz);
       for( i = 0; i < quadnz; ++i )
          fprintf(f, "%d %d %s\n", MAX(quadrowidx[i], quadcolidx[i]) + 1, MIN(quadrowidx[i], quadcolidx[i]) + 1, formatDouble((quadrowidx[i] == quadcolidx[i]) ? quadcoef[i] : 2.0*quadcoef[i]));
    }
@@ -889,13 +889,13 @@ RETURN writeQPLIB(
          ++linnz;
 
    def = getMostCommonValue(lincoef, linnz);
-   fprintf(f, "%s\n", formatDouble(def));
-   fprintf(f, "%d\n", getNNondefaultEntries(lincoef, linnz, def));
+   fprintf(f, "%s # default value for linear coefficients in objective\n", formatDouble(def));
+   fprintf(f, "%d # number of non-default linear coefficients in objective\n", getNNondefaultEntries(lincoef, linnz, def));
    for( i = 0; i < linnz; ++i )
       if( lincoef[i] != def )
          fprintf(f, "%d %s\n", i+1, formatDouble(lincoef[i]));
 
-   fprintf(f, "%s\n", formatDouble(gmoObjConst(gmo)));
+   fprintf(f, "%s # objective constant\n", formatDouble(gmoObjConst(gmo)));
 
    /* constraints quad coef matrices */
    if( gmoNLM(gmo) == 0 )
@@ -906,7 +906,7 @@ RETURN writeQPLIB(
       for( i = 0; i < gmoM(gmo); ++i )
          if( gmoGetEquOrderOne(gmo, i) == gmoorder_Q )
             sumnz += gmoGetRowQNZOne(gmo, i);
-      fprintf(f, "%d\n", sumnz);
+      fprintf(f, "%d # number of quadratic terms in all constraints\n", sumnz);
 
       for( i = 0; i < gmoM(gmo); ++i )
       {
@@ -931,7 +931,7 @@ RETURN writeQPLIB(
       sumnz += linnz;
    }
    if( gmoM(gmo) > 0 )
-      fprintf(f, "%d\n", sumnz);
+      fprintf(f, "%d # number of linear terms in all constraints\n", sumnz);
 
    for( i = 0; i < gmoM(gmo); ++i )
    {
@@ -941,7 +941,7 @@ RETURN writeQPLIB(
          fprintf(f, "%d %d %s\n", i+1, lincolidx[j]+1, formatDouble(lincoef[j]));
    }
 
-   fprintf(f, "%s\n", formatDouble(gmoPinf(gmo)));
+   fprintf(f, "%s # value for infinity\n", formatDouble(gmoPinf(gmo)));
 
    if( gmoM(gmo) > 0 )
    {
@@ -955,8 +955,8 @@ RETURN writeQPLIB(
             x[i] = gmoMinf(gmo);
 
       def = getMostCommonValue(x, gmoM(gmo));
-      fprintf(f, "%s\n", formatDouble(def)); /* default lhs */
-      fprintf(f, "%d\n", getNNondefaultEntries(x, gmoM(gmo), def));
+      fprintf(f, "%s # default left-hand-side value\n", formatDouble(def)); /* default lhs */
+      fprintf(f, "%d # number of non-default left-hand-sides\n", getNNondefaultEntries(x, gmoM(gmo), def));
       for( i = 0; i < gmoM(gmo); ++i )
          if( x[i] != def )
             fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
@@ -971,8 +971,8 @@ RETURN writeQPLIB(
             x[i] = gmoPinf(gmo);
 
       def = getMostCommonValue(x, gmoM(gmo));
-      fprintf(f, "%s\n", formatDouble(def)); /* default rhs */
-      fprintf(f, "%d\n", getNNondefaultEntries(x, gmoM(gmo), def));
+      fprintf(f, "%s # default right-hand-side value\n", formatDouble(def)); /* default rhs */
+      fprintf(f, "%d # number of non-default right-hand-sides\n", getNNondefaultEntries(x, gmoM(gmo), def));
       for( i = 0; i < gmoM(gmo); ++i )
          if( x[i] != def )
             fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
@@ -981,8 +981,8 @@ RETURN writeQPLIB(
    /* variable lower bounds */
    gmoGetVarLower(gmo, x);
    def = getMostCommonValue(x, gmoN(gmo));
-   fprintf(f, "%s\n", formatDouble(def)); /* default lb */
-   fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), def));
+   fprintf(f, "%s # default variable lower bound value\n", formatDouble(def)); /* default lb */
+   fprintf(f, "%d # number of non-default variable lower bounds\n", getNNondefaultEntries(x, gmoN(gmo), def));
    for( i = 0; i < gmoN(gmo); ++i )
       if( x[i] != def )
          fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
@@ -990,8 +990,8 @@ RETURN writeQPLIB(
    /* variable upper bounds */
    gmoGetVarUpper(gmo, x);
    def = getMostCommonValue(x, gmoN(gmo));
-   fprintf(f, "%s\n", formatDouble(def)); /* default ub */
-   fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), def));
+   fprintf(f, "%s # default variable upper bound value\n", formatDouble(def)); /* default ub */
+   fprintf(f, "%d # number of non-default variable upper bounds\n", getNNondefaultEntries(x, gmoN(gmo), def));
    for( i = 0; i < gmoN(gmo); ++i )
       if( x[i] != def )
          fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
@@ -999,8 +999,8 @@ RETURN writeQPLIB(
    /* variable types */
    if( gmoNDisc(gmo) > 0 && gmoNDisc(gmo) < gmoN(gmo) )
    {
-      fputs("0\n", f);  /* default variable type is "continuous" */
-      fprintf(f, "%d\n", gmoNDisc(gmo));
+      fputs("0 # default variable type\n", f);  /* default variable type is "continuous" TODO check what is better */
+      fprintf(f, "%d # number of non-default variable types\n", gmoNDisc(gmo));
       for( i = 0; i < gmoN(gmo); ++i )
          if( x[i] != gmovar_X )
             fprintf(f, "%d 1\n", i+1);
@@ -1009,8 +1009,8 @@ RETURN writeQPLIB(
    /* starting point: variable values */
    gmoGetVarL(gmo, x);
    def = getMostCommonValue(x, gmoN(gmo));
-   fprintf(f, "%s\n", formatDouble(def));  /* default value */
-   fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), def));
+   fprintf(f, "%s # default variable primal value in starting point\n", formatDouble(def));  /* default value */
+   fprintf(f, "%d # number of non-default variable primal values in starting point\n", getNNondefaultEntries(x, gmoN(gmo), def));
    for( i = 0; i < gmoN(gmo); ++i )
       if( x[i] != def )
          fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
@@ -1020,8 +1020,8 @@ RETURN writeQPLIB(
    {
       gmoGetEquM(gmo, x);
       def = getMostCommonValue(x, gmoM(gmo));
-      fprintf(f, "%s\n", formatDouble(def));  /* default value */
-      fprintf(f, "%d\n", getNNondefaultEntries(x, gmoM(gmo), def));
+      fprintf(f, "%s # default constraint dual value in starting point\n", formatDouble(def));  /* default value */
+      fprintf(f, "%d # number of non-default constraint dual values in starting point\n", getNNondefaultEntries(x, gmoM(gmo), def));
       for( i = 0; i < gmoM(gmo); ++i )
          if( x[i] != def )
             fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
@@ -1030,14 +1030,14 @@ RETURN writeQPLIB(
    /* starting point: variable marginals */
    gmoGetVarM(gmo, x);
    def = getMostCommonValue(x, gmoN(gmo));
-   fprintf(f, "%s\n", formatDouble(def));  /* default value */
-   fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), def));
+   fprintf(f, "%s # default variable bound dual value in starting point\n", formatDouble(def));  /* default value */
+   fprintf(f, "%d # number of non-default variable bound dual values in starting point\n", getNNondefaultEntries(x, gmoN(gmo), def));
    for( i = 0; i < gmoN(gmo); ++i )
       if( x[i] != def )
          fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
 
-   fputs("0\n", f); /* no nondefault variable names (TODO?) */
-   fputs("0\n", f); /* no nondefault equation names (TODO?) */
+   fputs("0 # number of non-default variable names\n", f); /* no nondefault variable names (TODO?) */
+   fputs("0 # number of non-default constraint names\n", f); /* no nondefault equation names (TODO?) */
 
    fclose(f);
 
