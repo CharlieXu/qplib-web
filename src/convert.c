@@ -816,7 +816,7 @@ RETURN writeQPLIB(
 
       fprintf(f, "%d\n", quadnz);
       for( i = 0; i < quadnz; ++i )
-         fprintf(f, "%d %d %s\n", MAX(quadrowidx[i], quadcolidx[i]), MIN(quadrowidx[i], quadcolidx[i]), formatDouble((quadrowidx[i] == quadcolidx[i]) ? quadcoef[i] : 2.0*quadcoef[i]));
+         fprintf(f, "%d %d %s\n", MAX(quadrowidx[i], quadcolidx[i]) + 1, MIN(quadrowidx[i], quadcolidx[i]) + 1, formatDouble((quadrowidx[i] == quadcolidx[i]) ? quadcoef[i] : 2.0*quadcoef[i]));
    }
 
    gmoGetObjVector(gmo, lincoef, NULL);
@@ -829,7 +829,7 @@ RETURN writeQPLIB(
    fprintf(f, "%d\n", linnz);
    for( i = 0; i < linnz; ++i )
       if( lincoef[i] != 0.0 )
-         fprintf(f, "%d %s\n", i, formatDouble(lincoef[i]));
+         fprintf(f, "%d %s\n", i+1, formatDouble(lincoef[i]));
 
    fprintf(f, "%s\n", formatDouble(gmoObjConst(gmo)));
 
@@ -855,7 +855,7 @@ RETURN writeQPLIB(
          }
 
          for( j = 0; j < quadnz; ++j )
-            fprintf(f, "%d %d %d %s\n", i, MAX(quadrowidx[i], quadcolidx[i]), MIN(quadrowidx[i], quadcolidx[i]), formatDouble((quadrowidx[j] == quadcolidx[j]) ? quadcoef[j] : 2.0*quadcoef[j]));
+            fprintf(f, "%d %d %d %s\n", i+1, MAX(quadrowidx[i], quadcolidx[i]) + 1, MIN(quadrowidx[i], quadcolidx[i]) + 1, formatDouble((quadrowidx[j] == quadcolidx[j]) ? quadcoef[j] : 2.0*quadcoef[j]));
       }
    }
 
@@ -874,7 +874,7 @@ RETURN writeQPLIB(
       gmoGetRowSparse(gmo, i, lincolidx, lincoef, NULL, &linnz, &nlnz);
 
       for( j = 0; j < linnz; ++j )
-         fprintf(f, "%d %d %s\n", i, lincolidx[j], formatDouble(lincoef[j]));
+         fprintf(f, "%d %d %s\n", i+1, lincolidx[j]+1, formatDouble(lincoef[j]));
    }
 
    fprintf(f, "%s\n", formatDouble(gmoPinf(gmo)));
@@ -888,7 +888,7 @@ RETURN writeQPLIB(
       for( i = 0; i < gmoM(gmo); ++i )
       {
          if( (gmoGetEquTypeOne(gmo, i) == gmoequ_G) || (gmoGetEquTypeOne(gmo, i) == gmoequ_E) )
-            fprintf(f, "%d %s\n", i, formatDouble(gmoGetRhsOne(gmo, i)));
+            fprintf(f, "%d %s\n", i+1, formatDouble(gmoGetRhsOne(gmo, i)));
          else
             assert(gmoGetEquTypeOne(gmo, i) == gmoequ_L);
       }
@@ -899,7 +899,7 @@ RETURN writeQPLIB(
       fprintf(f, "%d\n", gmoGetEquTypeCnt(gmo, gmoequ_L) + gmoGetEquTypeCnt(gmo, gmoequ_E));
       for( i = 0; i < gmoM(gmo); ++i )
          if( (gmoGetEquTypeOne(gmo, i) == gmoequ_L) || (gmoGetEquTypeOne(gmo, i) == gmoequ_E) )
-            fprintf(f, "%d %s\n", i, formatDouble(gmoGetRhsOne(gmo, i)));
+            fprintf(f, "%d %s\n", i+1, formatDouble(gmoGetRhsOne(gmo, i)));
    }
 
    /* variable lower bounds */
@@ -908,7 +908,7 @@ RETURN writeQPLIB(
    fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), gmoMinf(gmo)));
    for( i = 0; i < gmoN(gmo); ++i )
       if( x[i] != gmoMinf(gmo) )
-         fprintf(f, "%d %s\n", i, formatDouble(x[i]));
+         fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
 
    /* variable upper bounds */
    gmoGetVarUpper(gmo, x);
@@ -916,7 +916,7 @@ RETURN writeQPLIB(
    fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), gmoPinf(gmo)));
    for( i = 0; i < gmoN(gmo); ++i )
       if( x[i] != gmoPinf(gmo) )
-         fprintf(f, "%d %s\n", i, formatDouble(x[i]));
+         fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
 
    /* variable types */
    if( gmoNDisc(gmo) > 0 && gmoNDisc(gmo) < gmoN(gmo) )
@@ -925,7 +925,7 @@ RETURN writeQPLIB(
       fprintf(f, "%d\n", gmoNDisc(gmo));
       for( i = 0; i < gmoN(gmo); ++i )
          if( x[i] != gmovar_X )
-            fprintf(f, "%d 1\n", i);
+            fprintf(f, "%d 1\n", i+1);
    }
 
    /* starting point: variable values */
@@ -934,7 +934,7 @@ RETURN writeQPLIB(
    fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), 0.0));
    for( i = 0; i < gmoN(gmo); ++i )
       if( x[i] != 0.0 )
-         fprintf(f, "%d %s\n", i, formatDouble(x[i]));
+         fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
 
    /* starting point: equation marginals */
    if( gmoM(gmo) > 0 )
@@ -944,7 +944,7 @@ RETURN writeQPLIB(
       fprintf(f, "%d\n", getNNondefaultEntries(x, gmoM(gmo), 0.0));
       for( i = 0; i < gmoM(gmo); ++i )
          if( x[i] != 0.0 )
-            fprintf(f, "%d %s\n", i, formatDouble(x[i]));
+            fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
    }
 
    /* starting point: variable marginals */
@@ -953,7 +953,7 @@ RETURN writeQPLIB(
    fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), 0.0));
    for( i = 0; i < gmoN(gmo); ++i )
       if( x[i] != 0.0 )
-         fprintf(f, "%d %s\n", i, formatDouble(x[i]));
+         fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
 
    fputs("0\n", f); /* no nondefault variable names (TODO?) */
    fputs("0\n", f); /* no nondefault equation names (TODO?) */
