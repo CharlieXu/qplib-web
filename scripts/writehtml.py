@@ -1078,8 +1078,8 @@ def writehtml() :
                 shutil.rmtree(os.path.join(HTMLDIR, f));
              shutil.copytree(os.path.join(STATICDIR, f), os.path.join(HTMLDIR, f));
 
-    # copy all files from data/{gms,lp,qplib,png}
-    for d in ['gms', 'lp', 'qplib', 'png'] :
+    # copy all files from data/{gms,lp,mod,qplib,png}
+    for d in ['gms', 'lp', 'mod', 'qplib', 'png'] :
        if os.path.exists(os.path.join(HTMLDIR, d)) :
           shutil.rmtree(os.path.join(HTMLDIR, d));
        shutil.copytree(os.path.join(metadata.DATADIR, d), os.path.join(HTMLDIR, d));
