@@ -669,6 +669,68 @@ RETURN writeLP(
 }
 
 static
+int cmprdouble(
+   const void* a,
+   const void* b
+   )
+{
+   return (double*)a < (double*)b;
+}
+
+static
+double getMostCommonValue(
+   double* x,
+   int n
+   )
+{
+   double* sorted;
+   double bestval;
+   int bestcount;
+   double curval;
+   int curcount;
+   int i;
+
+   if( n == 0 )
+      return 0.0;
+
+   sorted = (double*)malloc(n * sizeof(double));
+   memcpy(sorted, x, n * sizeof(double));
+   qsort(sorted, n, sizeof(double), cmprdouble);
+
+   curval = sorted[0];
+   curcount = 1;
+   bestcount = 0;
+   bestval = 0.0;
+   for( i = 1; i < n; ++i )
+   {
+      if( sorted[i] == curval )
+      {
+         ++curcount;
+         continue;
+      }
+
+      if( curcount > bestcount )
+      {
+         bestcount = curcount;
+         bestval = curval;
+      }
+
+      curval = sorted[i];
+      curcount = 1;
+   }
+   if( curcount > bestcount )
+   {
+      bestcount = curcount;
+      bestval = curval;
+   }
+
+   free(sorted);
+
+   return bestval;
+}
+
+
+static
 int getNNondefaultEntries(
    double* x,
    int n,
@@ -721,6 +783,7 @@ RETURN writeQPLIB(
    int quadnz;
 
    int sumnz;
+   double def;
 
    double* x;
 
@@ -825,10 +888,11 @@ RETURN writeQPLIB(
       if( lincoef[i] != 0.0 )
          ++linnz;
 
-   fputs("0.0\n", f);
-   fprintf(f, "%d\n", linnz);
+   def = getMostCommonValue(lincoef, linnz);
+   fprintf(f, "%s\n", formatDouble(def));
+   fprintf(f, "%d\n", getNNondefaultEntries(lincoef, linnz, def));
    for( i = 0; i < linnz; ++i )
-      if( lincoef[i] != 0.0 )
+      if( lincoef[i] != def )
          fprintf(f, "%d %s\n", i+1, formatDouble(lincoef[i]));
 
    fprintf(f, "%s\n", formatDouble(gmoObjConst(gmo)));
@@ -882,40 +946,54 @@ RETURN writeQPLIB(
    if( gmoM(gmo) > 0 )
    {
       /* left-hand side */
-      fprintf(f, "%s\n", formatDouble(gmoMinf(gmo))); /* default lhs is -inf */
-      /* =G= and =E= equations have lhs */
-      fprintf(f, "%d\n", gmoGetEquTypeCnt(gmo, gmoequ_G) + gmoGetEquTypeCnt(gmo, gmoequ_E));
+
+      /* assemble values in an array first */
       for( i = 0; i < gmoM(gmo); ++i )
-      {
          if( (gmoGetEquTypeOne(gmo, i) == gmoequ_G) || (gmoGetEquTypeOne(gmo, i) == gmoequ_E) )
-            fprintf(f, "%d %s\n", i+1, formatDouble(gmoGetRhsOne(gmo, i)));
+            x[i] = gmoGetRhsOne(gmo, i);
          else
-            assert(gmoGetEquTypeOne(gmo, i) == gmoequ_L);
-      }
+            x[i] = gmoMinf(gmo);
+
+      def = getMostCommonValue(x, gmoM(gmo));
+      fprintf(f, "%s\n", formatDouble(def)); /* default lhs */
+      fprintf(f, "%d\n", getNNondefaultEntries(x, gmoM(gmo), def));
+      for( i = 0; i < gmoM(gmo); ++i )
+         if( x[i] != def )
+            fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
 
       /* right-hand side */
-      fprintf(f, "%s\n", formatDouble(gmoPinf(gmo))); /* default rhs is +inf */
-      /* =L= and =E= equations have rhs */
-      fprintf(f, "%d\n", gmoGetEquTypeCnt(gmo, gmoequ_L) + gmoGetEquTypeCnt(gmo, gmoequ_E));
+
+      /* assemble values in an array first */
       for( i = 0; i < gmoM(gmo); ++i )
          if( (gmoGetEquTypeOne(gmo, i) == gmoequ_L) || (gmoGetEquTypeOne(gmo, i) == gmoequ_E) )
-            fprintf(f, "%d %s\n", i+1, formatDouble(gmoGetRhsOne(gmo, i)));
+            x[i] = gmoGetRhsOne(gmo, i);
+         else
+            x[i] = gmoPinf(gmo);
+
+      def = getMostCommonValue(x, gmoM(gmo));
+      fprintf(f, "%s\n", formatDouble(def)); /* default rhs */
+      fprintf(f, "%d\n", getNNondefaultEntries(x, gmoM(gmo), def));
+      for( i = 0; i < gmoM(gmo); ++i )
+         if( x[i] != def )
+            fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
    }
 
    /* variable lower bounds */
    gmoGetVarLower(gmo, x);
-   fprintf(f, "%s\n", formatDouble(gmoMinf(gmo))); /* default lb is -inf */
-   fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), gmoMinf(gmo)));
+   def = getMostCommonValue(x, gmoN(gmo));
+   fprintf(f, "%s\n", formatDouble(def)); /* default lb */
+   fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), def));
    for( i = 0; i < gmoN(gmo); ++i )
-      if( x[i] != gmoMinf(gmo) )
+      if( x[i] != def )
          fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
 
    /* variable upper bounds */
    gmoGetVarUpper(gmo, x);
-   fprintf(f, "%s\n", formatDouble(gmoPinf(gmo))); /* default ub is +inf */
-   fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), gmoPinf(gmo)));
+   def = getMostCommonValue(x, gmoN(gmo));
+   fprintf(f, "%s\n", formatDouble(def)); /* default ub */
+   fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), def));
    for( i = 0; i < gmoN(gmo); ++i )
-      if( x[i] != gmoPinf(gmo) )
+      if( x[i] != def )
          fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
 
    /* variable types */
@@ -930,29 +1008,32 @@ RETURN writeQPLIB(
 
    /* starting point: variable values */
    gmoGetVarL(gmo, x);
-   fputs("0.0\n", f);  /* default value is 0 */
-   fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), 0.0));
+   def = getMostCommonValue(x, gmoN(gmo));
+   fprintf(f, "%s\n", formatDouble(def));  /* default value */
+   fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), def));
    for( i = 0; i < gmoN(gmo); ++i )
-      if( x[i] != 0.0 )
+      if( x[i] != def )
          fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
 
    /* starting point: equation marginals */
    if( gmoM(gmo) > 0 )
    {
       gmoGetEquM(gmo, x);
-      fputs("0.0\n", f);  /* default value is 0 */
-      fprintf(f, "%d\n", getNNondefaultEntries(x, gmoM(gmo), 0.0));
+      def = getMostCommonValue(x, gmoM(gmo));
+      fprintf(f, "%s\n", formatDouble(def));  /* default value */
+      fprintf(f, "%d\n", getNNondefaultEntries(x, gmoM(gmo), def));
       for( i = 0; i < gmoM(gmo); ++i )
-         if( x[i] != 0.0 )
+         if( x[i] != def )
             fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
    }
 
    /* starting point: variable marginals */
    gmoGetVarM(gmo, x);
-   fputs("0.0\n", f);  /* default value is 0 */
-   fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), 0.0));
+   def = getMostCommonValue(x, gmoN(gmo));
+   fprintf(f, "%s\n", formatDouble(def));  /* default value */
+   fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), def));
    for( i = 0; i < gmoN(gmo); ++i )
-      if( x[i] != 0.0 )
+      if( x[i] != def )
          fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
 
    fputs("0\n", f); /* no nondefault variable names (TODO?) */
