@@ -767,9 +767,6 @@ RETURN writeQPLIB(
    const char* filename
 )
 {
-   char linebuffer[MAX_PRINTLEN];
-   int  linecnt;
-
    FILE* f;
    char buffer[GMS_SSSIZE+10];
 
@@ -819,11 +816,6 @@ RETURN writeQPLIB(
       fprintf(stderr, "Could not open file %s for writing.\n", filename);
       return RETURN_ERROR;
    }
-
-   linebuffer[0] = '\0';
-   linecnt = 0;
-
-   CHECK( writeStatistics(gmo, f, linebuffer, &linecnt, "# ") );
 
    lincolidx = (int*) malloc(gmoN(gmo) * sizeof(int));
    lincoef   = (double*) malloc(gmoN(gmo) * sizeof(double));
