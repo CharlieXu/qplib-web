@@ -686,6 +686,18 @@ int getNNondefaultEntries(
 
 /* float format */
 #define FF "%.15g"
+static
+const char* formatDouble(
+   double d
+)
+{
+   static char buf[50];
+   if( d == (int)d )
+      sprintf(buf, "%d.0", (int)d);
+   else
+      sprintf(buf, FF, d);
+   return buf;
+}
 
 RETURN writeQPLIB(
    gmoHandle_t gmo,
@@ -802,7 +814,7 @@ RETURN writeQPLIB(
 
       fprintf(f, "%d\n", quadnz);
       for( i = 0; i < quadnz; ++i )
-         fprintf(f, "%d %d " FF "\n", MAX(quadrowidx[i], quadcolidx[i]), MIN(quadrowidx[i], quadcolidx[i]), (quadrowidx[i] == quadcolidx[i]) ? quadcoef[i] : 2.0*quadcoef[i]);
+         fprintf(f, "%d %d %s\n", MAX(quadrowidx[i], quadcolidx[i]), MIN(quadrowidx[i], quadcolidx[i]), formatDouble((quadrowidx[i] == quadcolidx[i]) ? quadcoef[i] : 2.0*quadcoef[i]));
    }
 
    gmoGetObjVector(gmo, lincoef, NULL);
@@ -815,9 +827,9 @@ RETURN writeQPLIB(
    fprintf(f, "%d\n", linnz);
    for( i = 0; i < linnz; ++i )
       if( lincoef[i] != 0.0 )
-         fprintf(f, "%d " FF "\n", i, lincoef[i]);
+         fprintf(f, "%d %s\n", i, formatDouble(lincoef[i]));
 
-   fprintf(f, FF "\n", gmoObjConst(gmo));
+   fprintf(f, "%s\n", formatDouble(gmoObjConst(gmo)));
 
    /* constraints quad coef matrices */
    if( gmoNLM(gmo) == 0 )
@@ -835,7 +847,7 @@ RETURN writeQPLIB(
 
          fprintf(f, "%d\n", quadnz);
          for( j = 0; j < quadnz; ++j )
-            fprintf(f, "%d %d %d " FF "\n", i, MAX(quadrowidx[i], quadcolidx[i]), MIN(quadrowidx[i], quadcolidx[i]), (quadrowidx[j] == quadcolidx[j]) ? quadcoef[j] : 2.0*quadcoef[j]);
+            fprintf(f, "%d %d %d %s\n", i, MAX(quadrowidx[i], quadcolidx[i]), MIN(quadrowidx[i], quadcolidx[i]), formatDouble((quadrowidx[j] == quadcolidx[j]) ? quadcoef[j] : 2.0*quadcoef[j]));
       }
    }
 
@@ -846,49 +858,49 @@ RETURN writeQPLIB(
 
       fprintf(f, "%d\n", linnz);
       for( j = 0; j < linnz; ++j )
-         fprintf(f, "%d %d " FF "\n", i, lincolidx[j], lincoef[j]);
+         fprintf(f, "%d %d %s\n", i, lincolidx[j], formatDouble(lincoef[j]));
    }
 
-   fprintf(f, FF "\n", gmoPinf(gmo));
+   fprintf(f, "%s\n", formatDouble(gmoPinf(gmo)));
 
    if( gmoM(gmo) > 0 )
    {
       /* left-hand side */
-      fprintf(f, FF "\n", gmoMinf(gmo)); /* default lhs is -inf */
+      fprintf(f, "%s\n", formatDouble(gmoMinf(gmo))); /* default lhs is -inf */
       /* =G= and =E= equations have lhs */
       fprintf(f, "%d\n", gmoGetEquTypeCnt(gmo, gmoequ_G) + gmoGetEquTypeCnt(gmo, gmoequ_E));
       for( i = 0; i < gmoM(gmo); ++i )
       {
          if( (gmoGetEquTypeOne(gmo, i) == gmoequ_G) || (gmoGetEquTypeOne(gmo, i) == gmoequ_E) )
-            fprintf(f, "%d " FF "\n", i, gmoGetRhsOne(gmo, i));
+            fprintf(f, "%d %s\n", i, formatDouble(gmoGetRhsOne(gmo, i)));
          else
             assert(gmoGetEquTypeOne(gmo, i) == gmoequ_L);
       }
 
       /* right-hand side */
-      fprintf(f, FF "\n", gmoPinf(gmo)); /* default rhs is +inf */
+      fprintf(f, "%s\n", formatDouble(gmoPinf(gmo))); /* default rhs is +inf */
       /* =L= and =E= equations have rhs */
       fprintf(f, "%d\n", gmoGetEquTypeCnt(gmo, gmoequ_L) + gmoGetEquTypeCnt(gmo, gmoequ_E));
       for( i = 0; i < gmoM(gmo); ++i )
          if( (gmoGetEquTypeOne(gmo, i) == gmoequ_L) || (gmoGetEquTypeOne(gmo, i) == gmoequ_E) )
-            fprintf(f, "%d " FF "\n", i, gmoGetRhsOne(gmo, i));
+            fprintf(f, "%d %s\n", i, formatDouble(gmoGetRhsOne(gmo, i)));
    }
 
    /* variable lower bounds */
    gmoGetVarLower(gmo, x);
-   fprintf(f, FF "\n", gmoMinf(gmo)); /* default lb is -inf */
+   fprintf(f, "%s\n", formatDouble(gmoMinf(gmo))); /* default lb is -inf */
    fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), gmoMinf(gmo)));
    for( i = 0; i < gmoN(gmo); ++i )
       if( x[i] != gmoMinf(gmo) )
-         fprintf(f, "%d " FF "\n", i, x[i]);
+         fprintf(f, "%d %s\n", i, formatDouble(x[i]));
 
    /* variable upper bounds */
    gmoGetVarUpper(gmo, x);
-   fprintf(f, FF "\n", gmoPinf(gmo)); /* default ub is +inf */
+   fprintf(f, "%s\n", formatDouble(gmoPinf(gmo))); /* default ub is +inf */
    fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), gmoPinf(gmo)));
    for( i = 0; i < gmoN(gmo); ++i )
       if( x[i] != gmoPinf(gmo) )
-         fprintf(f, "%d " FF "\n", i, x[i]);
+         fprintf(f, "%d %s\n", i, formatDouble(x[i]));
 
    /* variable types */
    if( gmoNDisc(gmo) > 0 && gmoNDisc(gmo) < gmoN(gmo) )
@@ -906,7 +918,7 @@ RETURN writeQPLIB(
    fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), 0.0));
    for( i = 0; i < gmoN(gmo); ++i )
       if( x[i] != 0.0 )
-         fprintf(f, "%d " FF "\n", i, x[i]);
+         fprintf(f, "%d %s\n", i, formatDouble(x[i]));
 
    /* starting point: equation marginals */
    if( gmoM(gmo) > 0 )
@@ -916,7 +928,7 @@ RETURN writeQPLIB(
       fprintf(f, "%d\n", getNNondefaultEntries(x, gmoM(gmo), 0.0));
       for( i = 0; i < gmoM(gmo); ++i )
          if( x[i] != 0.0 )
-            fprintf(f, "%d " FF "\n", i, x[i]);
+            fprintf(f, "%d %s\n", i, formatDouble(x[i]));
    }
 
    /* starting point: variable marginals */
@@ -925,7 +937,7 @@ RETURN writeQPLIB(
    fprintf(f, "%d\n", getNNondefaultEntries(x, gmoN(gmo), 0.0));
    for( i = 0; i < gmoN(gmo); ++i )
       if( x[i] != 0.0 )
-         fprintf(f, "%d " FF "\n", i, x[i]);
+         fprintf(f, "%d %s\n", i, formatDouble(x[i]));
 
    fputs("0\n", f); /* no nondefault variable names (TODO?) */
    fputs("0\n", f); /* no nondefault equation names (TODO?) */
