@@ -5,6 +5,7 @@ bin/
 html/
 data/lp
 data/qplib
+data/mod
 gams
 depend
 make.local
