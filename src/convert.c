@@ -791,7 +791,7 @@ RETURN writeQPLIB(
       fputs("maximize\n", f);
 
    fprintf(f, "%d\n", gmoN(gmo));
-   if( gmoM(gmo) == 0 && gmoObjQNZ(gmo) > 0 )  /* omit constraint number for BQP */
+   if( gmoM(gmo) > 0 )  /* omit constraint number for BQP */
       fprintf(f, "%d\n", gmoM(gmo));
 
    quadnz = gmoObjQNZ(gmo);
