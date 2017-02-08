@@ -746,8 +746,6 @@ int getNNondefaultEntries(
    return cnt;
 }
 
-/* float format */
-#define FF "%.15g"
 static
 const char* formatDouble(
    double d
@@ -757,7 +755,7 @@ const char* formatDouble(
    if( d == (int)d )
       sprintf(buf, "%d.0", (int)d);
    else
-      sprintf(buf, FF, d);
+      sprintf(buf, "%.15G", d);
    return buf;
 }
 
