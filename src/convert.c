@@ -888,7 +888,7 @@ RETURN writeQPLIB(
    fprintf(f, "%s # objective constant\n", formatDouble(gmoObjConst(gmo)));
 
    /* constraints quad coef matrices */
-   if( gmoNLM(gmo) == 0 )
+   if( gmoNLM(gmo) > 0 )
    {
       /* this section is omitted when no quadratic constraints (**B or **L) */
 
