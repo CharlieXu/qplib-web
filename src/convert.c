@@ -999,7 +999,7 @@ RETURN writeQPLIB(
          fputs("0 # default variable type\n", f);  /* default variable type is "continuous" */
          fprintf(f, "%d # number of non-default variable types\n", gmoNDisc(gmo));
          for( i = 0; i < gmoN(gmo); ++i )
-            if( x[i] != gmovar_X )
+            if( gmoGetVarTypeOne(gmo, i) != gmovar_X )
                fprintf(f, "%d 1\n", i+1);
       }
       else
@@ -1007,7 +1007,7 @@ RETURN writeQPLIB(
          fputs("1 # default variable type\n", f);  /* default variable type is "integer" */
          fprintf(f, "%d # number of non-default variable types\n", gmoN(gmo) - gmoNDisc(gmo));
          for( i = 0; i < gmoN(gmo); ++i )
-            if( x[i] == gmovar_X )
+            if( gmoGetVarTypeOne(gmo, i) == gmovar_X )
                fprintf(f, "%d 1\n", i+1);
       }
    }
