@@ -846,7 +846,7 @@ RETURN writeQPLIB(
    /* constraints classification */
    if( gmoM(gmo) == 0 )
       fputs("B", f); /* no constraints other than bounds, possibly */
-   else if( gmoNLM(gmo) == 0 )
+   else if( gmoQM(gmo) == 0 )
       fputs("L", f); /* only linear constraints */
    else
       fputs("Q", f); /* quadratic constraints */
@@ -888,7 +888,7 @@ RETURN writeQPLIB(
    fprintf(f, "%s # objective constant\n", formatDouble(gmoObjConst(gmo)));
 
    /* constraints quad coef matrices */
-   if( gmoNLM(gmo) > 0 )
+   if( gmoQM(gmo) > 0 )
    {
       /* this section is omitted when no quadratic constraints (**B or **L) */
 
