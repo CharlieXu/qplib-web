@@ -873,15 +873,10 @@ RETURN writeQPLIB(
    }
 
    gmoGetObjVector(gmo, lincoef, NULL);
-   linnz = 0;
-   for( i = 0; i < gmoN(gmo); ++i )
-      if( lincoef[i] != 0.0 )
-         ++linnz;
-
-   def = getMostCommonValue(lincoef, linnz);
+   def = getMostCommonValue(lincoef, gmoN(gmo));
    fprintf(f, "%s # default value for linear coefficients in objective\n", formatDouble(def));
-   fprintf(f, "%d # number of non-default linear coefficients in objective\n", getNNondefaultEntries(lincoef, linnz, def));
-   for( i = 0; i < linnz; ++i )
+   fprintf(f, "%d # number of non-default linear coefficients in objective\n", getNNondefaultEntries(lincoef, gmoN(gmo), def));
+   for( i = 0; i < gmoN(gmo); ++i )
       if( lincoef[i] != def )
          fprintf(f, "%d %s\n", i+1, formatDouble(lincoef[i]));
 
