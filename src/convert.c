@@ -782,6 +782,7 @@ RETURN writeQPLIB(
 
    double* x;
 
+   int purebinary;
    int nlnz;
    int i;
    int j;
@@ -832,7 +833,12 @@ RETURN writeQPLIB(
       fputs("L", f);
 
    /* variable classification */
-   if( gmoNDisc(gmo) == gmoN(gmo) )
+   purebinary = gmoGetVarTypeCnt(gmo, gmovar_B) == gmoN(gmo);
+   for( i = 0; purebinary && i < gmoN(gmo); ++i )
+      purebinary = (gmoGetVarLowerOne(gmo, i) == 0.0) && (gmoGetVarUpperOne(gmo, i) == 1.0);
+   if( purebinary )
+      fputs("B", f);
+   else if( gmoNDisc(gmo) == gmoN(gmo) )
       fputs("I", f); /* binary and general integer only */
    else if( gmoNDisc(gmo) > 0 )
       fputs("G", f);  /* mixed integer and continuous */
@@ -840,7 +846,8 @@ RETURN writeQPLIB(
       fputs("C", f);  /* continuous only */
    /* QPLIB format also allows for binary variables, but in certain situation,
     * one may still have to specify bounds for them; for now, we just treat
-    * binaries like general integers
+    * binaries like general integers, except if all variables are binary
+    * with bounds 0 and 1 (purebinary case).
     */
 
    /* constraints classification */
@@ -963,23 +970,26 @@ RETURN writeQPLIB(
             fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
    }
 
-   /* variable lower bounds */
-   gmoGetVarLower(gmo, x);
-   def = getMostCommonValue(x, gmoN(gmo));
-   fprintf(f, "%s # default variable lower bound value\n", formatDouble(def)); /* default lb */
-   fprintf(f, "%d # number of non-default variable lower bounds\n", getNNondefaultEntries(x, gmoN(gmo), def));
-   for( i = 0; i < gmoN(gmo); ++i )
-      if( x[i] != def )
-         fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
+   if( !purebinary )
+   {
+      /* variable lower bounds */
+      gmoGetVarLower(gmo, x);
+      def = getMostCommonValue(x, gmoN(gmo));
+      fprintf(f, "%s # default variable lower bound value\n", formatDouble(def)); /* default lb */
+      fprintf(f, "%d # number of non-default variable lower bounds\n", getNNondefaultEntries(x, gmoN(gmo), def));
+      for( i = 0; i < gmoN(gmo); ++i )
+         if( x[i] != def )
+            fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
 
-   /* variable upper bounds */
-   gmoGetVarUpper(gmo, x);
-   def = getMostCommonValue(x, gmoN(gmo));
-   fprintf(f, "%s # default variable upper bound value\n", formatDouble(def)); /* default ub */
-   fprintf(f, "%d # number of non-default variable upper bounds\n", getNNondefaultEntries(x, gmoN(gmo), def));
-   for( i = 0; i < gmoN(gmo); ++i )
-      if( x[i] != def )
-         fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
+      /* variable upper bounds */
+      gmoGetVarUpper(gmo, x);
+      def = getMostCommonValue(x, gmoN(gmo));
+      fprintf(f, "%s # default variable upper bound value\n", formatDouble(def)); /* default ub */
+      fprintf(f, "%d # number of non-default variable upper bounds\n", getNNondefaultEntries(x, gmoN(gmo), def));
+      for( i = 0; i < gmoN(gmo); ++i )
+         if( x[i] != def )
+            fprintf(f, "%d %s\n", i+1, formatDouble(x[i]));
+   }
 
    /* variable types */
    if( gmoNDisc(gmo) > 0 && gmoNDisc(gmo) < gmoN(gmo) )
