@@ -1136,6 +1136,8 @@ def writehtml() :
 
     print >> index, '''      <h3>History and updates</h3>
       <ul>
+        <li>February 15, 2017: New instance file formats online: AMPL's .mod and our newly developed .qplib.
+        </li>
         <li>February 6, 2017: The finalized instance selection for QPLIB&nbsp;2014 goes online.
         </li>
         <li>July 19, 2015: A first beta version containing 410&nbsp;discrete instances and 138&nbsp;continuous instances is online (<a href="http://www.lamsade.dauphine.fr/QPlib2014/doku.php?id=beta">here</a>).
