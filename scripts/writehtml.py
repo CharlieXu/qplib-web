@@ -396,13 +396,13 @@ $(document).ready(function() {
     "columns": [
       {"type": "string" },  // Name and formats
       {"type": "string" },  // Cvx
+      {"type": "string" },  // O
+      {"type": "numWithNull"},  // Q0 density
+      {"type": "numWithNull"},  // Q0 hard ev
       {"type": "string" },  // V
       null,  // Vars
       {"type": "numWithNull"},  // BinVars
       {"type": "numWithNull"},  // IntVars
-      {"type": "string" },  // O
-      {"type": "numWithNull"},  // Q0 density
-      {"type": "numWithNull"},  // Q0 hard ev
       {"type": "string" },  // C
       null,  // Cons
       {"type": "numWithNull"},  // QuadCons
@@ -414,12 +414,12 @@ $(document).ready(function() {
 
   $.fn.dataTable.ext.search.push(
     function( settings, data, dataIndex ) {
-      var inputV = $('#InputV').val();
-      if( inputV != "" && inputV.indexOf(data[2]) < 0 )
+      var inputO = $('#InputO').val();
+      if( inputO != "" && inputO.indexOf(data[2]) < 0 )
         return false;
 
-      var inputO = $('#InputO').val();
-      if( inputO != "" && inputO.indexOf(data[6]) < 0 )
+      var inputV = $('#InputV').val();
+      if( inputV != "" && inputV.indexOf(data[5]) < 0 )
         return false;
 
       var inputC = $('#InputC').val();
