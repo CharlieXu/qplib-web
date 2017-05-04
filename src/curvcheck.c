@@ -118,7 +118,7 @@ RETURN cholesky(
    /* TODO augment incoming curv, don't just reset */
    *curv = CURVATURE_UNKNOWN;
 
-   /* ensure that matrix from GMO is of lower-left form */
+   /* ensure that matrix from GMO is of lower-left form (TODO: should not need this anymore) */
    for( i = 0; i < qnz; ++i )
    {
       if( qcol[i] > qrow[i] )
@@ -158,10 +158,7 @@ RETURN cholesky(
       *     part are transposed and added to the lower triangular part when
       *     the matrix is converted to cholmod_sparse form.
       */
-   /* we ensured above that for the Hessian from GMO, only the lower-left triangle is given
-    * stype = 1 should be the corresponding setting
-    */
-   T.stype = 1;
+   T.stype = 0;
    T.itype = CHOLMOD_INT;  /* CHOLMOD_LONG: i and j are SuiteSparse_long.  Otherwise int */
    T.xtype = CHOLMOD_REAL;  /* pattern, real, complex, or zomplex */
    T.dtype = CHOLMOD_DOUBLE;  /* x and z are double or float */
@@ -285,12 +282,7 @@ RETURN curvSample(
       /* compute x'*Q*x */
       prod = 0.0;
       for( i = 0; i < qnz; ++i )
-      {
-         if( qcol[i] == qrow[i] )
-            prod += qcoef[i] * x[qcol[i]] * x[qrow[i]];
-         else
-            prod += 2.0 * qcoef[i] * x[qcol[i]] * x[qrow[i]]; /* because half of the non-diagonal elements are not specified */
-      }
+         prod += qcoef[i] * x[qcol[i]] * x[qrow[i]];
 
       /* conclude on curvature of Q */
       if( prod > 1e-9 )

@@ -376,15 +376,18 @@ RETURN instanceCheck(
             if( c == -1 )
             {
                eigvalcount evcount;
+               int diagnz = 0;
 
                qnz = gmoObjQNZ(gmo);
                assert(qnz <= maxqnz);
                (void) gmoGetObjQ(gmo, qcol, qrow, qcoef);
 
-               int diagnz = 0;
                for( i = 0; i < qnz; ++i )
                   if( qcol[i] == qrow[i] )
+                  {
                      ++diagnz;
+                     qcoef[i] /= 2.0; /* for some strange reason, the coefficients on the diagonal are multiplied by 2 in GMO */
+                  }
                printf("NOBJQUADNZ        = %d\n", qnz);
                printf("NOBJQUADDIAGNZ    = %d\n", diagnz);
 
@@ -403,13 +406,22 @@ RETURN instanceCheck(
             }
             else
             {
+               int diagonal;
+
                qnz = gmoGetRowQNZOne(gmo, c);
                assert(qnz <= maxqnz);
                (void) gmoGetRowQ(gmo, c, qcol, qrow, qcoef);
 
-               /* check if diagonal */
-               for( i = 0; i < qnz && qcol[i] != qrow[i]; ++i );
-               if( i == qnz )
+               /* check if diagonal, correct qcoef */
+               diagonal = 1;
+               for( i = 0; i < qnz; ++i )
+               {
+                  if( qcol[i] == qrow[i] )
+                     qcoef[i] /= 2.0; /* for some strange reason, the coefficients on the diagonal are multiplied by 2 in GMO */
+                  else
+                     diagonal = 0;
+               }
+               if( diagonal )
                   ++ndiagquadcons;
 
                CHECK( curvQuad(gmoN(gmo), qnz, qcol, qrow, qcoef, &curv, NULL) );
