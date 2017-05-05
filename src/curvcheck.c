@@ -8,6 +8,9 @@
 
 #include "curvcheck.h"
 
+/* tolerance for considering an eigenvalue as zero */
+#define EIGVAL_ZEROTOL 1e-12
+
 #ifdef HAVE_CHOLMOD
 #include "cholmod.h"
 #endif
@@ -283,6 +286,7 @@ RETURN curvSample(
    unsigned int seed = 42;
    double prod;
    double* x;
+   double xnorm;
 
    assert(qcol != NULL);
    assert(qrow != NULL);
@@ -294,18 +298,24 @@ RETURN curvSample(
    for( iter = 0; iter <= n/10 && !curvdecided[*curv]; ++iter )
    {
       /* generate random trial point (values in [-1.0,1.0]) */
+      xnorm = 0.0;
       for( i = 0; i < n; ++i )
+      {
          x[i] = 2.0 * (double)rand_r(&seed) / (double)RAND_MAX - 1.0;
+         xnorm += x[i] * x[i];
+      }
 
       /* compute x'*Q*x */
       prod = 0.0;
       for( i = 0; i < qnz; ++i )
          prod += qcoef[i] * x[qcol[i]] * x[qrow[i]];
 
-      /* conclude on curvature of Q */
-      if( prod > 1e-9 )
+      /* conclude on curvature of Q
+       * if x were an eigenvector, then x'*Q*x / ||x||^2 would be the corresponding eigenvalue, thus compare relative to ||x||^2
+       */
+      if( prod > EIGVAL_ZEROTOL * xnorm )
          curvAugment(curv, CURVATURE_NONCONCAVE);
-      else if( prod < -1e-9)
+      else if( prod < -EIGVAL_ZEROTOL * xnorm )
          curvAugment(curv, CURVATURE_NONCONVEX);
       /* printf("prod = %g -> curv = %s\n", prod, curvname[*curv]); */
    }
@@ -359,12 +369,12 @@ RETURN curvQuad(
       if( qcol[i] == qrow[i] )
       {
          /* quick check: positive (negative) elements on diagonal prohibit concavity (convexity, resp) */
-         if( qcoef[i] > 1e-9 )
+         if( qcoef[i] > EIGVAL_ZEROTOL )
          {
             curvAugment(curv, CURVATURE_NONCONCAVE);
             ++npos;
          }
-         else if( qcoef[i] < -1e-9 )
+         else if( qcoef[i] < -EIGVAL_ZEROTOL )
          {
             curvAugment(curv, CURVATURE_NONCONVEX);
             ++nneg;
@@ -405,7 +415,7 @@ RETURN curvQuad(
    {
       cholesky(qnz, qcol, qrow, qcoef, dim, curv);
       /* it seems that CHOLMOD sometimes concludes a matrix as not positive-semidefinite,
-       * though Lapack below might actually conclude that all eigenvalues are >= 0 (-1e-9)
+       * though Lapack below might actually conclude that all eigenvalues are >= 0 (-EIGVAL_ZEROTOL)
        * thus, retry with Lapack if CHOLMOD concludes indefinite
        */
       if( curvdecided[*curv] && *curv != CURVATURE_INDEFINITE )
@@ -451,9 +461,9 @@ RETURN curvQuad(
    nneg = 0;
    for( i = 0; i < dim; ++i )
    {
-      if( eigvals[i] < -1e-9 )
+      if( eigvals[i] < -EIGVAL_ZEROTOL )
          ++nneg;
-      else if( eigvals[i] > 1e-9 )
+      else if( eigvals[i] > EIGVAL_ZEROTOL )
          ++npos;
    }
 
