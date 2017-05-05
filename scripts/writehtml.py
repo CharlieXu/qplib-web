@@ -1136,6 +1136,8 @@ def writehtml() :
 
     print >> index, '''      <h3>History and updates</h3>
       <ul>
+        <li>May 5, 2017: Tightening the tolerance for zero eigenvalues lead to changes in convexity information for instances QPLIB_{2635,2881,9030}.
+        </li>
         <li>May 4, 2017: Corrected convexity information for instances QPLIB_{2696,3049,3326,3554,3790,9048}.
         </li>
         <li>February 15, 2017: New instance file formats online: AMPL's .mod and our newly developed .qplib.
