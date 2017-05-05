@@ -234,12 +234,12 @@ For each instance, we collect the following information:
  <TR style="border-top: 1px solid #CCCCCC; border-bottom: 1px solid #CCCCCC; border-collapse: collapse; vertical-align:top;">
   <TD><A name="nobjquadnegev"></A>NOBJQUADNEGEV</TD>
   <TD>Number of negative eigenvalues in \(Q^0\)</TD>
-  <TD>\(|\{\lambda \leq -10^{-9} \,:\, \exists v\neq 0 : Q^0v = \lambda v\}|\)
+  <TD>\(|\{\lambda \leq -10^{-12} \,:\, \exists v\neq 0 : Q^0v = \lambda v\}|\)
  </TR>
  <TR style="border-top: 1px solid #CCCCCC; border-bottom: 1px solid #CCCCCC; border-collapse: collapse; vertical-align:top;">
   <TD><A name="nobjquadnegev"></A>NOBJQUADPOSEV</TD>
   <TD>Number of positive eigenvalues in \(Q^0\)</TD>
-  <TD>\(|\{\lambda \geq 10^{-9} \,:\, \exists v\neq 0 : Q^0v = \lambda v\}|\)
+  <TD>\(|\{\lambda \geq 10^{-12} \,:\, \exists v\neq 0 : Q^0v = \lambda v\}|\)
  </TR>
  <TR style="border-top: 1px solid #CCCCCC; border-bottom: 1px solid #CCCCCC; border-collapse: collapse; vertical-align:top;">
   <TD><A name="objquadhardevfrac"></A>OBJQUADHARDEVFRAC</TD>
