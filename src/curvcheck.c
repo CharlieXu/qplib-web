@@ -113,12 +113,12 @@ RETURN cholesky(
    cholmod_sparse* A;
    cholmod_common c;
    cholmod_factor* L;
-   int i;
+   int i, j;
 
    /* TODO augment incoming curv, don't just reset */
    *curv = CURVATURE_UNKNOWN;
 
-   /* ensure that matrix from GMO is of lower-left form (TODO: should not need this anymore) */
+   /* ensure that matrix from GMO is of lower-left form, so we can use stype=1 below */
    for( i = 0; i < qnz; ++i )
    {
       if( qcol[i] > qrow[i] )
@@ -158,13 +158,31 @@ RETURN cholesky(
       *     part are transposed and added to the lower triangular part when
       *     the matrix is converted to cholmod_sparse form.
       */
-   T.stype = 0;
+   /* stype=1 seems to work:
+    * - above we ensured that all elements of the matrix are lower-triangular
+    * - however, cholmod now assumes that there are the same elements in the upper-triangular part
+    * - therefore, every off-diagonal element is considered doubled
+    * - we will correct this below (so we don't modify qcoef above)
+    */
+   T.stype = 1;
    T.itype = CHOLMOD_INT;  /* CHOLMOD_LONG: i and j are SuiteSparse_long.  Otherwise int */
    T.xtype = CHOLMOD_REAL;  /* pattern, real, complex, or zomplex */
    T.dtype = CHOLMOD_DOUBLE;  /* x and z are double or float */
 
    A = cholmod_triplet_to_sparse(&T, qnz, &c);
    assert(A != NULL);
+
+   /* ensure that non-diagonal elements are halfed, since we used stype = 1 above
+    * A->p [0..ncol] are column pointers
+    * A->i [0..nzmax-1] are row indices
+    */
+   assert(A->itype == CHOLMOD_INT);
+   assert(A->xtype == CHOLMOD_REAL);
+   assert(A->stype != 0);
+   for( j = 0; j < A->ncol; ++j )
+      for( i = ((int*)A->p)[j]; i < ((int*)A->p)[j+1]; ++i )
+         if( ((int*)A->i)[i] != j )
+            ((double*)A->x)[i] /= 2.0;
    /* cholmod_print_sparse(A, "A", &c); */
 
    L = cholmod_analyze(A, &c);
