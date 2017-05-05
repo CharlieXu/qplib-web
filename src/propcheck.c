@@ -391,18 +391,10 @@ RETURN instanceCheck(
                printf("NOBJQUADNZ        = %d\n", qnz);
                printf("NOBJQUADDIAGNZ    = %d\n", diagnz);
 
-               if( strstr(gmsfile, "QPLIB_8602") != NULL )
-               {
-                  /* eigenvalue computation currently fails on these two instances */
-                  CHECK( curvQuad(gmoN(gmo), qnz, qcol, qrow, qcoef, &curv, NULL) );
-               }
-               else
-               {
-                  CHECK( curvQuad(gmoN(gmo), qnz, qcol, qrow, qcoef, &curv, &evcount) );
+               CHECK( curvQuad(gmoN(gmo), qnz, qcol, qrow, qcoef, &curv, &evcount) );
 
-                  printf("NOBJQUADNEGEV     = %d\n", evcount.nnegeigvals);
-                  printf("NOBJQUADPOSEV     = %d\n", evcount.nposeigvals);
-               }
+               printf("NOBJQUADNEGEV     = %d\n", evcount.nnegeigvals);
+               printf("NOBJQUADPOSEV     = %d\n", evcount.nposeigvals);
             }
             else
             {
