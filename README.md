@@ -14,4 +14,6 @@ The code that checks instances for convexity can make use of CHOLMOD.
 If you have CHOLMOD available on your system, create a file make.local
 in the base directory with the line ```CHOLMOD = true```.
 
-To publish the website, simply copy the html/ directory to your server.
+To publish the website at the address http://qplib.zib.de/:
+
+7. Run ```./scripts/export-www.sh``` to copy the html/ directory to the web server.
