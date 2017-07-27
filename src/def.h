@@ -67,7 +67,7 @@ typedef enum
 #if defined(__GNUC__)
 __attribute__((unused))
 #endif
-static const char const* curvname[] = { "linear", "indefinite", "convex", "nonconcave", "concave", "nonconvex", (void*)0x0, "unknown" };
+static const char* curvname[] = { "linear", "indefinite", "convex", "nonconcave", "concave", "nonconvex", (void*)0x0, "unknown" };
 
 #if defined(__GNUC__)
 __attribute__((unused))
@@ -87,7 +87,7 @@ typedef enum
 #if defined(__GNUC__)
 __attribute__((unused))
 #endif
-static const char const* functypename[] = { "constant", "linear", "quadratic", "polynomial", "signomial", "nonlinear" };
+static const char* functypename[] = { "constant", "linear", "quadratic", "polynomial", "signomial", "nonlinear" };
 
 #endif
 
