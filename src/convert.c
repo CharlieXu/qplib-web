@@ -911,7 +911,7 @@ RETURN writeQPLIB(
          }
 
          for( j = 0; j < quadnz; ++j )
-            fprintf(f, "%d %d %d %s\n", i+1, MAX(quadrowidx[i], quadcolidx[i]) + 1, MIN(quadrowidx[i], quadcolidx[i]) + 1, formatDouble((quadrowidx[j] == quadcolidx[j]) ? quadcoef[j] : 2.0*quadcoef[j]));
+            fprintf(f, "%d %d %d %s\n", i+1, MAX(quadrowidx[j], quadcolidx[j]) + 1, MIN(quadrowidx[j], quadcolidx[j]) + 1, formatDouble((quadrowidx[j] == quadcolidx[j]) ? quadcoef[j] : 2.0*quadcoef[j]));
       }
    }
 
