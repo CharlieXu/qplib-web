@@ -1136,6 +1136,8 @@ def writehtml() :
 
     print >> index, '''      <h3>History and updates</h3>
       <ul>
+        <li>July 27, 2017: Fixed errors in the .qplib formatted versions of instances with quadratic constraints.
+        </li>
         <li>May 5, 2017: Tightening the tolerance for zero eigenvalues lead to changes in convexity information for instances QPLIB_{2635,2881,9030}.
         </li>
         <li>May 4, 2017: Corrected convexity information for instances QPLIB_{2696,3049,3326,3554,3790,9048}.

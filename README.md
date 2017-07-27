@@ -6,8 +6,8 @@ To build the QPLib instance listing:
 
 1. Create a link "gams" pointing to a GAMS system directory.
 2. Execute make to build helper tools.
-3. Run ```./scripts/convertinstances.sh``` to create .lp files.
-5. Run ```./scripts/writehtml.py``` to create HTML pages
+3. Run ```./scripts/convertinstances.sh``` to create files for the different formats.
+5. Run ```./scripts/writehtml.py``` to create HTML pages.
 6. Run ```./scripts/makedist.sh``` to create a qplib.zip file.
 
 The code that checks instances for convexity can make use of CHOLMOD.
