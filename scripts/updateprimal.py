@@ -119,11 +119,15 @@ def updateprimal(dir) :
         #assert not os.path.exists(gdxfile);
         shutil.copyfile(os.path.join(dir, f.split('.')[0] + '.gdx'), gdxfile);
 
-        # TODO update instead of overwrite (see below)
-        infofile = open(os.path.join(metadata.METADIR, m + '.info'), 'w');
+        infofile = os.path.join(metadata.METADIR, m + '.info');
+        newinfo = '';
+        if os.path.exists(infofile) :
+            for l in open(infofile, 'r') :
+                if not l.startswith('SOLSOURCE') :
+                    newinfo += l;
         if solver is not None :
-            print >> infofile, 'SOLSOURCE = Solution found by', solver, ('running with ' + settings + ' settings') if settings is not None else '';
-        infofile.close();
+            l += 'SOLSOURCE = Solution found by', solver, ('running with ' + settings + ' settings') if settings is not None else '';
+        print >> open(infofile, 'w'), newinfo;
 
         # update propfile of instance
         propfile = os.path.join(metadata.METADIR, m + '.prop');
