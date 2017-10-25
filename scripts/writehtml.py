@@ -111,6 +111,13 @@ def _pointstohtml(points) :
         s += '</div>'
     return s;
 
+def _pointtohtml(solobjvalue) :
+    s = '{0:.8f}'.format(solobjvalue);
+    s += ' (<A href="gdx/' + instance + '.gdx">gdx</A>,';
+    s += ' <A href="sol/' + instance + '.sol">sol</A>)';
+
+    return s;
+
 def _dualboundstohtml(dualbounds) :
     allbounds = [];
     for dattribs in dualbounds.values() :
@@ -156,6 +163,8 @@ INSTANCEATTRS = [
     ('removedate', 'Removed from library', lambda x : x.strftime("%d %b %Y")),
     ('removereason', 'Removed because', str),
     ('probtype', 'Problem type', str),
+    ('solobjvalue', 'Solution point objective value', _pointtohtml),
+    ('solinfeasibility', 'Solution point infeasibility', '{0:.4e}'.format),
     ('nvars', '#Variables', str),
     ('nbinvars', '#Binary Variables', str),
     ('nintvars', '#Integer Variables', str),
@@ -1081,11 +1090,12 @@ def writehtml() :
                 shutil.rmtree(os.path.join(HTMLDIR, f));
              shutil.copytree(os.path.join(STATICDIR, f), os.path.join(HTMLDIR, f));
 
-    # copy all files from data/{gms,lp,mod,qplib,png}
-    for d in ['gms', 'lp', 'mod', 'qplib', 'png'] :
+    # copy all files from data/{gms,lp,mod,qplib,png,gdx,sol}
+    for d in ['gms', 'lp', 'mod', 'qplib', 'png', 'gdx', 'sol'] :
        if os.path.exists(os.path.join(HTMLDIR, d)) :
           shutil.rmtree(os.path.join(HTMLDIR, d));
-       shutil.copytree(os.path.join(metadata.DATADIR, d), os.path.join(HTMLDIR, d));
+       if os.path.exists(os.path.join(metadata.DATADIR, d)) :
+          shutil.copytree(os.path.join(metadata.DATADIR, d), os.path.join(HTMLDIR, d));
 
     # write pages for each model and point
     for m, mattribs in data.iteritems() :

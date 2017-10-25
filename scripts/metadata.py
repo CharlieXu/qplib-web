@@ -91,7 +91,9 @@ INSTANCEPROPATTRS = {
     'nlaghessianblocks' : int,
     'laghessianminblocksize' : int,
     'laghessianmaxblocksize' : int,
-    'laghessianavgblocksize' : float
+    'laghessianavgblocksize' : float,
+    'solobjvalue' : float,
+    'solinfeasibility' : float
     }
 
 INSTANCEFORMATS = (['ams', 'gms', 'lp', 'mod', 'nl', 'osil', 'pip', 'qplib']);
