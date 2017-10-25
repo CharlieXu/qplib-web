@@ -6,7 +6,8 @@ To build the QPLib instance listing:
 
 1. Create a link "gams" pointing to a GAMS system directory.
 2. Execute make to build helper tools.
-3. Run ```./scripts/convertinstances.sh``` to create files for the different formats.
+3. Run ```./scripts/convertinstances.sh``` to create files for the different instance formats.
+4. Run ```./scripts/convertpoints.sh``` to create files for the different point formats.
 5. Run ```./scripts/writehtml.py``` to create HTML pages.
 6. Run ```./scripts/makedist.sh``` to create a qplib.zip file.
 

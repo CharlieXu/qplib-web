@@ -6,6 +6,7 @@ html/
 data/lp
 data/qplib
 data/mod
+data/sol
 gams
 depend
 make.local
