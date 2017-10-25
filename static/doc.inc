@@ -43,6 +43,9 @@ Further, let
    </LI>
 </UL>
 </p>
+<p>
+Additionally, one solution point \(x^* \in \mathbb{R}^n\) might be available for each instance.
+</p>
 
 <p>
 For each instance, we collect the following information:
@@ -87,6 +90,21 @@ For each instance, we collect the following information:
     <TR border="0" style="vertical-align:top;"><TD>&ndash;&nbsp;<B>Q</B>.</TD></TR>
    </table>
   </TD>
+ </TR>
+ <TR style="border-top: 1px solid #CCCCCC; border-bottom: 1px solid #CCCCCC; border-collapse: collapse; vertical-align:top;">
+  <TD><A name="solobjvalue"></A>SOLOBJVALUE</TD>
+  <TD>Solution point objective value</TD>
+  <TD>\(\frac{1}{2} (x^*)^\top Q^0 x^* + b^0 x^* + q^0\)</TD>
+ </TR>
+ <TR style="border-top: 1px solid #CCCCCC; border-bottom: 1px solid #CCCCCC; border-collapse: collapse; vertical-align:top;">
+  <TD><A name="solinfeasibility"></A>SOLINFEASIBILITY</TD>
+  <TD>Solution point infeasibility</TD>
+  <TD>The maximum of <UL>
+     <LI>\( \max\{c_l^i - \frac{1}{2}(x^*)^\top Q^i x^* - b^i x^*,  \frac{1}{2}(x^*)^\top Q^i x^* + b^i x^* - c_u^i\}, i\in\mathcal{M} \),</LI>
+     <LI>\( \max\{l_j - x_j^*, x_j^* - u_j\}, j\in\mathcal{N} \),</LI>
+     <LI>\( |x_j^* - \text{round} (x_j^*)|, j\in\mathcal{Z} \), and</LI>
+     <LI>0.</LI>
+    </UL></TD>
  </TR>
  <TR style="border-top: 1px solid #CCCCCC; border-bottom: 1px solid #CCCCCC; border-collapse: collapse; vertical-align:top;">
   <TD><A name="nvars"></A>NVARS</TD>
