@@ -31,7 +31,8 @@ INSTANCEINFOATTRS = {
     'removedate' : lambda x : datetime.datetime.strptime(x, '%Y-%m-%d'),
     'removereason' : str,
     'objcurvature' : str,
-    'conscurvature' : str
+    'conscurvature' : str,
+    'solsource' : str
     }
 
 INSTANCEPROPATTRS = {
@@ -132,9 +133,8 @@ POINTFORMATS = (['gdx', 'sol'])
 
 SOURCELINKS = { }
 
-def readinfo() :
+def readinfo(data) :
     '''Reads .info files about instances and points from meta directory'''
-    data = {};
     
     ls = os.listdir(METADIR);
     for f in ls :
@@ -215,7 +215,8 @@ def readinfo_dummy() :
             continue;
         
         if s[-1] != 'prop' :
-            print 'skipping ' + f;
+            if s[-1] != 'info' :
+                print 'skipping ' + f;
             continue;
 
         assert len(s) in [2,3];
@@ -418,6 +419,7 @@ def checkdata(data) :
 def read() :
     data = readinfo_dummy();
     checkformats(data);
+    readinfo(data);
     readprop(data);
     readdualbounds(data);
         
