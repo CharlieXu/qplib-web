@@ -157,7 +157,7 @@ INSTANCEATTRS = [
     #('points', 'Primal Bounds', _pointstohtml),
     #('dualbounds', ['Dual Bounds', 'Up to 3rd best bound is in bold. See also the FAQ!'], _dualboundstohtml),
     ('references', 'References', _refstohtml),
-    ('source', 'Source', _sourcetohtml),
+    #('source', 'Source', _sourcetohtml),
     ('application', 'Application', str),
     ('adddate', 'Added to library', lambda x : x.strftime("%d %b %Y")),
     ('removedate', 'Removed from library', lambda x : x.strftime("%d %b %Y")),
