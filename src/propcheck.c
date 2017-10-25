@@ -9,6 +9,7 @@
 
 #include "loadgms.h"
 #include "curvcheck.h"
+#include "pointcheck.h"
 #include "sparsityplot.h"
 
 static
@@ -518,10 +519,11 @@ int main(
 {
    gmoHandle_t gmo;
    gevHandle_t gev;
+   int i;
 
    if( argc < 2 )
    {
-      printf("usage: %s <instance.gms> { <point.gdx> }\n", argv[0]);
+      printf("usage: %s <instance.gms> [<point.gdx>]\n", argv[0]);
       return 1;
    }
    
@@ -530,6 +532,35 @@ int main(
    if( getenv("PROPCHECK_SKIPINSTANCE") == NULL )
    {
       CHECK( instanceCheck(gmo, gev, argv[1]) );
+   }
+
+   /* point check */
+   if( argc >= 3 )
+   {
+      double infeasibility;
+      int rc;
+
+      /* reset to GAMS default level values in case GDX file is not complete */
+      for( i = 0; i < gmoN(gmo); ++i )
+         gmoSetVarLOne(gmo, i, MAX(gmoGetVarLowerOne(gmo, i), MIN(gmoGetVarUpperOne(gmo, i), 0.0)));
+
+      /* currently do not load equation values (don't need them anyway) to work around GMO bug */
+      rc = gmoLoadSolutionGDX(gmo, argv[2], 0, 1, 1);
+      if( rc != 0 )
+      {
+         fprintf(stderr, "Could not load GDX file %s\n", argv[2]);
+         return 1;
+      }
+
+      if( gmoModelType(gmo) == gmoProc_cns )
+         gmoSetHeadnTail(gmo, gmoHobjval, 0.0);
+
+      gmoCompleteSolution(gmo);
+
+      CHECK( pointInfeasibility(gmo, gev, &infeasibility) );
+
+      printf("SOLOBJVALUE       = %.10g\n", gmoGetHeadnTail(gmo, gmoHobjval));
+      printf("SOLINFEASIBILITY  = %.10g\n", infeasibility);
    }
 
    freeGMS(&gmo, &gev);

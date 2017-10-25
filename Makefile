@@ -18,7 +18,7 @@ ifeq ($(CHOLMOD),true)
    LDFLAGS += -lcholmod
 endif
 
-OBJS = $(OBJDIR)/loadgms.o $(OBJDIR)/gevmcc.o $(OBJDIR)/gmomcc.o $(OBJDIR)/curvcheck.o $(OBJDIR)/sparsityplot.o $(OBJDIR)/convert.o
+OBJS = $(OBJDIR)/loadgms.o $(OBJDIR)/gevmcc.o $(OBJDIR)/gmomcc.o $(OBJDIR)/curvcheck.o $(OBJDIR)/pointcheck.o $(OBJDIR)/sparsityplot.o $(OBJDIR)/convert.o
 
 all : $(BINDIR)/propcheck $(BINDIR)/convert
 
