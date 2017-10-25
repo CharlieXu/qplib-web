@@ -11,7 +11,7 @@ try :
 except ImportError :
     _havepandas = False;
 
-FEASTOL = 1e-6;
+FEASTOL = 1e-9;
 OPTTOL = 1e-9;
 GAPTOL = 1e-6;
 ZEROGAPTOL = 1e-9;
@@ -429,16 +429,9 @@ def read() :
 
 
 def getbestprimal(instanceattribs) :
-    sense = 1.0;
-    if 'objsense' in instanceattribs :
-        sense = 1.0 if instanceattribs['objsense'] == 'min' else -1.0;
-
-    best = None;
-    for pa in instanceattribs['points'].values() :
-        if 'objvalue' in pa and (best is None or sense * best > sense * pa['objvalue']) :
-            best = pa['objvalue'];
-            
-    return best;
+    if 'solobjvalue' in instanceattribs :
+        return instanceattribs['solobjvalue']
+    return None;
 
 def gettrusteddual(instanceattribs) :
     sense = 1.0;
