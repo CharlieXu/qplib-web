@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by SCIP 
+DONOR = Thomas Schlex
+SOURCE = ThomasSchlex/evalwcsp (2)/MaxCSP/Langford/langford-3-11-ext_1000_qp.lp

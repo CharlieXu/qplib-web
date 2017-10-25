@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by GUROBI 
+DONOR = Fabio Furini
+SOURCE = FabioFurini/set_1/Inst_150_25_75_1.lp

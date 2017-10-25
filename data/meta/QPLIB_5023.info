@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by CPLEX
+DONOR = Antonio Frangioni
+SOURCE = AntonioFrangioni/ND/lp/netgen-3000-1-1-b-b-ns_7_translated.lp

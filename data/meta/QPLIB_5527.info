@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by GUROBI 
+DONOR = Antonio Frangioni
+SOURCE = AntonioFrangioni/UC/200_100_2_w.mod_8_translated.lp

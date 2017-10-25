@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by GUROBI 
+DONOR = Andrea Lodi
+SOURCE = AndreLodi/LAB2/COLOR_lab2_4x0_SDPA.lp

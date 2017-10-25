@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by CPLEX
+DONOR = Stefan Vigerske
+SOURCE = StefanVigerske/gms/sporttournament30.gms

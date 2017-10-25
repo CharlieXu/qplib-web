@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by ANTIGONE 
+DONOR = MINLPLIB
+SOURCE = MINLPLIB/generalizedpooling_meyer10.gms

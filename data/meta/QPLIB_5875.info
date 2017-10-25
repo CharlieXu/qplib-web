@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by BARON 
+DONOR = BicMac
+SOURCE = BicMac/biq/be/be200.8.4.sparse.lp

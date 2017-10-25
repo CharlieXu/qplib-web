@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by BARON 
+DONOR = Stefan Vigerske
+SOURCE = StefanVigerske/gms/nuclear49b.gms

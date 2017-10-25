@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by GUROBI 
+DONOR = Pierre Bonami
+SOURCE = PierreBonami/sonet/dat/ins.23.v6.dat

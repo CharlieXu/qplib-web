@@ -837,6 +837,7 @@ def _writestatistics(data) :
 
     # create instancedata.csv
     df = metadata.todataframe(data);
+    df.drop('source', axis = 1, inplace = True);  # drop SOURCE for now
     df.to_csv(os.path.join(HTMLDIR, 'instancedata.csv'));
 
     ninstances = len(df.index);

@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by GUROBI 
+DONOR = Andrea Lodi
+SOURCE = AndreLodi/LAB3/COLOR_lab3_3x0.lp

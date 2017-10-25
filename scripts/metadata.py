@@ -23,6 +23,7 @@ METADIR = os.path.join(DATADIR, 'meta');
 
 INSTANCEINFOATTRS = {
     'source' : str,
+    'donor' : str,
     'descr' : str,
     'application' : str,
     'references': lambda x: x.split(),

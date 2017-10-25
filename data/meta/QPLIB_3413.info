@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by CPLEX
+DONOR = Ruth Misener
+SOURCE = RuthMisener/GloMIQO_TestSet/chr20a.gms

@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by BARON 
+DONOR = MINLPLIB
+SOURCE = MINLPLIB/generalizedpooling_meyer4.gms

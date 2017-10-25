@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by GUROBI 
+DONOR = Ruth Misener
+SOURCE = RuthMisener/GloMIQO_TestSet/q18a13l1.gms

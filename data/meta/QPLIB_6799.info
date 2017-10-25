@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by GUROBI 
+DONOR = Thomas Schlex
+SOURCE = ThomasSchlex/evalwcsp (2)/MaxCSP/EHI-85/ehi-85-297-71_ext_1000_qp.lp

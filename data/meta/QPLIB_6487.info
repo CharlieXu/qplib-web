@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by GUROBI 
+DONOR = Thomas Schlex
+SOURCE = ThomasSchlex/evalwcsp (3)/UAI/DBN/rus2_100_200_7_1_qp.lp

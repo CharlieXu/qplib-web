@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by SCIP 
+DONOR = Ghaddar
+SOURCE = Ghaddar/AmplDataQKP/randqkp_80_90.mod

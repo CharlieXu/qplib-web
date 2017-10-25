@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by GUROBI 
+DONOR = Nick Sahinidis
+SOURCE = NickSahinidis/binqp/bqp250e2.gms

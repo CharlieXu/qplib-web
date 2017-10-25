@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by SCIP 
+DONOR = Stefan Vigerske
+SOURCE = StefanVigerske/gms/portfol_shortfall200_05.gms

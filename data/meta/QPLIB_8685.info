@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by SCIP 
+DONOR = Nick Gould
+SOURCE = nick_lp/KISSING2_800_10000.lp

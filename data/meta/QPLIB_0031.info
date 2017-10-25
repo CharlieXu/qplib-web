@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by ALPHAECP 
+DONOR = Andrea Scozzari
+SOURCE = AndreaScozzari/stqp test problems with cardinality constraints/Cardinality StQP Models in AMPL/Problem_Q30.dat

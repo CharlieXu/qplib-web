@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by SCIP 
+DONOR = Ruth Misener
+SOURCE = RuthMisener/GloMIQO_TestSet/kg_example2_pw4.gms

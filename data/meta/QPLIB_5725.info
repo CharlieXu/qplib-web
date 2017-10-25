@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by CPLEX
+DONOR = BicMac
+SOURCE = BicMac/mac/ising/t3g7_6666.lp

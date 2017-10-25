@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by SCIP 
+DONOR = Sebastien Le Digabel
+SOURCE = SebastienLeDigabel/pooling_instances/pooling_instances/R18_FLOW.lp

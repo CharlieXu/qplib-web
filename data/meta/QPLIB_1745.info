@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by SCIP 
+DONOR = Nick Sahinidis
+SOURCE = NickSahinidis/qcqp2/g1_050_050_005_50_5.gms

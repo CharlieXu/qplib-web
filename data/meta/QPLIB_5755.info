@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by BARON 
+DONOR = BicMac
+SOURCE = BicMac/mac/ising/t2g20_5555.lp

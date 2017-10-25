@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by ANTIGONE 
+DONOR = BicMac
+SOURCE = BicMac/biq/beasley/bqp250-8.sparse.lp

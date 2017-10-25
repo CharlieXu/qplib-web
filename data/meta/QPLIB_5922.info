@@ -1,1 +1,3 @@
 SOLSOURCE = Solution found by GUROBI 
+DONOR = BicMac
+SOURCE = BicMac/biq/beasley/bqp500-2.sparse.lp
