@@ -381,7 +381,20 @@ def _writeinstancepage(data) :
     print >> instances, '<HTML>', _htmlheader("QPLIB Instance Listing"), _htmlstartbody(), '''
 <p>
 This page lists all QPLIB instances. For column-wise filters, scroll to the <a href="#filter">end of the table</a>.
-</p>
+A file with the objective value of all solution points is available <a href="qplib.solu">here</a>.
+</p>'''
+
+    # create solu file
+    soluout = open(os.path.join(HTMLDIR, 'qplib.solu'), 'w')
+    for m, mattribs in data.iteritems() :
+        if 'solobjvalue' in mattribs :
+            obj = mattribs['solobjvalue'];
+            print >> soluout, '=best= {0:25s} {1:30.16f}'.format(m, obj);
+        else :
+            print >> soluout, '=unkn=', m;
+    soluout.close();
+
+    print >> instances, '''
 <link rel="stylesheet" type="text/css" href="DataTables/css/jquery.dataTables.min.css">
 <link rel="stylesheet" type="text/css" href="FixedHeader/css/fixedHeader.dataTables.min.css">
 <script type="text/javascript" src="jQuery/jquery-2.2.4.min.js"></script>
