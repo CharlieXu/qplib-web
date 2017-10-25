@@ -20,7 +20,7 @@ endif
 
 OBJS = $(OBJDIR)/loadgms.o $(OBJDIR)/gevmcc.o $(OBJDIR)/gmomcc.o $(OBJDIR)/curvcheck.o $(OBJDIR)/pointcheck.o $(OBJDIR)/sparsityplot.o $(OBJDIR)/convert.o
 
-all : $(BINDIR)/propcheck $(BINDIR)/convert
+all : $(BINDIR)/propcheck $(BINDIR)/convert $(BINDIR)/pointpolish
 
 depend : $(SRCDIR)/*.c $(SRCDIR)/*.h $(GAMSAPIDIR)/*.c $(GAMSAPIDIR)/*.h
 	$(CC) $(CFLAGS) -MM $^ | sed -e 's@^\([a-z]\)@$(OBJDIR)/\1@g' > $@
@@ -34,6 +34,9 @@ $(BINDIR)/propcheck : $(OBJS) $(OBJDIR)/propcheck.o | $(BINDIR)
 	$(CC) $^ $(LDFLAGS) -o $@
 
 $(BINDIR)/convert : $(OBJS) $(OBJDIR)/convertmain.o | $(BINDIR)
+	$(CC) $^ $(LDFLAGS) -o $@
+
+$(BINDIR)/pointpolish : $(OBJS) $(OBJDIR)/pointpolish.o | $(BINDIR)
 	$(CC) $^ $(LDFLAGS) -o $@
 
 $(OBJDIR)/%.o : $(GAMSAPIDIR)/%.c | $(OBJDIR)
