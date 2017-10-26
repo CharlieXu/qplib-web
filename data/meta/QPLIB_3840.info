@@ -1,2 +1,3 @@
 DONOR = Stefan Vigerske
 SOURCE = StefanVigerske/gms/nuclear49.gms
+SOLSOURCE = Solution found by SCIP

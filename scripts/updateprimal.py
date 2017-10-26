@@ -126,7 +126,7 @@ def updateprimal(dir) :
                 if not l.startswith('SOLSOURCE') :
                     newinfo += l;
         if solver is not None :
-            l += 'SOLSOURCE = Solution found by', solver, ('running with ' + settings + ' settings') if settings is not None else '';
+            newinfo += 'SOLSOURCE = Solution found by ' + solver + ((' running with ' + settings + ' settings') if settings is not None else '');
         print >> open(infofile, 'w'), newinfo;
 
         # update propfile of instance
@@ -139,7 +139,7 @@ def updateprimal(dir) :
         newprop += prop;
         print >> open(propfile, 'w'), newprop,;
 
-        updates.append([m, infeas, obj, bestprimal if bestprimal is not None else float('nan')])
+        updates.append([m, infeas, obj, bestprimal if bestprimal is not None else float('nan'), solver])
     return updates;
 
 if __name__ == '__main__' :
@@ -147,4 +147,4 @@ if __name__ == '__main__' :
     for dir in sys.argv[1:] :
         updates += updateprimal(dir);
     for u in updates :
-       print '{0:<30s} infeas {1:5g} newobj {2:20f} oldobj {3:20f}'.format(u[0], u[1], u[2], u[3]);
+       print '{0:<30s} newobj {1:20f} oldobj {2:20f} infeas {3:>5g} by {4:s}'.format(u[0], u[2], u[3], u[1], u[4] if u[4] is not None else '--');
