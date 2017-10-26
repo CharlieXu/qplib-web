@@ -1161,6 +1161,8 @@ def writehtml() :
 
     print >> index, '''      <h3>History and updates</h3>
       <ul>
+        <li>October 26, 2017: Added feasible solution points obtained by running a variety of solvers with a 12 hour time limit.  All solutions satisfy integrality requirements and variable bounds exactly; absolute constraint violations should be 1e-9 or less.
+        </li>
         <li>July 27, 2017: Fixed errors in the .qplib formatted versions of instances with quadratic constraints.
         </li>
         <li>May 5, 2017: Tightening the tolerance for zero eigenvalues lead to changes in convexity information for instances QPLIB_{2635,2881,9030}.
