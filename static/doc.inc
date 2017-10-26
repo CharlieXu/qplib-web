@@ -107,6 +107,11 @@ For each instance, we collect the following information:
     </UL></TD>
  </TR>
  <TR style="border-top: 1px solid #CCCCCC; border-bottom: 1px solid #CCCCCC; border-collapse: collapse; vertical-align:top;">
+  <TD><A name="donor"></A>DONOR</TD>
+  <TD>Donor of instance.</TD>
+  <TD>Name of person who submitted this instance to QPLIB.</TD>
+ </TR>
+ <TR style="border-top: 1px solid #CCCCCC; border-bottom: 1px solid #CCCCCC; border-collapse: collapse; vertical-align:top;">
   <TD><A name="nvars"></A>NVARS</TD>
   <TD>Number of Variables</TD>
   <TD>\(|\mathcal{N}|\)</TD>

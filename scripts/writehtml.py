@@ -165,6 +165,7 @@ INSTANCEATTRS = [
     ('probtype', 'Problem type', str),
     ('solobjvalue', 'Solution point objective value', _pointtohtml),
     ('solinfeasibility', 'Solution point infeasibility', '{0:.4e}'.format),
+    ('donor', 'Donor', str),
     ('nvars', '#Variables', str),
     ('nbinvars', '#Binary Variables', str),
     ('nintvars', '#Integer Variables', str),
