@@ -151,7 +151,6 @@ def _sourcetohtml(source):
     return s;
 
 # (attribute keys, string to print for it, conversion function for value)
-# TODO get variable/equation names into table
 INSTANCEATTRS = [
     ('formats', 'Formats', _formatstohtml),
     #('points', 'Primal Bounds', _pointstohtml),
@@ -206,23 +205,7 @@ INSTANCEATTRS = [
     #('nsemi', ['#Semicontinuities', 'semicontinuous and semiinteger variables'], str),
     #('nnlsemi', ['#Nonlinear Semicontinuities', 'nonlinear semicontinuous and semiinteger variables'], str),
     #('nsos1', '#SOS type 1', str),
-    #('nsos2', '#SOS type 2', str),
-    ('minobjcoef', ['Min. Objective Grad.', 'w.r.t. initial point'], '{0:.4e}'.format),
-    #'minobjcoefvar' : str,
-    ('maxobjcoef', ['Max. Objective Grad.', 'w.r.t. initial point'], '{0:.4e}'.format),
-    #'maxobjcoefvar' : str,
-    ('minjaccoef', ['Min. Jacobian Entry', 'w.r.t. initial point'], '{0:.4e}'.format),
-    #'minjaccoefvar' : str,
-    #'minjaccoefequ' : str,
-    ('maxjaccoef', ['Max. Jacobian Entry', 'w.r.t. initial point'], '{0:.4e}'.format),
-    #'maxjaccoefvar' : str,
-    #'maxjaccoefequ' : str,
-    ('minscale', ['Min. Scale', 'w.r.t. initial point'], '{0:.4e}'.format),
-    #'minscalevar' : str,
-    #'minscaleequ' : str,
-    ('maxscale', ['Max. Scale', 'w.r.t. initial point'], '{0:.4e}'.format)
-    #'maxscalevar' : str,
-    #'maxscaleequ' : str
+    #('nsos2', '#SOS type 2', str)
     ]
 
 def _writemodelpage(m, mattribs, bib) :
@@ -314,29 +297,12 @@ def _pointformatstohtml(formats) :
     return s;
 
 # (attribute keys, string to print for it, conversion function for value)
-# TODO get variable/equation names into table
 POINTATTRS = [
     ('formats', 'Formats', _pointformatstohtml),
     ('adddate', 'Added to library', lambda x : x.strftime("%d %b %Y")),
     ('objvalue', 'Objective Value', '{0:.6f}'.format),
     ('infeasibility', 'Infeasibility (absolute)', '{0:.4g}'.format),
-    ('infeasscaled', 'Infeasibility (scaled)', '{0:.4g}'.format),
-    ('minobjcoef', 'Min. Objective Grad.', '{0:.4e}'.format),
-    #'minobjcoefvar' : str,
-    ('maxobjcoef', 'Max. Objective Grad.', '{0:.4e}'.format),
-    #'maxobjcoefvar' : str,
-    ('minjaccoef', 'Min. Jacobian Entry', '{0:.4e}'.format),
-    #'minjaccoefvar' : str,
-    #'minjaccoefequ' : str,
-    ('maxjaccoef', 'Max. Jacobian Entry', '{0:.4e}'.format),
-    #'maxjaccoefvar' : str,
-    #'maxjaccoefequ' : str,
-    ('minscale', 'Min. Scale', '{0:.4e}'.format),
-    #'minscalevar' : str,
-    #'minscaleequ' : str,
-    ('maxscale', 'Max. Scale', '{0:.4e}'.format)
-    #'maxscalevar' : str,
-    #'maxscaleequ' : str
+    ('infeasscaled', 'Infeasibility (scaled)', '{0:.4g}'.format)
     ]
 
 def _writepointpage(m, p, pattribs) :
