@@ -24,7 +24,7 @@ def gms2gms(infile, outfile, fix = "", gamsopts = "") :
                  "| grep -i -v -F .optca " +
                  "| grep -i -v -F .holdfixed " +
                  fix +
-                 "> gms2gms_tmp1.gms") :
+                 " > gms2gms_tmp1.gms") :
         raise BaseException("gams file " + infile + " cleanup failed");
 
     # run GAMS convert to create tmp2 from tmp1

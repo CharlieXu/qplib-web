@@ -71,7 +71,7 @@ if [ $DOOSIL == 1 -a ! -e $osilfile ]; then
   echo "osil $osilfile" > convert.o42
 
   # convert to .osil file
-#  $SCRIPTDIR/../gams/gams $i optfile=42 output=convert.lst lo=2 logfile=convert.log pf4=0 limcol=0 limrow=0 pc=2 LP=CONVERT RMIP=CONVERT QCP=CONVERT RMIQCP=CONVERT NLP=CONVERT DNLP=CONVERT RMINLP=CONVERT CNS=CONVERT MIP=CONVERT MIQCP=CONVERT MINLP=CONVERT MCP=CONVERT MPEC=CONVERT RMPEC=CONVERT
+  $SCRIPTDIR/../gams/gams $i optfile=42 output=convert.lst lo=2 logfile=convert.log pf4=0 limcol=0 limrow=0 pc=2 LP=CONVERT RMIP=CONVERT QCP=CONVERT RMIQCP=CONVERT NLP=CONVERT DNLP=CONVERT RMINLP=CONVERT CNS=CONVERT MIP=CONVERT MIQCP=CONVERT MINLP=CONVERT MCP=CONVERT MPEC=CONVERT RMPEC=CONVERT
 
   if test x`grep -m 1 "SOLVER STATUS" convert.lst | awk '{print $4}'` != x1 ; then
     echo "  OSiL: Capability problem"
